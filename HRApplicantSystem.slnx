@@ -1,2 +1,6 @@
 <Solution>
+  <Project Path="HRApplicantSystem.Data/HRApplicantSystem.Data.csproj" />
+  <Project Path="HRApplicantSystem.Services/HRApplicantSystem.Services.csproj" />
+  <Project Path="HRApplicantSystem.Shared/HRApplicantSystem.Shared.csproj" />
+  <Project Path="HRApplicantSystem.UI/HRApplicantSystem.UI.csproj" />
 </Solution>
