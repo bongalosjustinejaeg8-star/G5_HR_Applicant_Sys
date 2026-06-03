@@ -9,7 +9,7 @@ public class ApplicantDocument
     public string RequirementTypeId { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
     public DocumentStatus Status { get; set; } = DocumentStatus.Missing;
-    public string Remarks { get; set; } = string.Empty;
+    public string? Remarks { get; set; }
     public DateTime SubmittedAt { get; set; }
 
 
