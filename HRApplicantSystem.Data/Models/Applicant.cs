@@ -11,5 +11,5 @@ public class Applicant
     public string Education { get; set; } = string.Empty;
     public string WorkExperience { get; set; } = string.Empty;
     public string Skills { get; set; } = string.Empty;
-
+    public string? Address { get; internal set; }
 }

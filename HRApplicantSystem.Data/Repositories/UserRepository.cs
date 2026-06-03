@@ -25,7 +25,7 @@ public class UserRepository : IUserRepository
         {
             users.Add(new User
             {
-                UserId = reader.GetString(0),
+                UserID = reader.GetString(0),
                 RoleId = reader.GetString(1),
                 Username = reader.GetString(2),
                 Email = reader.GetString(3),
@@ -48,7 +48,7 @@ public class UserRepository : IUserRepository
         {
             return new User
             {
-                UserId = reader.GetString(0),
+                UserID = reader.GetString(0),
                 RoleId = reader.GetString(1),
                 Username = reader.GetString(2),
                 Email = reader.GetString(3),
@@ -71,7 +71,7 @@ public class UserRepository : IUserRepository
         {
             return new User
             {
-                UserId = reader.GetString(0),
+                UserID = reader.GetString(0),
                 RoleId = reader.GetString(1),
                 Username = reader.GetString(2),
                 Email = reader.GetString(3),
@@ -107,7 +107,7 @@ public class UserRepository : IUserRepository
                          email = @email, password_hash = @passwordHash, is_active = @isActive 
                          WHERE user_id = @userId";
         using var command = new MySqlCommand(query, connection);
-        command.Parameters.AddWithValue("@userId", user.UserId);
+        command.Parameters.AddWithValue("@userId", user.UserID);
         command.Parameters.AddWithValue("@roleId", user.RoleId);
         command.Parameters.AddWithValue("@username", user.Username);
         command.Parameters.AddWithValue("@email", user.Email);

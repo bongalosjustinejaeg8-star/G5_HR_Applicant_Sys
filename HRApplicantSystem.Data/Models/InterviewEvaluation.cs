@@ -11,4 +11,5 @@ public class InterviewEvaluation
     public string? Recommendation { get; set; }
 
     public string PassFail { get; set; } = string.Empty;
+    public string EvalId { get; internal set; }
 }
