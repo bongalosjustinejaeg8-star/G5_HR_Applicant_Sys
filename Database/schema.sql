@@ -1,14 +1,6 @@
--- =========================================
--- G5 HR APPLICANT SYSTEM
--- Database Schema
--- =========================================
 
 CREATE DATABASE IF NOT EXISTS hr_applicant_system;
 USE hr_applicant_system;
-
--- =========================================
--- USERS & ACCESS
--- =========================================
 
 CREATE TABLE Roles (
     role_id     CHAR(36)     PRIMARY KEY DEFAULT (UUID()),
@@ -37,9 +29,6 @@ CREATE TABLE ApplicantAccounts (
     created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
--- =========================================
--- APPLICANT INFO
--- =========================================
 
 CREATE TABLE Applicants (
     applicant_id    CHAR(36)     PRIMARY KEY DEFAULT (UUID()),
@@ -56,10 +45,6 @@ CREATE TABLE Applicants (
         ON UPDATE CASCADE
 );
 
--- =========================================
--- MAINTENANCE / LOOKUP TABLES
--- =========================================
-
 CREATE TABLE Departments (
     department_id   CHAR(36)     PRIMARY KEY DEFAULT (UUID()),
     department_name VARCHAR(100) NOT NULL UNIQUE
@@ -70,10 +55,6 @@ CREATE TABLE RequirementTypes (
     name                VARCHAR(100) NOT NULL,
     description         TEXT
 );
-
--- =========================================
--- JOBS & APPLICATIONS
--- =========================================
 
 CREATE TABLE JobVacancies (
     vacancy_id       CHAR(36)     PRIMARY KEY DEFAULT (UUID()),
@@ -123,10 +104,6 @@ CREATE TABLE ApplicantDocuments (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
-
--- =========================================
--- HR WORKFLOW
--- =========================================
 
 CREATE TABLE ScreeningResults (
     screening_id   CHAR(36)    PRIMARY KEY DEFAULT (UUID()),
@@ -197,11 +174,6 @@ CREATE TABLE HiringDecisions (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
-
--- =========================================
--- LOGS & AUDIT
--- =========================================
-
 CREATE TABLE ApplicationStatusHistory (
     history_id     CHAR(36)    PRIMARY KEY DEFAULT (UUID()),
     application_id CHAR(36)    NOT NULL,
