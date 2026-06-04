@@ -2,7 +2,7 @@ namespace HRApplicantSystem.Data.Models;
 
 public class ApplicantAccount
 {
-    public string AccountID { get; set; } = string.Empty;
+    public string AccountId { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
