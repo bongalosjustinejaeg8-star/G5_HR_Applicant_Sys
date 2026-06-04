@@ -1,5 +1,6 @@
 using MySql.Data.MySqlClient;
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Shared.Enums; 
 
 namespace HRApplicantSystem.Data.Repositories;
 
@@ -27,7 +28,7 @@ public class ScreeningResultRepository : IScreeningResultRepository
                 ScreeningId = reader.GetString(0),
                 ApplicationId = reader.GetString(1),
                 ScreenedBy = reader.IsDBNull(2) ? null : reader.GetString(2),
-                Result = reader.GetString(3),
+                Result = (ScreeningResults)Enum.Parse(typeof(ScreeningResults), reader.GetString(3)),
                 Remarks = reader.IsDBNull(4) ? null : reader.GetString(4),
                 ScreenedAt = reader.GetDateTime(5)
             };
