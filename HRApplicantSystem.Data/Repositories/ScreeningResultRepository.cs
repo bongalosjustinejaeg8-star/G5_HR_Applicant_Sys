@@ -1,6 +1,6 @@
-using MySql.Data.MySqlClient;
 using HRApplicantSystem.Data.Models;
-using HRApplicantSystem.Shared.Enums; 
+using HRApplicantSystem.Shared.Enums;
+using MySql.Data.MySqlClient;
 
 namespace HRApplicantSystem.Data.Repositories;
 
