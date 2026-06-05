@@ -1,6 +1,22 @@
-﻿namespace HRApplicantSystem.UI.ViewModels;
-
-public partial class MainWindowViewModel : ViewModelBase
+﻿namespace HRApplicantSystem.UI.ViewModels
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    public class MainWindowViewModel : ViewModelBase
+    {
+        private ViewModelBase _currentPage;
+
+        public ViewModelBase CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                _currentPage = value;
+                OnPropertyChanged(nameof(CurrentPage));
+            }
+        }
+
+        public MainWindowViewModel()
+        {
+            CurrentPage = new LoginViewModel();
+        }
+    }
 }
