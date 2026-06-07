@@ -1,10 +1,11 @@
 using Avalonia.Controls;
+using HRApplicantSystem.UI.ViewModels;
 
 namespace HRApplicantSystem.UI.Views
 {
-    public partial class LoginView : UserControl
+    public partial class StatusTrackingView : UserControl
     {
-        public LoginView()
+        public StatusTrackingView()
         {
             InitializeComponent();
         }

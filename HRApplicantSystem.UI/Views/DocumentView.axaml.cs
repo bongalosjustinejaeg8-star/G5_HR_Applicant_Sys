@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace HRApplicantSystem.UI.Views
 {
-    public partial class LoginView : UserControl
+    public partial class DocumentsView : UserControl
     {
-        public LoginView()
+        public DocumentsView()
         {
             InitializeComponent();
         }

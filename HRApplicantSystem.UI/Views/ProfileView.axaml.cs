@@ -3,11 +3,11 @@ using HRApplicantSystem.UI.ViewModels;
 
 namespace HRApplicantSystem.UI.Views
 {
-    public partial class MainWindow : Window
+    public partial class ProfileView : UserControl
     {
-        public MainWindow()
+        public ProfileView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
     }
 }

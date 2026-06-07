@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.ProfileView"
+             x:DataType="vm:ProfileViewModel">
+
+    <ScrollViewer Background="#121212">
+        <StackPanel Margin="30" Spacing="20" MaxWidth="750" HorizontalAlignment="Center">
+            
+            <Border Background="#1E1E1E" Padding="20" CornerRadius="8" BorderBrush="#2D2D2D" BorderThickness="1">
+                <Grid ColumnDefinitions="Auto, *, Auto">
+                    <Border Grid.Column="0" Width="60" Height="60" CornerRadius="30" Background="#007ACC" Margin="0,0,15,0">
+                        <TextBlock Text="{Binding AvatarInitials}" Foreground="White" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                        <TextBlock Text="{Binding FullName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="Applicant Information Dashboard" Foreground="#888888" FontSize="13"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="2" Content="{Binding EditButtonText}" 
+                            Command="{Binding ToggleEditModeCommand}" 
+                            Background="#007ACC" Foreground="White" FontWeight="SemiBold" Padding="15,10" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <Border Background="#1E1E1E" Padding="25" CornerRadius="8" BorderBrush="#2D2D2D" BorderThickness="1">
+                <StackPanel Spacing="20">
+                    
+                    <TextBlock Text="Personal &amp; Contact Details" Foreground="#007ACC" FontSize="15" FontWeight="Bold"/>
+                    <Separator Background="#2D2D2D" Margin="0,-10,0,5"/>
+
+                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" Margin="0,0,0,10">
+                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="5" Margin="0,0,10,15">
+                            <TextBlock Text="Full Name" Foreground="#888888" FontSize="12"/>
+                            <TextBox Text="{Binding FullName}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="5" Margin="10,0,0,15">
+                            <TextBlock Text="Birth Date" Foreground="#888888" FontSize="12"/>
+                            <TextBox Text="{Binding BirthDate}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="5" Margin="0,0,10,0">
+                            <TextBlock Text="Contact Number" Foreground="#888888" FontSize="12"/>
+                            <TextBox Text="{Binding ContactNumber}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="5" Margin="10,0,0,0">
+                            <TextBlock Text="Email Address" Foreground="#888888" FontSize="12"/>
+                            <TextBox Text="{Binding Email}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Spacing="5" Margin="0,0,0,15">
+                        <TextBlock Text="Permanent Address" Foreground="#888888" FontSize="12"/>
+                        <TextBox Text="{Binding Address}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Education &amp; Work Background" Foreground="#007ACC" FontSize="15" FontWeight="Bold"/>
+                    <Separator Background="#2D2D2D" Margin="0,-10,0,5"/>
+
+                    <StackPanel Spacing="5" Margin="0,0,0,15">
+                        <TextBlock Text="Educational Institution / School" Foreground="#888888" FontSize="12"/>
+                        <TextBox Text="{Binding Education}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="5" Margin="0,0,0,15">
+                        <TextBlock Text="Technical Skills (Comma-separated)" Foreground="#888888" FontSize="12"/>
+                        <TextBox Text="{Binding Skills}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White" PlaceholderText="e.g. C#, SQL, Java"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Work Experience / Professional History" Foreground="#888888" FontSize="12"/>
+                        <TextBox Text="{Binding WorkExperience}" IsReadOnly="{Binding IsReadOnly}" Background="#2D2D2D" Foreground="White" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

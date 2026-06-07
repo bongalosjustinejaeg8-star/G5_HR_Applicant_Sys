@@ -1,26 +1,40 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
-namespace HRApplicantSystem.UI.ViewModels;
-
-public class LoginViewModel : ViewModelBase
+namespace HRApplicantSystem.UI.ViewModels
 {
-    private string _email = string.Empty;
-    private string _password = string.Empty;
-
-    public string Email
+    public partial class LoginViewModel : ViewModelBase
     {
-        get => _email;
-        set { _email = value; OnPropertyChanged(); }
-    }
+        private readonly MainWindowViewModel? _mainViewModel;
 
-    public string Password
-    {
-        get => _password;
-        set { _password = value; OnPropertyChanged(); }
-    }
+        [ObservableProperty] private string _username = string.Empty;
+        [ObservableProperty] private string _password = string.Empty;
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public LoginViewModel()
+        {
+        }
+
+        public LoginViewModel(MainWindowViewModel mainViewModel)
+        {
+            _mainViewModel = mainViewModel;
+        }
+
+        [RelayCommand]
+        private void Login()
+        {
+            if (_mainViewModel != null)
+            {
+                _mainViewModel.NavigateTo(new DashboardViewModel(_mainViewModel));
+            }
+        }
+
+        [RelayCommand]
+        private void NavigateToRegister()
+        {
+            if (_mainViewModel != null)
+            {
+                _mainViewModel.NavigateTo(new RegisterViewModel(_mainViewModel));
+            }
+        }
+    }
 }

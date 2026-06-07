@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <Grid ColumnDefinitions="250, *">
+        <!-- SIDEBAR PANEL (KALIWA) -->
+        <Border Grid.Column="0" Background="#1E1E1E" BorderBrush="#2D2D2D" BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto, *, Auto" Margin="20">
+                
+                <!-- HEADER SECTION -->
+                <StackPanel Grid.Row="0" Spacing="5" Margin="0,10,0,30">
+                    <TextBlock Text="APPLICANT PANEL" Foreground="White" FontSize="18" FontWeight="Bold" LetterSpacing="1"/>
+                    <Separator Background="#2D2D2D" Margin="0,10,0,0"/>
+                </StackPanel>
+
+                <!-- NAVIGATION SIDEBAR BUTTONS -->
+                <StackPanel Grid.Row="1" Spacing="10">
+                    <Button Content="👤 My Profile" 
+                            Command="{Binding NavigateToProfileCommand}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" 
+                            Background="Transparent" Foreground="White" Padding="15,12"/>
+
+                    <Button Content="📄 My Documents" 
+                            Command="{Binding NavigateToDocumentsCommand}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" 
+                            Background="Transparent" Foreground="White" Padding="15,12"/>
+
+                    <Button Content="📊 Application Status" 
+                            Command="{Binding NavigateToStatusCommand}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" 
+                            Background="Transparent" Foreground="White" Padding="15,12"/>
+                </StackPanel>
+
+                <!-- LOGOUT BUTTON (BABA) -->
+                <Button Grid.Row="2" Content="🚪 Logout Account" 
+                        Command="{Binding LogoutCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                        Background="#A31D1D" Foreground="White" FontWeight="Bold" Padding="10,12"/>
+            </Grid>
+        </Border>
+
+        <!-- DYNAMIC MAIN CONTENT PANEL (KANAN) -->
+        <Grid Grid.Column="1" Background="#121212">
+            <TransitioningContentControl Content="{Binding CurrentSubPage}" />
+        </Grid>
+    </Grid>
+</UserControl>

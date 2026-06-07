@@ -1,22 +1,21 @@
-﻿namespace HRApplicantSystem.UI.ViewModels
-{
-    public class MainWindowViewModel : ViewModelBase
-    {
-        private ViewModelBase _currentPage;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using HRApplicantSystem.UI.ViewModels;
 
-        public ViewModelBase CurrentPage
-        {
-            get => _currentPage;
-            set
-            {
-                _currentPage = value;
-                OnPropertyChanged(nameof(CurrentPage));
-            }
-        }
+namespace HRApplicantSystem.UI.ViewModels
+{
+    public partial class MainWindowViewModel : ViewModelBase
+    {
+        [ObservableProperty]
+        private ViewModelBase _currentPage;
 
         public MainWindowViewModel()
         {
-            CurrentPage = new LoginViewModel();
+            _currentPage = new LoginViewModel(this);
+        }
+
+        public void NavigateTo(ViewModelBase viewModel)
+        {
+            CurrentPage = viewModel;
         }
     }
 }

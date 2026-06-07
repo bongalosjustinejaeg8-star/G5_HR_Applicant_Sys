@@ -1,22 +1,12 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
-        xmlns:views="using:HRApplicantSystem.UI.Views"
         x:Class="HRApplicantSystem.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="HR Applicant System"
-        Width="900" Height="600">
+        Width="1050" Height="650"
+        WindowStartupLocation="CenterScreen">
 
-    <Window.DataContext>
-        <vm:MainWindowViewModel/>
-    </Window.DataContext>
-
-    <ContentControl Content="{Binding CurrentPage}">
-        <ContentControl.DataTemplates>
-            <DataTemplate DataType="vm:LoginViewModel">
-                <views:LoginView/>
-            </DataTemplate>
-        </ContentControl.DataTemplates>
-    </ContentControl>
+    <TransitioningContentControl Content="{Binding CurrentPage}" />
 
 </Window>
