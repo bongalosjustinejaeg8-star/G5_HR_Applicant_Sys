@@ -18,8 +18,12 @@ public class ViewLocator : IDataTemplate
     {
         if (param is null)
             return null;
-        
-        var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
+
+        var name = param.GetType().FullName!
+    .Replace("ViewModels.Applicant", "Views.Applicant")
+    .Replace("ViewModels.HR", "Views.HR")
+    .Replace("ViewModels", "Views")
+    .Replace("ViewModel", "View");  
         var type = Type.GetType(name);
 
         if (type != null)
