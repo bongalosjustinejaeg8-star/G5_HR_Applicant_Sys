@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using HRApplicantSystem.UI.ViewModels;
 
+
 namespace HRApplicantSystem.UI;
 
 /// <summary>

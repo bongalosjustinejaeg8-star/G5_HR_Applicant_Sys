@@ -28,4 +28,14 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         CurrentView = new HRLoginViewModel(this);
     }
+
+    public void NavigateToLanding()
+    {
+        CurrentView = new LandingViewModel(this);
+    }
+
+    public void NavigateToRegister()
+    {
+        CurrentView = new RegisterViewModel(this);
+    }
 }

@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using HRApplicantSystem.UI.ViewModels;
+using HRApplicantSystem.Services.Implementations;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
-public partial class ApplicantLoginViewModel : ViewModelBase
+public partial class RegisterViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainViewModel;
 
@@ -16,21 +16,24 @@ public partial class ApplicantLoginViewModel : ViewModelBase
     private string _password = string.Empty;
 
     [ObservableProperty]
+    private string _confirmPassword = string.Empty;
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
     private bool _hasError = false;
 
-    public ApplicantLoginViewModel(MainWindowViewModel mainViewModel)
+    public RegisterViewModel(MainWindowViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
     }
 
     [RelayCommand]
-    private async Task LoginAsync()
+    private async Task RegisterAsync()
     {
-        // will implement auth logic later
         HasError = false;
+
 
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
@@ -38,14 +41,20 @@ public partial class ApplicantLoginViewModel : ViewModelBase
             HasError = true;
             return;
         }
+        if (Password != ConfirmPassword)
+        {
+            ErrorMessage = "Passwords do not match!";
+            HasError = true;
+            return;
+        }
 
-        // TODO: call AuthService here
+        AuthService.RegisterApplicantAsync(Email, Password);
     }
 
     [RelayCommand]
-    private void GoToRegister()
+    private void GoToLogin()
     {
-        _mainViewModel.NavigateToRegister();
+        _mainViewModel.NavigateToApplicantLogin();
     }
 
     [RelayCommand]
