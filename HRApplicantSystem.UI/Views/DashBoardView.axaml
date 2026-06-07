@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="HRApplicantSystem.UI.Views.DashboardView">
+    
+    <Border Background="#121212" Padding="30">
+        <StackPanel Spacing="25">
+            <Grid ColumnDefinitions="*, Auto">
+                <TextBlock Text="Welcome Back, Admin!" Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"/>
+                <TextBlock Grid.Column="1" Text="📅 June 2026" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+            </Grid>
+
+            <TextBlock Text="Overview" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold" Margin="0,10,0,0"/>
+
+            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="15">
+                <Border Grid.Column="0" Background="#1E1E1E" CornerRadius="12" Padding="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Total Applicants" Foreground="#AAAAAA" FontSize="14"/>
+                        <TextBlock Text="142" Foreground="#FFFFFF" FontSize="36" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Background="#1E1E1E" CornerRadius="12" Padding="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Pending Reviews" Foreground="#AAAAAA" FontSize="14"/>
+                        <TextBlock Text="12" Foreground="#FFFFFF" FontSize="36" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Background="#1E1E1E" CornerRadius="12" Padding="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Hired This Month" Foreground="#AAAAAA" FontSize="14"/>
+                        <TextBlock Text="24" Foreground="#FFFFFF" FontSize="36" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

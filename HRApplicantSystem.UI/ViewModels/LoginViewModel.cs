@@ -1,26 +1,17 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HRApplicantSystem.UI.ViewModels;
 
-namespace HRApplicantSystem.UI.ViewModels;
-
-public class LoginViewModel : ViewModelBase
+namespace HRApplicantSystem.UI.ViewModels
 {
-    private string _email = string.Empty;
-    private string _password = string.Empty;
+     public partial class LoginViewModel : ViewModelBase
+    {   
+        [ObservableProperty]
+        private string _email = string.Empty;
 
-    public string Email
-    {
-        get => _email;
-        set { _email = value; OnPropertyChanged(); }
+        [ObservableProperty]
+        private string _password = string.Empty;
     }
 
-    public string Password
-    {
-        get => _password;
-        set { _password = value; OnPropertyChanged(); }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
+

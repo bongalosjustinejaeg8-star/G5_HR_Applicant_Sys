@@ -1,14 +1,50 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="using:HRApplicantSystem.UI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HRApplicantSystem.UI.Views.LoginView"
-             x:DataType="vm:LoginViewModel">
-             
-    <StackPanel Margin="20">
-        <TextBlock Text="Login Page" FontSize="24"/>
-        <TextBox PlaceholderText="Email" Margin="0,10,0,0"/>
-        <TextBox PlaceholderText="Password" PasswordChar="●" Margin="0,10,0,0"/>
-        <Button Content="Sign In" Margin="0,10,0,0"/>
-    </StackPanel>
+             x:DataType="viewModels:LoginViewModel">
 
+    <UserControl.Styles>
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="#3D3D3D"/>
+            <Setter Property="BorderBrush" Value="#4D4D4D"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Border Background="#1E1E1E" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="12" Width="380">
+        <StackPanel Spacing="15">
+
+            <StackPanel Spacing="5">
+                <TextBlock Text="Email address" Foreground="#DDDDDD" FontSize="13" FontWeight="Medium"/>
+                <TextBox Text="{Binding Email}" PlaceholderText="user@email.com" Background="#3D3D3D" Foreground="#FFFFFF" BorderBrush="#4D4D4D" CornerRadius="6" Padding="10,8"/>
+            </StackPanel>
+
+            <StackPanel Spacing="5" Margin="0,10,0,0">
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBlock Grid.Column="0" Text="Password" Foreground="#DDDDDD" FontSize="13" FontWeight="Medium" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Content="Forgot password?" Background="Transparent" BorderThickness="0" Foreground="#AAAAAA" FontSize="12" Padding="0" VerticalAlignment="Center"/>
+                </Grid>
+                <TextBox Text="{Binding Password}" PlaceholderText="Enter your password" PasswordChar="*" Background="#3D3D3D" Foreground="#FFFFFF" BorderBrush="#4D4D4D" CornerRadius="6" Padding="10,8"/>
+            </StackPanel>
+
+            <Button Content="Sign In"
+                    Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).NavigateToDashboardCommand}"
+                    Background="#3D3D3D" Foreground="#FFFFFF" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="6" Margin="0,10,0,0" FontWeight="SemiBold"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0" Spacing="5">
+                <TextBlock Text="Don't have an account?" Foreground="#AAAAAA" FontSize="13"/>
+                <Button Content="Register"
+                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).NavigateToRegisterCommand}"
+                        Background="Transparent" BorderThickness="0" Foreground="#FFFFFF" Padding="0" FontSize="13" FontWeight="SemiBold"/>
+            </StackPanel>
+
+        </StackPanel>
+    </Border>
 </UserControl>

@@ -1,13 +1,15 @@
+using Avalonia;
 using Avalonia.Controls;
 using HRApplicantSystem.UI.ViewModels;
 
 namespace HRApplicantSystem.UI.Views
 {
-    public partial class MainWindow : Window
+    public partial class RegisterView : UserControl
     {
-        public MainWindow()
+        public RegisterView()
         {
             InitializeComponent();
+            DataContext = new RegisterViewModel();
         }
     }
 }
