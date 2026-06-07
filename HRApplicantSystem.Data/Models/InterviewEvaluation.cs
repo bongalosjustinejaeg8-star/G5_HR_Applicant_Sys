@@ -10,5 +10,5 @@ public class InterviewEvaluation
     public string Remarks { get; set; } = string.Empty;
     public string? Recommendation { get; set; }
 
-    public bool PassFail { get; set; } 
+    public string PassFail { get; set; } = string.Empty;
 }
