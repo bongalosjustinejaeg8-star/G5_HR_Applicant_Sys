@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.InterviewEvaluationView">
+
+  <StackPanel Margin="20">
+
+    <TextBlock Text="Interview Evaluation" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <!-- Applicants For Interview List -->
+    <TextBlock Text="Applicants For Interview" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+    <ListBox Name="ApplicantListBox" Height="200" Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Status}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SubmittedAt}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- Evaluation Details -->
+    <TextBlock Text="Evaluation Details" FontSize="16" FontWeight="Bold" Margin="0 10 0 5"/>
+
+    <!-- Score -->
+    <TextBlock Text="Score (1-100)" Margin="0 0 0 5"/>
+    <TextBox Name="ScoreBox"
+             Watermark="Enter score..."
+             Margin="0 0 0 10"/>
+
+    <!-- Remarks -->
+    <TextBlock Text="Remarks" Margin="0 0 0 5"/>
+    <TextBox Name="RemarksBox"
+             Watermark="Enter evaluation remarks..."
+             Height="80"
+             AcceptsReturn="True"
+             Margin="0 0 0 10"/>
+
+    <!-- Pass or Fail -->
+    <!-- Based on PDF: Pass = For Final Review, Fail = Rejected -->
+    <TextBlock Text="Result" Margin="0 0 0 5"/>
+    <RadioButton Name="PassRadio" Content="Pass" Margin="0 0 0 5"/>
+    <RadioButton Name="FailRadio" Content="Fail" Margin="0 0 0 10"/>
+
+    <!-- Recommendation -->
+    <TextBlock Text="Recommendation" Margin="0 0 0 5"/>
+    <TextBox Name="RecommendationBox"
+             Watermark="Enter recommendation..."
+             Margin="0 0 0 10"/>
+
+    <!-- Save Button -->
+    <Button Name="SaveEvaluationButton"
+            Content="Save Evaluation"
+            HorizontalAlignment="Right"
+            Margin="0 10 0 0"/>
+
+  </StackPanel>
+
+</UserControl>
