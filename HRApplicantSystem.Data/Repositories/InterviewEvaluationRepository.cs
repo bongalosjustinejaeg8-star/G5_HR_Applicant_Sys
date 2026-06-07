@@ -30,7 +30,7 @@ public class InterviewEvaluationRepository : IInterviewEvaluationRepository
                 Score = reader.IsDBNull(3) ? null : reader.GetInt32(3),
                 Remarks = reader.IsDBNull(4) ? null : reader.GetString(4),
                 Recommendation = reader.IsDBNull(5) ? null : reader.GetString(5),
-                PassFail = reader.GetBoolean(6)
+                PassFail = reader.GetBoolean(6).ToString()
             };
         }
         return null;
