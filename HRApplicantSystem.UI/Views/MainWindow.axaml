@@ -9,4 +9,21 @@
 
     <TransitioningContentControl Content="{Binding CurrentPage}" />
 
+        <Button Content="🪪 My Profile" 
+                Command="{Binding NavigateToProfileCommand}"
+                HorizontalAlignment="Stretch" Padding="12,10" Background="Transparent" Foreground="#FFFFFF"/>
+
+        <Button Content="📄 My Documents" 
+                Command="{Binding NavigateToDocumentsCommand}"
+                HorizontalAlignment="Stretch" Padding="12,10" Background="Transparent" Foreground="#FFFFFF"/>
+
+        <Button Content="⏳ Status Tracking" 
+                Command="{Binding NavigateToStatusTrackingCommand}"
+                HorizontalAlignment="Stretch" Padding="12,10" Background="Transparent" Foreground="#FFFFFF"/>
+            </StackPanel>
+        </Border>
+
+        <ContentControl Grid.Column="1" Content="{Binding CurrentPage}"/>
+
+    </Grid>
 </Window>
