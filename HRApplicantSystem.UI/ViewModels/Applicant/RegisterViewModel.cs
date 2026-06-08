@@ -1,7 +1,11 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HRApplicantSystem.Data;
+using HRApplicantSystem.Data.Repositories;
+using HRApplicantSystem.Shared.Helpers;
 using HRApplicantSystem.Services.Implementations;
+using HRApplicantSystem.UI.ViewModels;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
@@ -48,7 +52,27 @@ public partial class RegisterViewModel : ViewModelBase
             return;
         }
 
-        AuthService.RegisterApplicantAsync(Email, Password);
+        var dbContext = new DbContext(AppConfig.ConnectionString);
+        var authService = new AuthService(
+            new ApplicantAccountRepository(dbContext),
+            new UserRepository(dbContext),
+            new PasswordHasher()
+        );
+
+        var account = await authService.LoginApplicantAsync(Email, Password);
+
+        if (account == null)
+        {
+            ErrorMessage = "Invalid email or password!";
+            HasError = true;
+            return;
+        }
+
+        // store in session
+        SessionManager.Login(account.Email, account.AccountId, UserRole.None);
+
+        // navigate to dashboard
+        _mainViewModel.NavigateToApplicantDashboard();
     }
 
     [RelayCommand]
