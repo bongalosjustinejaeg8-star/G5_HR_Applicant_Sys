@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.HR.ReportsView"
+             x:DataType="vm:ReportsViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Reports" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
+      <StackPanel>
+        <TextBlock Text="Report Type" FontSize="14" FontWeight="Bold"/>
+        <ComboBox SelectedItem="{Binding SelectedReportType}" Margin="0 5 10 0">
+          <ComboBoxItem Content="Recruitment Summary"/>
+          <ComboBoxItem Content="Applicant Status"/>
+          <ComboBoxItem Content="Interview Results"/>
+          <ComboBoxItem Content="Hiring Analytics"/>
+        </ComboBox>
+      </StackPanel>
+      <StackPanel>
+        <TextBlock Text="Date Range" FontSize="14" FontWeight="Bold"/>
+        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+          <DatePicker SelectedDate="{Binding StartDate}" Margin="0 0 5 0"/>
+          <DatePicker SelectedDate="{Binding EndDate}"/>
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+
+    <Button Content="Generate Report" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+    <Button Content="Export to PDF" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+
+    <TextBlock Text="Report Preview" FontSize="16" FontWeight="Bold" Margin="0 10 0 10"/>
+    <TextBlock Text="{Binding ReportData}" TextWrapping="Wrap" Height="300"/>
+  </StackPanel>
+</UserControl>

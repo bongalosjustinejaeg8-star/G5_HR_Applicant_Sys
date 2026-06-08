@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.Applicant.JobVacanciesView"
+             x:DataType="vm:JobVacanciesViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Job Vacancies" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
+      <TextBox Text="{Binding SearchText}" PlaceholderText="Search jobs..." Margin="0 0 10 0"/>
+      <ComboBox SelectedItem="{Binding SelectedDepartmentFilter}">
+        <ComboBoxItem Content="All Departments"/>
+      </ComboBox>
+    </Grid>
+
+    <ListBox ItemsSource="{Binding JobVacancies}"
+             SelectedItem="{Binding SelectedJobVacancy}"
+             Height="300"
+             Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Position}" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Department}"/>
+            <TextBlock Text="{Binding Location}"/>
+            <TextBlock Text="Posted: {Binding PostedDate}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <Grid ColumnDefinitions="*,*" Margin="0 10 0 0">
+      <Button Content="View Details" HorizontalAlignment="Left"/>
+      <Button Content="Apply Now" HorizontalAlignment="Right"/>
+    </Grid>
+  </StackPanel>
+</UserControl>

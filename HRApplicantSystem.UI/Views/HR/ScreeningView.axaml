@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.HR.ScreeningView">
+
+  <StackPanel Margin="20">
+
+    <TextBlock Text="Screening Module" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <!-- Applicant List Under Review -->
+    <TextBlock Text="Applicants Under Review" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+    <ListBox Name="ApplicantListBox" Height="200" Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Status}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SubmittedAt}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- Screening Result -->
+    <TextBlock Text="Screening Result" FontSize="16" FontWeight="Bold" Margin="0 10 0 5"/>
+
+    <!-- Based on PDF: Qualified or Not Qualified -->
+    <RadioButton Name="QualifiedRadio" Content="Qualified" Margin="0 0 0 5"/>
+    <RadioButton Name="NotQualifiedRadio" Content="Not Qualified" Margin="0 0 0 10"/>
+
+    <!-- Remarks -->
+    <TextBlock Text="Remarks" Margin="0 0 0 5"/>
+    <TextBox Name="RemarksBox"
+             Watermark="Enter screening remarks..."
+             Height="80"
+             AcceptsReturn="True"
+             Margin="0 0 0 10"/>
+
+    <!-- Save Button -->
+    <Button Name="SaveScreeningButton"
+            Content="Save Screening Result"
+            HorizontalAlignment="Right"
+            Margin="0 10 0 0"/>
+
+  </StackPanel>
+
+</UserControl>

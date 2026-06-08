@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             xmlns:m="using:HRApplicantSystem.Data.Models"
+             x:Class="HRApplicantSystem.UI.Views.HR.ApplicantReviewView"
+             x:DataType="vm:ApplicantReviewViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="HR Applicant Review" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <TextBox Text="{Binding SearchText}"
+             PlaceholderText="Search applicants..."
+             Margin="0 0 0 10"/>
+
+    <ListBox ItemsSource="{Binding Applications}"
+             SelectedItem="{Binding SelectedApplication}"
+             Height="250"
+             Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="m:Application">
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Status}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SubmittedAt}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <TextBlock Text="{Binding Message}" Foreground="Green" Margin="0 0 0 10"/>
+
+    <Button Content="Start Review"
+            HorizontalAlignment="Right"/>
+  </StackPanel>
+</UserControl>
