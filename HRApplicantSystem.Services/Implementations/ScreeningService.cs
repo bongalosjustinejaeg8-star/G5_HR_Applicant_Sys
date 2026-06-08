@@ -8,15 +8,12 @@ namespace HRApplicantSystem.Services.Implementations;
 public class ScreeningService : IScreeningService
 {
     private readonly IApplicationRepository _applicationRepository;
-    private readonly IScreeningResultRepository _screeningRepository;
     private readonly IApplicationStatusHistoryRepository _historyRepository;
 
     public ScreeningService(IApplicationRepository applicationRepository,
-                            IScreeningResultRepository screeningRepository,
-                            IApplicationStatusHistoryRepository historyRepository)
+                           IApplicationStatusHistoryRepository historyRepository)
     {
         _applicationRepository = applicationRepository;
-        _screeningRepository = screeningRepository;
         _historyRepository = historyRepository;
     }
 
@@ -26,22 +23,15 @@ public class ScreeningService : IScreeningService
         return apps.Where(a => a.Status == ApplicationStatus.UnderReview);
     }
 
-    // Based on PDF: Qualified = Shortlisted, NotQualified = Rejected
     public async Task<string> SaveScreeningResultAsync(string applicationId, string hrUserId, ScreeningResults result, string remarks)
     {
-        var newStatus = result == ScreeningResults.Qualified
-            ? ApplicationStatus.Shortlisted
+        var app = await _applicationRepository.GetByIdAsync(applicationId);
+        if (app == null) return "Application not found.";
+
+        // Determine new status based on screening result
+        var newStatus = result == ScreeningResults.Qualified 
+            ? ApplicationStatus.Shortlisted 
             : ApplicationStatus.Rejected;
-
-        var screeningResult = new ScreeningResult
-        {
-            ApplicationId = applicationId,
-            ScreenedBy = hrUserId,
-            Result = result.ToString(),
-            Remarks = remarks
-        };
-
-        await _screeningRepository.CreateAsync(screeningResult);
 
         bool success = await _applicationRepository.UpdateStatusAsync(applicationId, newStatus);
 
@@ -51,10 +41,11 @@ public class ScreeningService : IScreeningService
             {
                 ApplicationId = applicationId,
                 ChangedBy = hrUserId,
-                OldStatus = "UnderReview",
-                NewStatus = newStatus.ToString()
+                OldStatus = ApplicationStatus.UnderReview.ToString(),
+                NewStatus = newStatus.ToString(),
+                Remarks = remarks
             });
-            return $"Applicant marked as {newStatus}.";
+            return $"Screening result saved successfully! Status: {newStatus}";
         }
 
         return "Something went wrong.";
