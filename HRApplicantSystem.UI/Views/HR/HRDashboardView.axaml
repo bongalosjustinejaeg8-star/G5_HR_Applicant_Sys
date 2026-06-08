@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.HR.HRDashboardView"
+             x:DataType="vm:HRDashboardViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="HR Dashboard" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+    
+    <!-- Recruitment Summary Stats -->
+    <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto" Margin="0 0 0 20">
+      <StackPanel Margin="0 0 10 0">
+        <TextBlock Text="Total Applicants" FontSize="14" FontWeight="Bold"/>
+        <TextBlock Text="{Binding TotalApplicants}" FontSize="20" Foreground="Blue"/>
+      </StackPanel>
+      <StackPanel Margin="10 0 10 0">
+        <TextBlock Text="Screening" FontSize="14" FontWeight="Bold"/>
+        <TextBlock Text="{Binding ScreeningCount}" FontSize="20" Foreground="Orange"/>
+      </StackPanel>
+      <StackPanel Margin="10 0 10 0">
+        <TextBlock Text="Interview" FontSize="14" FontWeight="Bold"/>
+        <TextBlock Text="{Binding InterviewCount}" FontSize="20" Foreground="Purple"/>
+      </StackPanel>
+      <StackPanel Margin="10 0 0 0">
+        <TextBlock Text="Hired" FontSize="14" FontWeight="Bold"/>
+        <TextBlock Text="{Binding HiredCount}" FontSize="20" Foreground="Green"/>
+      </StackPanel>
+    </Grid>
+
+    <!-- Recent Activities -->
+    <TextBlock Text="Recent Activities" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+    <ListBox ItemsSource="{Binding RecentActivities}" Height="200" Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Description}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Timestamp}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </StackPanel>
+</UserControl>

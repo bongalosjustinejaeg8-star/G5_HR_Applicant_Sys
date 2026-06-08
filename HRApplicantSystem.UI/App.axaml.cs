@@ -33,4 +33,8 @@ namespace HRApplicantSystem.UI
             base.OnFrameworkInitializationCompleted();
         }
     }
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
 }

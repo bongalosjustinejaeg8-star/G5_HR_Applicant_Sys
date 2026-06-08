@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.HR.JobVacancyMgmtView"
+             x:DataType="vm:JobVacancyMgmtViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Job Vacancy Management" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <Button Content="+ Add New Job Opening" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+
+    <TextBlock Text="Active Job Openings" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+    <ListBox ItemsSource="{Binding JobVacancies}"
+             SelectedItem="{Binding SelectedJobVacancy}"
+             Height="250"
+             Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Position}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Department}"/>
+            <TextBlock Text="{Binding Status}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+      <Button Content="Edit" HorizontalAlignment="Left" Margin="0 0 10 0"/>
+      <Button Content="Close" HorizontalAlignment="Left"/>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

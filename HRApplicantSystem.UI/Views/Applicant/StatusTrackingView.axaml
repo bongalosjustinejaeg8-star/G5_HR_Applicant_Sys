@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.Applicant.StatusTrackingView"
+             x:DataType="vm:StatusTrackingViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Application Status Tracking" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <!-- Timeline of Status Changes -->
+    <TextBlock Text="Timeline" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+    <ListBox ItemsSource="{Binding StatusHistory}" Height="400">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="10" Background="#F0F0F0" Padding="10">
+            <TextBlock Text="{Binding StatusName}" FontSize="14" FontWeight="Bold" Foreground="Blue"/>
+            <TextBlock Text="Changed on: {Binding ChangedDate}" FontSize="12"/>
+            <TextBlock Text="Details: {Binding Details}" TextWrapping="Wrap" Margin="0 5 0 0"/>
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+              <TextBlock Text="By: {Binding ChangedBy}" FontSize="11" Foreground="Gray" Margin="0 0 20 0"/>
+              <TextBlock Text="Time: {Binding ChangedTime}" FontSize="11" Foreground="Gray"/>
+            </StackPanel>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- Current Status Summary -->
+    <Border Background="#E8F5E9" Padding="15" CornerRadius="5" Margin="0 20 0 0">
+      <StackPanel>
+        <TextBlock Text="Current Status" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
+        <TextBlock Text="{Binding CurrentStatus}" FontSize="16" Foreground="Green" FontWeight="Bold"/>
+        <TextBlock Text="Last Updated: {Binding LastUpdated}" FontSize="12" Foreground="Gray" Margin="0 5 0 0"/>
+      </StackPanel>
+    </Border>
+  </StackPanel>
+</UserControl>
