@@ -1,99 +1,80 @@
 using System;
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Services.Interfaces;
+using HRApplicantSystem.Shared.Enums;
+using HRApplicantSystem.Shared.Helpers;
 
 namespace HRApplicantSystem.UI.ViewModels;
 
 public class InterviewScheduleViewModel : ViewModelBase
 {
-    // List of shortlisted applicants
+    private readonly IInterviewScheduleService _scheduleService;
+
     public ObservableCollection<Application> Applications { get; set; } = new();
 
-    // Selected application
     private Application? _selectedApplication;
     public Application? SelectedApplication
     {
         get => _selectedApplication;
-        set
-        {
-            _selectedApplication = value;
-            OnPropertyChanged();
-        }
+        set { _selectedApplication = value; OnPropertyChanged(); }
     }
 
-    // Interview Date
     private DateTime _interviewDate = DateTime.Now;
     public DateTime InterviewDate
     {
         get => _interviewDate;
-        set
-        {
-            _interviewDate = value;
-            OnPropertyChanged();
-        }
+        set { _interviewDate = value; OnPropertyChanged(); }
     }
 
-    // Interviewer Name
     private string _interviewer = "";
     public string Interviewer
     {
         get => _interviewer;
-        set
-        {
-            _interviewer = value;
-            OnPropertyChanged();
-        }
+        set { _interviewer = value; OnPropertyChanged(); }
     }
 
-    // Mode — Online or On-site
-    private string _mode = "Online";
-    public string Mode
+    private InterviewMode _mode = InterviewMode.Online;
+    public InterviewMode Mode
     {
         get => _mode;
-        set
-        {
-            _mode = value;
-            OnPropertyChanged();
-        }
+        set { _mode = value; OnPropertyChanged(); }
     }
 
-    // Location
     private string _location = "";
     public string Location
     {
         get => _location;
-        set
-        {
-            _location = value;
-            OnPropertyChanged();
-        }
+        set { _location = value; OnPropertyChanged(); }
     }
 
-    public InterviewScheduleViewModel()
+    private string _message = "";
+    public string Message
     {
-        // Sample data for now — will connect to database later
-        Applications.Add(new Application
-        {
-            Status = "Shortlisted"
-        });
+        get => _message;
+        set { _message = value; OnPropertyChanged(); }
     }
 
-    // Save Interview Schedule
-    // Based on PDF: blocks past dates, saves to InterviewSchedules table
-    public bool SaveSchedule()
+    public InterviewScheduleViewModel(IInterviewScheduleService scheduleService)
     {
-        if (SelectedApplication == null) return false;
+        _scheduleService = scheduleService;
+    }
 
-        // Based on PDF: reject dates in the past
-        if (InterviewDate < DateTime.Now)
-        {
-            return false;
-        }
+    public async Task LoadApplicationsAsync()
+    {
+        var apps = await _scheduleService.GetShortlistedApplicationsAsync();
+        Applications.Clear();
+        foreach (var app in apps)
+            Applications.Add(app);
+    }
 
-        // Update application status to For Interview
-        SelectedApplication.Status = "For Interview";
-        OnPropertyChanged(nameof(SelectedApplication));
-
-        return true;
+    public async Task SaveScheduleAsync()
+    {
+        if (SelectedApplication == null) return;
+        var hrUserId = SessionManager.CurrentUserId;
+        Message = await _scheduleService.ScheduleInterviewAsync(
+            SelectedApplication.ApplicationId, hrUserId!,
+            InterviewDate, Interviewer, Mode, Location);
+        await LoadApplicationsAsync();
     }
 }

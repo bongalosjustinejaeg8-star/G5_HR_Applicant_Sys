@@ -1,66 +1,56 @@
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Services.Interfaces;
+using HRApplicantSystem.Shared.Helpers;
 
 namespace HRApplicantSystem.UI.ViewModels;
 
 public class HRApplicantReviewViewModel : ViewModelBase
 {
-    // List of submitted applications for HR to review
+    private readonly IApplicationService _applicationService;
+
     public ObservableCollection<Application> Applications { get; set; } = new();
 
-    // Selected application
     private Application? _selectedApplication;
     public Application? SelectedApplication
     {
         get => _selectedApplication;
-        set
-        {
-            _selectedApplication = value;
-            OnPropertyChanged();
-        }
+        set { _selectedApplication = value; OnPropertyChanged(); }
     }
 
-    // Search text
     private string _searchText = "";
     public string SearchText
     {
         get => _searchText;
-        set
-        {
-            _searchText = value;
-            OnPropertyChanged();
-        }
+        set { _searchText = value; OnPropertyChanged(); }
     }
 
-    public HRApplicantReviewViewModel()
+    private string _message = "";
+    public string Message
     {
-        // Sample data for now — will connect to database later
-        Applications.Add(new Application
-        {
-            Status = "Submitted"
-        });
-
-        Applications.Add(new Application
-        {
-            Status = "Submitted"
-        });
+        get => _message;
+        set { _message = value; OnPropertyChanged(); }
     }
 
-    // Start Review method
-    // Based on PDF: changes status to Under Review and locks application
-    public void StartReview()
+    public HRApplicantReviewViewModel(IApplicationService applicationService)
+    {
+        _applicationService = applicationService;
+    }
+
+    public async Task LoadApplicationsAsync()
+    {
+        var apps = await _applicationService.GetAllSubmittedAsync();
+        Applications.Clear();
+        foreach (var app in apps)
+            Applications.Add(app);
+    }
+
+    public async Task StartReviewAsync()
     {
         if (SelectedApplication == null) return;
-
-        if (SelectedApplication.Status != "Submitted")
-        {
-            return;
-        }
-
-        // Lock the application and change status
-        SelectedApplication.Status = "Under Review";
-        SelectedApplication.IsLocked = true;
-
-        OnPropertyChanged(nameof(SelectedApplication));
+        var hrUserId = SessionManager.CurrentUserId;
+        Message = await _applicationService.StartReviewAsync(
+            SelectedApplication.ApplicationId, hrUserId!);
+        await LoadApplicationsAsync();
     }
 }

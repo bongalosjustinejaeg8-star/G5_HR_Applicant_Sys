@@ -1,73 +1,64 @@
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Services.Interfaces;
+using HRApplicantSystem.Shared.Enums;
+using HRApplicantSystem.Shared.Helpers;
 
 namespace HRApplicantSystem.UI.ViewModels;
 
 public class ScreeningViewModel : ViewModelBase
 {
-    // List of applications under review
+    private readonly IScreeningService _screeningService;
+
     public ObservableCollection<Application> Applications { get; set; } = new();
 
-    // Selected application
     private Application? _selectedApplication;
     public Application? SelectedApplication
     {
         get => _selectedApplication;
-        set
-        {
-            _selectedApplication = value;
-            OnPropertyChanged();
-        }
+        set { _selectedApplication = value; OnPropertyChanged(); }
     }
 
-    // Screening result — Qualified or Not Qualified
-    private string _screeningResult = "Qualified";
-    public string ScreeningResult
+    private ScreeningResults _screeningResult = ScreeningResults.Qualified;
+    public ScreeningResults ScreeningResult
     {
         get => _screeningResult;
-        set
-        {
-            _screeningResult = value;
-            OnPropertyChanged();
-        }
+        set { _screeningResult = value; OnPropertyChanged(); }
     }
 
-    // Remarks from HR
     private string _remarks = "";
     public string Remarks
     {
         get => _remarks;
-        set
-        {
-            _remarks = value;
-            OnPropertyChanged();
-        }
+        set { _remarks = value; OnPropertyChanged(); }
     }
 
-    public ScreeningViewModel()
+    private string _message = "";
+    public string Message
     {
-        // Sample data for now — will connect to database later
-        Applications.Add(new Application
-        {
-            Status = "Under Review"
-        });
+        get => _message;
+        set { _message = value; OnPropertyChanged(); }
     }
 
-    // Save Screening Result
-    // Based on PDF: Qualified = Shortlisted, Not Qualified = Rejected
-    public void SaveScreeningResult()
+    public ScreeningViewModel(IScreeningService screeningService)
+    {
+        _screeningService = screeningService;
+    }
+
+    public async Task LoadApplicationsAsync()
+    {
+        var apps = await _screeningService.GetApplicationsForScreeningAsync();
+        Applications.Clear();
+        foreach (var app in apps)
+            Applications.Add(app);
+    }
+
+    public async Task SaveScreeningResultAsync()
     {
         if (SelectedApplication == null) return;
-
-        if (ScreeningResult == "Qualified")
-        {
-            SelectedApplication.Status = "Shortlisted";
-        }
-        else
-        {
-            SelectedApplication.Status = "Rejected";
-        }
-
-        OnPropertyChanged(nameof(SelectedApplication));
+        var hrUserId = SessionManager.CurrentUserId;
+        Message = await _screeningService.SaveScreeningResultAsync(
+            SelectedApplication.ApplicationId, hrUserId!, ScreeningResult, Remarks);
+        await LoadApplicationsAsync();
     }
 }
