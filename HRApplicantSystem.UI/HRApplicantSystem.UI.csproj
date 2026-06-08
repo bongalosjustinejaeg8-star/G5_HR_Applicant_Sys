@@ -21,7 +21,8 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,4 +30,10 @@
     <ProjectReference Include="..\HRApplicantSystem.Data\HRApplicantSystem.Data.csproj" />
     <ProjectReference Include="..\HRApplicantSystem.Shared\HRApplicantSystem.Shared.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+  <Content Include="appsettings.json">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
 </Project>
