@@ -1,17 +1,19 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
-             x:Class="HRApplicantSystem.UI.Views.InterviewScheduleView">
+             xmlns:m="using:HRApplicantSystem.Data.Models"
+             x:Class="HRApplicantSystem.UI.Views.InterviewScheduleView"
+             x:DataType="vm:InterviewScheduleViewModel">
 
   <StackPanel Margin="20">
-
     <TextBlock Text="Interview Scheduling" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
-    <!-- Shortlisted Applicants List -->
-    <TextBlock Text="Shortlisted Applicants" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
-    <ListBox Name="ApplicantListBox" Height="200" Margin="0 0 0 10">
+    <ListBox ItemsSource="{Binding Applications}"
+             SelectedItem="{Binding SelectedApplication}"
+             Height="200"
+             Margin="0 0 0 10">
       <ListBox.ItemTemplate>
-        <DataTemplate>
+        <DataTemplate x:DataType="m:Application">
           <StackPanel Margin="5">
             <TextBlock Text="{Binding Status}" FontWeight="Bold"/>
             <TextBlock Text="{Binding SubmittedAt}"/>
@@ -20,38 +22,30 @@
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <!-- Interview Details -->
     <TextBlock Text="Interview Details" FontSize="16" FontWeight="Bold" Margin="0 10 0 5"/>
 
-    <!-- Date and Time -->
-    <TextBlock Text="Interview Date and Time" Margin="0 0 0 5"/>
-    <DatePicker Name="InterviewDatePicker" Margin="0 0 0 10"/>
+    <TextBlock Text="Interview Date" Margin="0 0 0 5"/>
+    <DatePicker SelectedDate="{Binding InterviewDate}" Margin="0 0 0 10"/>
 
-    <!-- Interviewer -->
     <TextBlock Text="Interviewer" Margin="0 0 0 5"/>
-    <TextBox Name="InterviewerBox"
-             Watermark="Enter interviewer name..."
+    <TextBox Text="{Binding Interviewer}"
+             PlaceholderText="Enter interviewer name..."
              Margin="0 0 0 10"/>
 
-    <!-- Mode -->
     <TextBlock Text="Mode" Margin="0 0 0 5"/>
-    <ComboBox Name="ModeComboBox" Margin="0 0 0 10">
+    <ComboBox SelectedItem="{Binding Mode}" Margin="0 0 0 10">
       <ComboBoxItem Content="Online"/>
-      <ComboBoxItem Content="On-site"/>
+      <ComboBoxItem Content="Onsite"/>
     </ComboBox>
 
-    <!-- Location -->
     <TextBlock Text="Location" Margin="0 0 0 5"/>
-    <TextBox Name="LocationBox"
-             Watermark="Enter location or meeting link..."
+    <TextBox Text="{Binding Location}"
+             PlaceholderText="Enter location or meeting link..."
              Margin="0 0 0 10"/>
 
-    <!-- Save Button -->
-    <Button Name="SaveScheduleButton"
-            Content="Save Interview Schedule"
-            HorizontalAlignment="Right"
-            Margin="0 10 0 0"/>
+    <TextBlock Text="{Binding Message}" Foreground="Green" Margin="0 0 0 10"/>
 
+    <Button Content="Save Interview Schedule"
+            HorizontalAlignment="Right"/>
   </StackPanel>
-
 </UserControl>
