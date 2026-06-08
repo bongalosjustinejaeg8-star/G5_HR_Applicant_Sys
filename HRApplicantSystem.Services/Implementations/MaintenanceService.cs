@@ -29,23 +29,6 @@ public class MaintenanceService : IMaintenanceService
         return await Task.FromResult(false);
     }
 
-    public async Task<IEnumerable<Position>> GetAllPositionsAsync()
-    {
-        // TODO: Implement retrieval of all positions
-        return await Task.FromResult(Enumerable.Empty<Position>());
-    }
-
-    public async Task<bool> CreatePositionAsync(Position position)
-    {
-        // TODO: Implement position creation
-        return await Task.FromResult(false);
-    }
-
-    public async Task<bool> UpdatePositionAsync(Position position)
-    {
-        // TODO: Implement position update
-        return await Task.FromResult(false);
-    }
 
     public async Task<bool> DeletePositionAsync(string positionId)
     {

@@ -5,10 +5,10 @@ namespace HRApplicantSystem.Services.Implementations;
 
 public class MyDocumentsService : IMyDocumentsService
 {
-    public async Task<IEnumerable<ApplicationDocument>> GetApplicantDocumentsAsync(string applicantId)
+    public async Task<IEnumerable<ApplicantDocument>> GetApplicantDocumentsAsync(string applicantId)
     {
         // TODO: Implement retrieval of applicant documents
-        return await Task.FromResult(Enumerable.Empty<ApplicationDocument>());
+        return await Task.FromResult(Enumerable.Empty<ApplicantDocument>());
     }
 
     public async Task<bool> UploadDocumentAsync(string applicantId, string fileName, byte[] fileData, string documentType)

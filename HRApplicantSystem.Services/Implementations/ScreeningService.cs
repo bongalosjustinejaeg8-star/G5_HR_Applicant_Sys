@@ -37,7 +37,7 @@ public class ScreeningService : IScreeningService
         {
             ApplicationId = applicationId,
             ScreenedBy = hrUserId,
-            Result = result.ToString(),
+            Result = result,
             Remarks = remarks
         };
 
@@ -51,8 +51,8 @@ public class ScreeningService : IScreeningService
             {
                 ApplicationId = applicationId,
                 ChangedBy = hrUserId,
-                OldStatus = "UnderReview",
-                NewStatus = newStatus.ToString()
+                OldStatus = ApplicationStatus.UnderReview,
+                NewStatus = newStatus
             });
             return $"Applicant marked as {newStatus}.";
         }

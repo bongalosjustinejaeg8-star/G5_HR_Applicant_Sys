@@ -8,9 +8,5 @@ public interface IMaintenanceService
     Task<bool> CreateDepartmentAsync(Department department);
     Task<bool> UpdateDepartmentAsync(Department department);
     Task<bool> DeleteDepartmentAsync(string departmentId);
-
-    Task<IEnumerable<Position>> GetAllPositionsAsync();
-    Task<bool> CreatePositionAsync(Position position);
-    Task<bool> UpdatePositionAsync(Position position);
     Task<bool> DeletePositionAsync(string positionId);
 }
