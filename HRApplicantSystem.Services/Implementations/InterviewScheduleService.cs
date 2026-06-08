@@ -39,9 +39,9 @@ public class InterviewScheduleService : IInterviewScheduleService
         {
             ApplicationId = applicationId,
             InterviewDate = interviewDate,
-            Mode = mode.ToString(),
+            Mode = InterviewMode.Online,
             Location = location,
-            Status = InterviewStatus.Scheduled.ToString()
+            Status = InterviewStatus.Scheduled
         };
 
         await _scheduleRepository.CreateAsync(schedule);
@@ -55,8 +55,8 @@ public class InterviewScheduleService : IInterviewScheduleService
             {
                 ApplicationId = applicationId,
                 ChangedBy = hrUserId,
-                OldStatus = "Shortlisted",
-                NewStatus = "ForInterview"
+                OldStatus = ApplicationStatus.UnderReview,
+                NewStatus = ApplicationStatus.ForInterview
             });
             return "Interview scheduled successfully!";
         }

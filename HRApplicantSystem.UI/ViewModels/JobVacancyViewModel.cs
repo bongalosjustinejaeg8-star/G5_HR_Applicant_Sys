@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
@@ -75,7 +77,8 @@ public class JobVacancyViewModel : ViewModelBase
     public async Task ApplyAsync()
     {
         if (SelectedJob == null) return;
-        var applicantId = SessionManager.CurrentApplicantId;
-        Message = await _applicationService.ApplyAsync(applicantId!, SelectedJob.VacancyId);
+        var applicantId = SessionManager.CurrentUserId;
+        bool success = await _applicationService.SubmitApplicationAsync(applicantId!, SelectedJob.VacancyId);
+        Message = success ? "Application submitted successfully!" : "Failed to submit. You may have already applied.";
     }
 }

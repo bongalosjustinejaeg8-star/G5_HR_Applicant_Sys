@@ -1,31 +1,48 @@
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Services.Interfaces;
+using HRApplicantSystem.Shared.Enums;
 
 namespace HRApplicantSystem.Services.Implementations;
 
 public class JobVacanciesService : IJobVacanciesService
 {
+    private readonly IJobVacancyRepository _jobVacancyRepository;
+
+    public JobVacanciesService(IJobVacancyRepository jobVacancyRepository)
+    {
+        _jobVacancyRepository = jobVacancyRepository;
+    }
+
     public async Task<IEnumerable<JobVacancy>> GetAllOpenJobsAsync()
     {
-        // TODO: Implement retrieval of all open job vacancies
-        return await Task.FromResult(Enumerable.Empty<JobVacancy>());
+        return await _jobVacancyRepository.GetOpenAsync();
     }
 
     public async Task<IEnumerable<JobVacancy>> SearchJobsAsync(string keyword)
     {
-        // TODO: Implement job search by keyword (position, department, location, etc.)
-        return await Task.FromResult(Enumerable.Empty<JobVacancy>());
+        var all = await _jobVacancyRepository.GetOpenAsync();
+        if (string.IsNullOrWhiteSpace(keyword)) return all;
+
+        return all.Where(j =>
+            j.PositionTitle.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+            (j.Qualifications != null && j.Qualifications.Contains(keyword, StringComparison.OrdinalIgnoreCase)) ||
+            j.EmploymentType.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+        );
     }
 
     public async Task<JobVacancy?> GetJobByIdAsync(string vacancyId)
     {
-        // TODO: Implement retrieval of specific job vacancy by ID
-        return await Task.FromResult<JobVacancy?>(null);
+        return await _jobVacancyRepository.GetByIdAsync(vacancyId);
     }
 
     public async Task<IEnumerable<JobVacancy>> GetJobsByCategoryAsync(string category)
     {
-        // TODO: Implement retrieval of jobs by category/department
-        return await Task.FromResult(Enumerable.Empty<JobVacancy>());
+        var all = await _jobVacancyRepository.GetOpenAsync();
+        if (string.IsNullOrWhiteSpace(category)) return all;
+
+        return all.Where(j =>
+            j.DepartmentId.Contains(category, StringComparison.OrdinalIgnoreCase)
+        );
     }
 }

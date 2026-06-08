@@ -6,10 +6,10 @@ namespace HRApplicantSystem.Services.Implementations;
 
 public class MyDocumentsService : IMyDocumentsService
 {
-    private readonly IApplicationDocumentRepository _documentRepository;
+    private readonly IApplicantDocumentRepository _documentRepository;
     private readonly string _documentStoragePath;
 
-    public MyDocumentsService(IApplicationDocumentRepository documentRepository)
+    public MyDocumentsService(IApplicantDocumentRepository documentRepository)
     {
         _documentRepository = documentRepository;
         // Set storage path - in production, this would come from config

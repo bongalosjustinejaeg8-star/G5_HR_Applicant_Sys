@@ -9,12 +9,15 @@ public class ScreeningService : IScreeningService
 {
     private readonly IApplicationRepository _applicationRepository;
     private readonly IApplicationStatusHistoryRepository _historyRepository;
+    private readonly IScreeningResultRepository _screeningRepository; 
 
     public ScreeningService(IApplicationRepository applicationRepository,
-                           IApplicationStatusHistoryRepository historyRepository)
+                       IApplicationStatusHistoryRepository historyRepository,
+                       IScreeningResultRepository screeningRepository) 
     {
         _applicationRepository = applicationRepository;
         _historyRepository = historyRepository;
+        _screeningRepository = screeningRepository; 
     }
 
     public async Task<IEnumerable<Application>> GetApplicationsForScreeningAsync()
@@ -28,7 +31,6 @@ public class ScreeningService : IScreeningService
         var app = await _applicationRepository.GetByIdAsync(applicationId);
         if (app == null) return "Application not found.";
 
-        // Determine new status based on screening result
         var newStatus = result == ScreeningResults.Qualified 
             ? ApplicationStatus.Shortlisted 
             : ApplicationStatus.Rejected;

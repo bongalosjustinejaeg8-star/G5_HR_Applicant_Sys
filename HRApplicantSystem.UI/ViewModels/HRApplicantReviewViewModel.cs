@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
@@ -39,7 +41,7 @@ public class HRApplicantReviewViewModel : ViewModelBase
 
     public async Task LoadApplicationsAsync()
     {
-        var apps = await _applicationService.GetAllSubmittedAsync();
+        var apps = await _applicationService.GetAllAsync();
         Applications.Clear();
         foreach (var app in apps)
             Applications.Add(app);
@@ -49,8 +51,9 @@ public class HRApplicantReviewViewModel : ViewModelBase
     {
         if (SelectedApplication == null) return;
         var hrUserId = SessionManager.CurrentUserId;
-        Message = await _applicationService.StartReviewAsync(
+        bool success = await _applicationService.StartReviewAsync(
             SelectedApplication.ApplicationId, hrUserId!);
+        Message = success ? "Review started successfully!" : "Something went wrong.";
         await LoadApplicationsAsync();
     }
 }

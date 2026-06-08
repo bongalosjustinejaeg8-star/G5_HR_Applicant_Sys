@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
@@ -48,7 +50,7 @@ public class MyApplicationViewModel : ViewModelBase
 
     public async Task LoadApplicationsAsync()
     {
-        var applicantId = SessionManager.CurrentApplicantId;
+        var applicantId = SessionManager.CurrentUserId;
         var apps = await _applicationService.GetByApplicantIdAsync(applicantId!);
         Applications.Clear();
         foreach (var app in apps)
@@ -58,9 +60,10 @@ public class MyApplicationViewModel : ViewModelBase
     public async Task SubmitApplicationAsync()
     {
         if (SelectedApplication == null) return;
-        var applicantId = SessionManager.CurrentApplicantId;
-        Message = await _applicationService.SubmitApplicationAsync(
-            SelectedApplication.ApplicationId, applicantId!);
+        var applicantId = SessionManager.CurrentUserId;
+        bool success = await _applicationService.SubmitApplicationAsync(
+    SelectedApplication.ApplicationId, applicantId!);
+        Message = success ? "Application submitted!" : "Something went wrong.";
         await LoadApplicationsAsync();
     }
 }

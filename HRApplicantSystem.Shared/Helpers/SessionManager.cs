@@ -5,7 +5,7 @@ namespace HRApplicantSystem.Shared.Helpers;
 
 public static class SessionManager
 {
-    public static string? CurrentUserID { get; private set; }
+    public static string? CurrentUserId { get; private set; }
     public static string? CurrentUserName { get; private set; }
 
     public static UserRole? CurrentUserRole { get; private set; }
@@ -14,7 +14,7 @@ public static class SessionManager
 
     public static void Login(string name, string id, UserRole role)
     {
-        CurrentUserID = id;
+        CurrentUserId = id;
         CurrentUserName = name;
         CurrentUserRole = role;
         IsLoggedIn = true;
@@ -23,7 +23,7 @@ public static class SessionManager
     }
     public static void Logout()
     {
-        CurrentUserID = null;
+        CurrentUserId = null;
         CurrentUserName = null;
         CurrentUserRole = UserRole.None;
         IsLoggedIn = false;

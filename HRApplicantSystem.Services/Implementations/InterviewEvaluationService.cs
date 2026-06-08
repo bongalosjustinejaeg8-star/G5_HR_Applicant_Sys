@@ -64,8 +64,8 @@ public class InterviewEvaluationService : IInterviewEvaluationService
             {
                 ApplicationId = applicationId,
                 ChangedBy = hrUserId,
-                OldStatus = "ForInterview",
-                NewStatus = newStatus.ToString()
+                OldStatus = ApplicationStatus.ForInterview,
+                NewStatus = newStatus
             });
             return $"Evaluation saved. Applicant is now {newStatus}.";
         }
