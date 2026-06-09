@@ -1,6 +1,5 @@
-using System;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Enums;
@@ -12,7 +11,7 @@ public class MyApplicationViewModel : ViewModelBase
 {
     private readonly IApplicationService _applicationService;
 
-    public ObservableCollection<Application> Applications { get; set; } = new();
+    public ObservableCollection<Application> Applications { get; } = new();
 
     private Application? _selectedApplication;
     public Application? SelectedApplication
@@ -31,15 +30,17 @@ public class MyApplicationViewModel : ViewModelBase
     public string Message
     {
         get => _message;
-        set { _message = value; OnPropertyChanged(); }
+        set
+        {
+            _message = value;
+            OnPropertyChanged();
+        }
     }
 
-    // Based on PDF: only Draft and Submitted can be edited
     public bool IsEditable =>
         SelectedApplication?.Status == ApplicationStatus.Draft ||
         SelectedApplication?.Status == ApplicationStatus.Submitted;
 
-    // Based on PDF: locked when HR starts review
     public bool IsLocked =>
         SelectedApplication != null && !IsEditable;
 
@@ -51,19 +52,31 @@ public class MyApplicationViewModel : ViewModelBase
     public async Task LoadApplicationsAsync()
     {
         var applicantId = SessionManager.CurrentUserId;
+
         var apps = await _applicationService.GetByApplicantIdAsync(applicantId!);
+
         Applications.Clear();
+
         foreach (var app in apps)
             Applications.Add(app);
     }
 
     public async Task SubmitApplicationAsync()
     {
-        if (SelectedApplication == null) return;
+        if (SelectedApplication == null)
+            return;
+
         var applicantId = SessionManager.CurrentUserId;
-        bool success = await _applicationService.SubmitApplicationAsync(
-    SelectedApplication.ApplicationId, applicantId!);
-        Message = success ? "Application submitted!" : "Something went wrong.";
+
+        bool success =
+            await _applicationService.SubmitApplicationAsync(
+                SelectedApplication.ApplicationId,
+                applicantId!);
+
+        Message = success
+            ? "Application submitted!"
+            : "Something went wrong.";
+
         await LoadApplicationsAsync();
     }
 }
