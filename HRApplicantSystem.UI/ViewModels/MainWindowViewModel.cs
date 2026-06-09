@@ -69,6 +69,12 @@ public class MainWindowViewModel : ViewModelBase
         return new JobVacancyService(new JobVacancyRepository(db));
     }
 
+    private static JobVacancyMgmtService GetJobVacancyMgmtService()
+    {
+        var db = GetDb();
+        return new JobVacancyMgmtService(new JobVacancyRepository(db));
+    }
+
     public MainWindowViewModel()
     {
         CurrentView = new LandingViewModel(this);
@@ -92,8 +98,12 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToHRDashboard()
         => CurrentView = new HRDashboardViewModel(this);
 
+    /// <summary>
+    /// Navigate to HR Job Vacancy Management module.
+    /// FIXED: Pass JobVacancyMgmtService to ensure ViewModel can load data.
+    /// </summary>
     public void NavigateToJobVacancyMgmt()
-        => CurrentView = new JobVacancyMgmtViewModel();
+        => CurrentView = new JobVacancyMgmtViewModel(GetJobVacancyMgmtService());
 
     public void NavigateToApplicantList()
         => CurrentView = new ApplicantListViewModel();
@@ -127,6 +137,10 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToProfile()
         => CurrentView = new ProfileViewModel();
 
+    /// <summary>
+    /// Navigate to Applicant Job Vacancies browse page.
+    /// Passes JobVacancyService for fetching open jobs.
+    /// </summary>
     public void NavigateToJobVacancies()
         => CurrentView = new JobVacanciesViewModel(GetJobVacancyService(), GetAppService());
 

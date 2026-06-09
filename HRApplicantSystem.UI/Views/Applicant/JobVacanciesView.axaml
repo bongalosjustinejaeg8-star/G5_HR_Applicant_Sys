@@ -7,16 +7,23 @@
              x:DataType="vm:JobVacanciesViewModel">
 
   <StackPanel Margin="20">
+    <TextBlock Text="Job Vacancies" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
-    <TextBlock Text="Job Vacancies"
-               FontSize="24"
-               FontWeight="Bold"
-               Margin="0 0 0 20"/>
+    <!-- Debug Message -->
+    <TextBlock Text="{Binding Message}" 
+               IsVisible="{Binding HasMessage}"
+               Foreground="Blue" 
+               Margin="0 0 0 10"/>
 
-    <TextBox Text="{Binding SearchText}"
-             Watermark="Search jobs..."
-             Margin="0 0 0 10"/>
+    <!-- Search and Filter -->
+    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
+      <TextBox Text="{Binding SearchText}" PlaceholderText="Search jobs..." Margin="0 0 10 0"/>
+      <ComboBox SelectedItem="{Binding SelectedDepartmentFilter}">
+        <ComboBoxItem Content="All Departments"/>
+      </ComboBox>
+    </Grid>
 
+    <!-- Job Vacancies ListBox -->
     <ListBox ItemsSource="{Binding Vacancies}"
              SelectedItem="{Binding SelectedJob}"
              Height="300"
@@ -25,32 +32,26 @@
       <ListBox.ItemTemplate>
         <DataTemplate x:DataType="m:JobVacancy">
           <StackPanel Margin="5">
-
-            <TextBlock Text="{Binding PositionTitle}"
-                       FontSize="14"
-                       FontWeight="Bold"/>
-
-            <TextBlock Text="{Binding DepartmentId}"/>
-
-            <TextBlock Text="{Binding EmploymentType}"/>
-
-            <TextBlock Text="{Binding Status}"/>
-
-            <TextBlock Text="{Binding CreatedAt}"/>
-
+            <TextBlock Text="{Binding PositionTitle}" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="{Binding DepartmentId}" FontSize="11"/>
+            <StackPanel Orientation="Horizontal" Margin="0 2 0 0">
+              <TextBlock Text="Type: " FontSize="10"/>
+              <TextBlock Text="{Binding EmploymentType}" FontSize="10"/>
+            </StackPanel>
+            <TextBlock Text="{Binding CreatedAt, StringFormat='Posted: {0:yyyy-MM-dd}'}" FontSize="10" Foreground="Gray"/>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
 
     </ListBox>
 
-    <StackPanel Orientation="Horizontal"
-                HorizontalAlignment="Right">
-
-      <Button Content="Apply Now"
-              Command="{Binding ApplyCommand}"/>
-
-    </StackPanel>
-
+    <!-- Action Buttons -->
+    <Grid ColumnDefinitions="*,*" Margin="0 10 0 0">
+      <Button Content="View Details" HorizontalAlignment="Left"/>
+      <Button Content="Apply Now" 
+              HorizontalAlignment="Right"
+              Command="{Binding ApplyCommand}"
+              IsEnabled="{Binding CanApply}"/>
+    </Grid>
   </StackPanel>
 </UserControl>
