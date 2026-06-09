@@ -7,27 +7,50 @@
   <StackPanel Margin="20">
     <TextBlock Text="Job Vacancy Management" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
-    <Button Content="+ Add New Job Opening" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+    <!-- Loading indicator -->
+    <ProgressBar IsIndeterminate="{Binding IsLoading}" Margin="0 0 0 10"/>
+
+    <!-- Message display -->
+    <TextBlock Text="{Binding Message}" 
+               IsVisible="{Binding HasMessage}"
+               Foreground="Blue" 
+               Margin="0 0 0 10"/>
+
+    <!-- Add New Job Opening Button -->
+    <Button Content="+ Add New Job Opening" 
+            HorizontalAlignment="Left" 
+            Margin="0 0 0 10"/>
 
     <TextBlock Text="Active Job Openings" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
-    <ListBox ItemsSource="{Binding JobVacancies}"
+
+    <!-- Job Vacancies ListBox -->
+    <ListBox ItemsSource="{Binding Vacancies}"
              SelectedItem="{Binding SelectedJobVacancy}"
              Height="250"
              Margin="0 0 0 10">
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Margin="5">
-            <TextBlock Text="{Binding Position}" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Department}"/>
-            <TextBlock Text="{Binding Status}"/>
+            <TextBlock Text="{Binding PositionTitle}" FontWeight="Bold" FontSize="12"/>
+            <TextBlock Text="{Binding DepartmentId}" FontSize="11"/>
+            <StackPanel Orientation="Horizontal" Margin="0 2 0 0">
+              <TextBlock Text="Status: " FontSize="10"/>
+              <TextBlock Text="{Binding Status}" FontSize="10" Foreground="Green"/>
+            </StackPanel>
+            <TextBlock Text="{Binding CreatedAt, StringFormat='Created: {0:yyyy-MM-dd}'}" FontSize="10" Foreground="Gray"/>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
 
+    <!-- Action Buttons -->
     <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
       <Button Content="Edit" HorizontalAlignment="Left" Margin="0 0 10 0"/>
-      <Button Content="Close" HorizontalAlignment="Left"/>
+      <Button Content="Close" 
+              HorizontalAlignment="Left" 
+              Margin="0 0 10 0"
+              Command="{Binding CloseJobVacancyCommand}"/>
+      <Button Content="Reopen" HorizontalAlignment="Left"/>
     </StackPanel>
   </StackPanel>
 </UserControl>
