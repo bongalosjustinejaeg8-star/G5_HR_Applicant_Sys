@@ -1,21 +1,30 @@
-<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+<UserControl x:CompileBindings="False"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.Applicant"
              xmlns:m="using:HRApplicantSystem.Data.Models"
              x:Class="HRApplicantSystem.UI.Views.JobVacancyView"
-             x:DataType="vm:JobVacancyViewModel">
+             x:DataType="vm:JobVacanciesViewModel">
 
-  <StackPanel Margin="20">
-    <TextBlock Text="Job Vacancies" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="Black"/>
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel Margin="20" Spacing="10">
+
+    <TextBlock Text="Job Vacancies"
+               FontSize="24"
+               FontWeight="Bold"/>
 
     <TextBox Text="{Binding SearchText}"
-             PlaceholderText="Search by position..."
-             Margin="0 0 0 10"/>
+             Watermark="Search by position..." />
 
-    <ListBox ItemsSource="{Binding FilteredVacancies}"
+    <ListBox ItemsSource="{Binding Vacancies}"
              SelectedItem="{Binding SelectedJob}"
-             Height="300"
-             Margin="0 0 0 10">
+             Height="300">
+
       <ListBox.ItemTemplate>
         <DataTemplate x:DataType="m:JobVacancy">
           <StackPanel Margin="5">
@@ -25,12 +34,17 @@
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
+
     </ListBox>
 
-    <TextBlock Text="{Binding Message}" Foreground="Green" Margin="0 0 0 10"/>
+    <TextBlock Text="{Binding Message}"
+               IsVisible="{Binding HasMessage}"
+               Foreground="Green"/>
 
     <Button Content="Apply"
+            Command="{Binding ApplyAsyncCommand}"
             IsEnabled="{Binding CanApply}"
             HorizontalAlignment="Right"/>
+
   </StackPanel>
 </UserControl>

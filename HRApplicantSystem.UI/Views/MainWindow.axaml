@@ -11,4 +11,4 @@
 
     <ContentControl Content="{Binding CurrentView}"/>
 
-</Window>
+</Window>   
