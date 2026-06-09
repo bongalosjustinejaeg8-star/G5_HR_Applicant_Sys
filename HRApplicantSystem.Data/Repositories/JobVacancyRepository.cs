@@ -29,8 +29,8 @@ public class JobVacancyRepository : IJobVacancyRepository
 
         return new JobVacancy
         {
-            VacancyId = reader.GetString(0),
-            DepartmentId = reader.GetString(1),
+            VacancyId = reader.GetValue(0).ToString()!,
+            DepartmentId = reader.GetValue(1).ToString()!,
             PositionTitle = reader.GetString(2),
             Qualifications = reader.IsDBNull(3) ? null : reader.GetString(3),
             EmploymentType = reader.GetString(4),

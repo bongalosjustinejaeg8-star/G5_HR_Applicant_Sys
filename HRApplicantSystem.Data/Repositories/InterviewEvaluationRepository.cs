@@ -25,7 +25,7 @@ public class InterviewEvaluationRepository : IInterviewEvaluationRepository
             return new InterviewEvaluation
             {
                 EvalId = reader.GetValue(0).ToString()!,
-                ScheduleId = reader.GetString(1),
+                ScheduleId = reader.GetValue(1).ToString()!,
                 EvaluatedBy = reader.IsDBNull(2) ? null : reader.GetString(2),
                 Score = reader.IsDBNull(3) ? null : reader.GetInt32(3),
                 Remarks = reader.IsDBNull(4) ? null : reader.GetString(4),

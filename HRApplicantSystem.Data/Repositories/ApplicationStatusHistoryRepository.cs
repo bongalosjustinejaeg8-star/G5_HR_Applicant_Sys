@@ -30,7 +30,7 @@ public class ApplicationStatusHistoryRepository : IApplicationStatusHistoryRepos
             history.Add(new ApplicationStatusHistory
             {
                 HistoryId = reader.GetValue(0).ToString()!,
-                ApplicationId = reader.GetString(1),
+                ApplicationId = reader.GetValue(1).ToString()!,
                 ChangedBy = reader.IsDBNull(2) ? null : reader.GetString(2),
                 OldStatus = reader.IsDBNull(3) ? null : Enum.Parse<ApplicationStatus>(reader.GetString(3)),
                 NewStatus = Enum.Parse<ApplicationStatus>(reader.GetString(4)),

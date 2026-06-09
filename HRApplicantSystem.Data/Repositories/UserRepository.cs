@@ -26,7 +26,7 @@ public class UserRepository : IUserRepository
             users.Add(new User
             {
                 UserId = reader.GetValue(0).ToString()!,
-                RoleId = reader.GetString(1),
+                RoleId = reader.GetValue(1).ToString()!,
                 Username = reader.GetString(2),
                 Email = reader.GetString(3),
                 PasswordHash = reader.GetString(4),
@@ -49,7 +49,7 @@ public class UserRepository : IUserRepository
             return new User
             {
                 UserId = reader.GetValue(0).ToString()!,
-                RoleId = reader.GetString(1),
+                RoleId = reader.GetValue(1).ToString()!,
                 Username = reader.GetString(2),
                 Email = reader.GetString(3),
                 PasswordHash = reader.GetString(4),

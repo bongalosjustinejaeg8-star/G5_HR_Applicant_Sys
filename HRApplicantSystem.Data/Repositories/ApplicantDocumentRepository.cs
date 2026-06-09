@@ -27,7 +27,7 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
             docs.Add(new ApplicantDocument
             {
                 DocumentId = reader.GetValue(0).ToString()!,
-                ApplicantId = reader.GetString(1),
+                ApplicantId = reader.GetValue(1).ToString()!,
                 RequirementTypeId = reader.GetString(2),
                 FilePath = reader.GetString(3),
                 Status = Enum.Parse<DocumentStatus>(reader.GetString(4)),
@@ -51,7 +51,7 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
             return new ApplicantDocument
             {
                 DocumentId = reader.GetValue(0).ToString()!,
-                ApplicantId = reader.GetString(1),
+                ApplicantId = reader.GetValue(1).ToString()!,
                 RequirementTypeId = reader.GetString(2),
                 FilePath = reader.GetString(3),
                 Status = Enum.Parse<DocumentStatus>(reader.GetString(4)),
