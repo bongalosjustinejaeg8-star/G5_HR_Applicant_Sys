@@ -45,16 +45,16 @@ public class AuthService : IAuthService
 
     public async Task<User?> LoginHRAsync(string email, string password)
     {
-        // same exact flow as LoginApplicantAsync
-        // but queries Users table instead of ApplicantAccounts
         var user = await _userRepo.GetByEmailAsync(email);
-
+        Console.WriteLine($"[AuthService] User: {user?.Email ?? "null"}");
         if (user == null) return null;
 
+        Console.WriteLine($"[AuthService] IsActive: {user.IsActive}");
         if (!user.IsActive) return null;
 
         bool isPasswordValid = _passwordHasher.Verify(password, user.PasswordHash);
-
+        Console.WriteLine($"[AuthService] PasswordValid: {isPasswordValid}");
+        Console.WriteLine($"[AuthService] Hash: {user.PasswordHash}");
         if (!isPasswordValid) return null;
 
         return user;

@@ -24,7 +24,7 @@ public class ApplicantAccountRepository : IApplicantAccountRepository
         {
             accounts.Add(new ApplicantAccount
             {
-                AccountId = reader.GetString(0),
+                AccountId = reader.GetValue(0).ToString()!,
                 Email = reader.GetString(1),
                 PasswordHash = reader.GetString(2),
                 IsActive = reader.GetBoolean(3),
@@ -46,7 +46,7 @@ public class ApplicantAccountRepository : IApplicantAccountRepository
         {
             return new ApplicantAccount
             {
-                AccountId = reader.GetString(0),
+                AccountId = reader.GetValue(0).ToString()!,
                 Email = reader.GetString(1),
                 PasswordHash = reader.GetString(2),
                 IsActive = reader.GetBoolean(3),
@@ -68,7 +68,7 @@ public class ApplicantAccountRepository : IApplicantAccountRepository
         {
             return new ApplicantAccount
             {
-                AccountId = reader.GetString(0),
+                AccountId = reader.GetValue(0).ToString()!,
                 Email = reader.GetString(1),
                 PasswordHash = reader.GetString(2),
                 IsActive = reader.GetBoolean(3),

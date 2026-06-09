@@ -25,7 +25,7 @@ public class JobVacancyRepository : IJobVacancyRepository
         {
             vacancies.Add(new JobVacancy
             {
-                VacancyId = reader.GetString(0),
+                VacancyId = reader.GetValue(0).ToString()!,
                 DepartmentId = reader.GetString(1),
                 PositionTitle = reader.GetString(2),
                 Qualifications = reader.IsDBNull(3) ? null : reader.GetString(3),
@@ -49,7 +49,7 @@ public class JobVacancyRepository : IJobVacancyRepository
         {
             vacancies.Add(new JobVacancy
             {
-                VacancyId = reader.GetString(0),
+                VacancyId = reader.GetValue(0).ToString()!,
                 DepartmentId = reader.GetString(1),
                 PositionTitle = reader.GetString(2),
                 Qualifications = reader.IsDBNull(3) ? null : reader.GetString(3),
@@ -73,7 +73,7 @@ public class JobVacancyRepository : IJobVacancyRepository
         {
             return new JobVacancy
             {
-                VacancyId = reader.GetString(0),
+                VacancyId = reader.GetValue(0).ToString()!,
                 DepartmentId = reader.GetString(1),
                 PositionTitle = reader.GetString(2),
                 Qualifications = reader.IsDBNull(3) ? null : reader.GetString(3),

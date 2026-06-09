@@ -1,9 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using HRApplicantSystem.UI.ViewModels;
+using HRApplicantSystem.Data;
+using HRApplicantSystem.Data.Repositories;
+using HRApplicantSystem.Shared.Enums;
+using HRApplicantSystem.Shared.Helpers;
+using HRApplicantSystem.Services.Implementations;
 
 namespace HRApplicantSystem.UI.ViewModels.HR;
 
@@ -27,7 +30,6 @@ public partial class HRLoginViewModel : ViewModelBase
     {
         _mainViewModel = mainViewModel;
     }
-
     [RelayCommand]
     private async Task LoginAsync()
     {
@@ -40,12 +42,39 @@ public partial class HRLoginViewModel : ViewModelBase
             return;
         }
 
-        // TODO: call AuthService here
-    }
+        try
+        {
+            var dbContext = new DbContext(AppConfig.ConnectionString);
+            var authService = new AuthService(
+                new ApplicantAccountRepository(dbContext),
+                new UserRepository(dbContext),
+                new PasswordHasher()
+            );
 
-    [RelayCommand]
-    private void GoBack()
-    {
-        _mainViewModel.NavigateToLanding();
+            var user = await authService.LoginHRAsync(Email, Password);
+            Console.WriteLine($"User: {user?.Email ?? "null"}");
+
+            if (user == null)
+            {
+                ErrorMessage = "Invalid email or password!";
+                HasError = true;
+                return;
+            }
+
+            var roleRepo = new RoleRepository(dbContext);
+            var role = await roleRepo.GetByIdAsync(user.RoleId);
+            var userRole = Enum.Parse<UserRole>(role?.RoleName ?? "HRStaff");
+
+            SessionManager.Login(user.Email, user.UserId, userRole);
+            _mainViewModel.NavigateToHRDashboard();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("=== HR LOGIN ERROR ===");
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            ErrorMessage = ex.Message;
+            HasError = true;
+        }
     }
 }

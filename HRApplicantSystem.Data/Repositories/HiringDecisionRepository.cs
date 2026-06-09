@@ -24,7 +24,7 @@ public class HiringDecisionRepository : IHiringDecisionRepository
         {
             decisions.Add(new HiringDecision
             {
-                DecisionId = reader.GetString(0),
+                DecisionId = reader.GetValue(0).ToString()!,
                 ApplicationId = reader.GetString(1),
                 DecidedBy = reader.IsDBNull(2) ? null : reader.GetString(2),
                 Decision = reader.GetString(3),
@@ -47,7 +47,7 @@ public class HiringDecisionRepository : IHiringDecisionRepository
         {
             return new HiringDecision
             {
-                DecisionId = reader.GetString(0),
+                DecisionId = reader.GetValue(0).ToString()!,
                 ApplicationId = reader.GetString(1),
                 DecidedBy = reader.IsDBNull(2) ? null : reader.GetString(2),
                 Decision = reader.GetString(3),

@@ -24,7 +24,7 @@ public class ApplicantRepository : IApplicantRepository
         {
             applicants.Add(new Applicant
             {
-                ApplicantId = reader.GetString(0),
+                ApplicantId = reader.GetValue(0).ToString()!,
                 AccountId = reader.GetString(1),
                 FullName = reader.GetString(2),
                 Address = reader.IsDBNull(3) ? null : reader.GetString(3),
@@ -49,7 +49,7 @@ public class ApplicantRepository : IApplicantRepository
         {
             return new Applicant
             {
-                ApplicantId = reader.GetString(0),
+                ApplicantId = reader.GetValue(0).ToString()!,
                 AccountId = reader.GetString(1),
                 FullName = reader.GetString(2),
                 Address = reader.IsDBNull(3) ? null : reader.GetString(3),
@@ -74,7 +74,7 @@ public class ApplicantRepository : IApplicantRepository
         {
             return new Applicant
             {
-                ApplicantId = reader.GetString(0),
+                ApplicantId = reader.GetValue(0).ToString()!,
                 AccountId = reader.GetString(1),
                 FullName = reader.GetString(2),
                 Address = reader.IsDBNull(3) ? null : reader.GetString(3),

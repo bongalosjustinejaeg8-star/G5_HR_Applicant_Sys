@@ -1,6 +1,4 @@
-using HRApplicantSystem.Shared.Enums;
 using System;
-using System.Threading.Tasks;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +6,6 @@ using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Shared.Helpers;
 using HRApplicantSystem.Services.Implementations;
-using HRApplicantSystem.UI.ViewModels;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
@@ -41,13 +38,13 @@ public partial class RegisterViewModel : ViewModelBase
     {
         HasError = false;
 
-
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
             ErrorMessage = "Please enter your email and password.";
             HasError = true;
             return;
         }
+
         if (Password != ConfirmPassword)
         {
             ErrorMessage = "Passwords do not match!";
@@ -55,27 +52,32 @@ public partial class RegisterViewModel : ViewModelBase
             return;
         }
 
-        var dbContext = new DbContext(AppConfig.ConnectionString);
-        var authService = new AuthService(
-            new ApplicantAccountRepository(dbContext),
-            new UserRepository(dbContext),
-            new PasswordHasher()
-        );
-
-        var account = await authService.LoginApplicantAsync(Email, Password);
-
-        if (account == null)
+        try
         {
-            ErrorMessage = "Invalid email or password!";
-            HasError = true;
-            return;
+            var dbContext = new DbContext(AppConfig.ConnectionString);
+            var authService = new AuthService(
+                new ApplicantAccountRepository(dbContext),
+                new UserRepository(dbContext),
+                new PasswordHasher()
+            );
+
+            bool success = await authService.RegisterApplicantAsync(Email, Password);
+
+            if (!success)
+            {
+                ErrorMessage = "Email already exists!";
+                HasError = true;
+                return;
+            }
+
+            // navigate to login after successful registration
+            _mainViewModel.NavigateToApplicantLogin();
         }
-
-        // store in session
-        SessionManager.Login(account.Email, account.AccountId, UserRole.None);
-
-        // navigate to dashboard
-        _mainViewModel.NavigateToApplicantDashboard();
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+            HasError = true;
+        }
     }
 
     [RelayCommand]

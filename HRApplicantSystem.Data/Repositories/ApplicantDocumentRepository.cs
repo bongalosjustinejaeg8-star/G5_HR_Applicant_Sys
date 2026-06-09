@@ -26,7 +26,7 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
         {
             docs.Add(new ApplicantDocument
             {
-                DocumentId = reader.GetString(0),
+                DocumentId = reader.GetValue(0).ToString()!,
                 ApplicantId = reader.GetString(1),
                 RequirementTypeId = reader.GetString(2),
                 FilePath = reader.GetString(3),
@@ -50,7 +50,7 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
         {
             return new ApplicantDocument
             {
-                DocumentId = reader.GetString(0),
+                DocumentId = reader.GetValue(0).ToString()!,
                 ApplicantId = reader.GetString(1),
                 RequirementTypeId = reader.GetString(2),
                 FilePath = reader.GetString(3),

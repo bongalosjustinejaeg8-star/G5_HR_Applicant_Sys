@@ -25,7 +25,7 @@ public class InterviewScheduleRepository : IInterviewScheduleRepository
         {
             schedules.Add(new InterviewSchedule
             {
-                ScheduleId = reader.GetString(0),
+                ScheduleId = reader.GetValue(0).ToString()!,
                 ApplicationId = reader.GetString(1),
                 InterviewerId = reader.IsDBNull(2) ? null : reader.GetString(2),
                 InterviewDate = reader.GetDateTime(3),
@@ -49,7 +49,7 @@ public class InterviewScheduleRepository : IInterviewScheduleRepository
         {
             return new InterviewSchedule
             {
-                ScheduleId = reader.GetString(0),
+                ScheduleId = reader.GetValue(0).ToString()!,
                 ApplicationId = reader.GetString(1),
                 InterviewerId = reader.IsDBNull(2) ? null : reader.GetString(2),
                 InterviewDate = reader.GetDateTime(3),
@@ -73,7 +73,7 @@ public class InterviewScheduleRepository : IInterviewScheduleRepository
         {
             return new InterviewSchedule
             {
-                ScheduleId = reader.GetString(0),
+                ScheduleId = reader.GetValue(0).ToString()!,
                 ApplicationId = reader.GetString(1),
                 InterviewerId = reader.IsDBNull(2) ? null : reader.GetString(2),
                 InterviewDate = reader.GetDateTime(3),
