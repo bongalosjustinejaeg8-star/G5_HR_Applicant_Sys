@@ -1,6 +1,6 @@
 <UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
              x:Class="HRApplicantSystem.UI.Views.HR.HiringDecisionView"
              x:DataType="vm:HiringDecisionViewModel">
 

@@ -34,7 +34,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
     {
         try
         {
-            var jobs = await _jobVacancyService.GetAllOpenJobsAsync();
+            var jobs = await _jobVacancyService.GetOpenJobsAsync();
             Vacancies.Clear();
             foreach (var job in jobs) Vacancies.Add(job);
         }
@@ -49,7 +49,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
         {
             var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
-            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserID ?? string.Empty);
+            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? string.Empty);
             if (applicant == null) { Message = "Please complete your profile first!"; HasMessage = true; return; }
 
             bool success = await _applicationService.SubmitApplicationAsync(applicant.ApplicantId, SelectedJob.VacancyId);

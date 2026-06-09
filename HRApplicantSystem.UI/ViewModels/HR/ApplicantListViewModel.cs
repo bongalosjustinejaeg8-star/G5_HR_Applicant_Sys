@@ -15,7 +15,7 @@ public partial class ApplicantListViewModel : ViewModelBase
     private readonly MainWindowViewModel? _mainViewModel;
 
     [ObservableProperty] private ObservableCollection<dynamic> _applicants = new();
-    [ObservableProperty] private dynamic? _selectedApplicant;
+    [ObservableProperty] private object? _selectedApplicant;
     [ObservableProperty] private string _searchText = string.Empty;
     [ObservableProperty] private bool _hasSelected = false;
 
@@ -62,7 +62,7 @@ public partial class ApplicantListViewModel : ViewModelBase
             var db = new DbContext(AppConfig.ConnectionString);
             var appRepo = new ApplicationRepository(db);
             var historyRepo = new ApplicationStatusHistoryRepository(db);
-            string appId = SelectedApplicant.ApplicationId;
+            var appId = ((dynamic)SelectedApplicant).ApplicationId as string ?? string.Empty;
             await appRepo.LockAsync(appId);
             await appRepo.UpdateStatusAsync(appId, ApplicationStatus.UnderReview);
             await historyRepo.CreateAsync(new HRApplicantSystem.Data.Models.ApplicationStatusHistory

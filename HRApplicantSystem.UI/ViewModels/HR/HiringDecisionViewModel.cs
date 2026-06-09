@@ -20,7 +20,7 @@ public partial class HiringDecisionViewModel : ViewModelBase
     private readonly IHiringDecisionService? _hiringDecisionService;
 
     [ObservableProperty] private ObservableCollection<dynamic> _applicants = new();
-    [ObservableProperty] private dynamic? _selectedApplicant;
+    [ObservableProperty] private object? _selectedApplicant;
     [ObservableProperty] private string _decision = "Accepted";
     [ObservableProperty] private string _remarks = string.Empty;
     [ObservableProperty] private string _message = string.Empty;
@@ -82,7 +82,7 @@ public partial class HiringDecisionViewModel : ViewModelBase
             var appRepo = new ApplicationRepository(db);
             var historyRepo = new ApplicationStatusHistoryRepository(db);
 
-            string appId = SelectedApplicant.ApplicationId;
+            var appId = ((dynamic)SelectedApplicant).ApplicationId as string ?? string.Empty;
             var app = await appRepo.GetByIdAsync(appId);
             if (app == null) return;
 

@@ -7,7 +7,7 @@ using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Shared.Helpers;
 
-namespace HRApplicantSystem.UI.ViewModels;
+namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
 public partial class DashboardViewModel : ViewModelBase
 {
