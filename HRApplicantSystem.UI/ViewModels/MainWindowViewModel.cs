@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Repositories;
@@ -91,8 +90,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public void NavigateToApplicantDashboard() => CurrentView = new DashboardViewModel(this);
     public void NavigateToProfile() => CurrentView = new ProfileViewModel();
     public void NavigateToJobVacancies() => CurrentView = new JobVacancyViewModel(GetJobVacancyService(), GetAppService());
-    public void NavigateToMyApplication() => CurrentView = new MyApplicationViewModel(GetAppService());
-    public void NavigateToMyDocuments() => CurrentView = new MyDocumentsViewModel();
+    public void NavigateToMyApplication()=> CurrentView = new MyApplicationViewModel(GetAppService(), this); public void NavigateToMyDocuments() => CurrentView = new MyDocumentsViewModel();
     public void NavigateToStatusTracking() => CurrentView = new StatusTrackingViewModel();
     #endregion
 }

@@ -15,7 +15,7 @@ public partial class App : Application
 {
     public override void OnFrameworkInitializationCompleted()
     {
-        AppConfig.Load(); // ← add this line!
+        AppConfig.Load();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

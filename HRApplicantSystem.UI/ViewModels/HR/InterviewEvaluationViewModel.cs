@@ -5,7 +5,7 @@ using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Helpers;
 
-namespace HRApplicantSystem.UI.ViewModels;
+namespace HRApplicantSystem.UI.ViewModels.HR;
 
 public class InterviewEvaluationViewModel : ViewModelBase
 {

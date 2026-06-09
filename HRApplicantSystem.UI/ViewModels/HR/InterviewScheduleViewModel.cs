@@ -7,7 +7,7 @@ using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Enums;
 using HRApplicantSystem.Shared.Helpers;
 
-namespace HRApplicantSystem.UI.ViewModels;
+namespace HRApplicantSystem.UI.ViewModels.HR;
 
 public class InterviewScheduleViewModel : ViewModelBase
 {

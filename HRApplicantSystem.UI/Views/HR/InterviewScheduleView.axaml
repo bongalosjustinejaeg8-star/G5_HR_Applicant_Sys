@@ -1,6 +1,6 @@
 <UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
              xmlns:m="using:HRApplicantSystem.Data.Models"
              x:Class="HRApplicantSystem.UI.Views.HR.InterviewScheduleView"
              x:DataType="vm:InterviewScheduleViewModel">

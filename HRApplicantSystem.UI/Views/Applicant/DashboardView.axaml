@@ -5,6 +5,12 @@
              x:Class="HRApplicantSystem.UI.Views.Applicant.DashboardView"
              x:DataType="vm:DashboardViewModel">
 
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="Black"/>
+    </Style>
+  </UserControl.Styles>
+
   <ScrollViewer>
     <StackPanel Margin="24" Spacing="20">
 
@@ -77,6 +83,16 @@
         </Border>
 
       </Grid>
+      <!-- Navigation Buttons -->
+      <!-- Navigation Buttons -->
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+        <Button Content="🔍 Job Vacancies" Command="{Binding GoToJobVacanciesCommand}" Padding="15,10" Background="#2563EB" Foreground="White"/>
+        <Button Content="📄 My Application" Command="{Binding GoToMyApplicationCommand}" Padding="15,10" Background="#059669" Foreground="White"/>
+        <Button Content="📁 My Documents" Command="{Binding GoToMyDocumentsCommand}" Padding="15,10" Background="#D97706" Foreground="White"/>
+        <Button Content="📊 Status" Command="{Binding GoToStatusTrackingCommand}" Padding="15,10" Background="#7C3AED" Foreground="White"/>
+        <Button Content="👤 Profile" Command="{Binding GoToProfileCommand}" Padding="15,10" Background="#6B7280" Foreground="White"/>
+        <Button Content="🚪 Logout" Command="{Binding LogoutCommand}" Padding="15,10" Background="#EF4444" Foreground="White"/>
+      </StackPanel>
 
       <!-- Main Content -->
       <Grid ColumnDefinitions="*,*"

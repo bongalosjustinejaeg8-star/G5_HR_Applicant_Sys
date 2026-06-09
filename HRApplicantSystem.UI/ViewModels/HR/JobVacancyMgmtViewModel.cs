@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using HRApplicantSystem.Shared.Helpers;
 
-namespace HRApplicantSystem.UI.ViewModels;
+namespace HRApplicantSystem.UI.ViewModels.HR;
 
 public class JobVacancyMgmtViewModel : ViewModelBase
 {

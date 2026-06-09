@@ -4,13 +4,14 @@ using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Enums;
 using HRApplicantSystem.Shared.Helpers;
+using CommunityToolkit.Mvvm.Input;
 
-namespace HRApplicantSystem.UI.ViewModels;
+namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
-public class MyApplicationViewModel : ViewModelBase
+public partial class MyApplicationViewModel : ViewModelBase
 {
     private readonly IApplicationService _applicationService;
-
+    private readonly MainWindowViewModel? _mainViewModel;
     public ObservableCollection<Application> Applications { get; } = new();
 
     private Application? _selectedApplication;
@@ -44,9 +45,12 @@ public class MyApplicationViewModel : ViewModelBase
     public bool IsLocked =>
         SelectedApplication != null && !IsEditable;
 
-    public MyApplicationViewModel(IApplicationService applicationService)
+    public MyApplicationViewModel(
+    IApplicationService applicationService,
+    MainWindowViewModel mainViewModel)
     {
         _applicationService = applicationService;
+        _mainViewModel = mainViewModel;
     }
 
     public async Task LoadApplicationsAsync()
@@ -78,5 +82,9 @@ public class MyApplicationViewModel : ViewModelBase
             : "Something went wrong.";
 
         await LoadApplicationsAsync();
+
+
     }
+    [RelayCommand] public void BackDash() => _mainViewModel?.NavigateToApplicantDashboard();
+
 }
