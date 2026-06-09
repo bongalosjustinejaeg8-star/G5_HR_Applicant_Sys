@@ -98,10 +98,6 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToHRDashboard()
         => CurrentView = new HRDashboardViewModel(this);
 
-    /// <summary>
-    /// Navigate to HR Job Vacancy Management module.
-    /// FIXED: Pass JobVacancyMgmtService to ensure ViewModel can load data.
-    /// </summary>
     public void NavigateToJobVacancyMgmt()
         => CurrentView = new JobVacancyMgmtViewModel(GetJobVacancyMgmtService());
 
@@ -134,13 +130,8 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToApplicantDashboard()
         => CurrentView = new DashboardViewModel(this);
 
-    public void NavigateToProfile()
-        => CurrentView = new ProfileViewModel();
+    public void NavigateToProfile() => CurrentView = new ProfileViewModel(this);
 
-    /// <summary>
-    /// Navigate to Applicant Job Vacancies browse page.
-    /// Passes JobVacancyService for fetching open jobs.
-    /// </summary>
     public void NavigateToJobVacancies()
         => CurrentView = new JobVacanciesViewModel(GetJobVacancyService(), GetAppService());
 
