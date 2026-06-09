@@ -1,47 +1,61 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HRApplicantSystem.Data;
+using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Data.Repositories;
+using HRApplicantSystem.Services.Implementations;
+using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Helpers;
 
-namespace HRApplicantSystem.UI.ViewModels;
+namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
-public class JobVacanciesViewModel : ViewModelBase
+public partial class JobVacanciesViewModel : ViewModelBase
 {
-    public ObservableCollection<dynamic> JobVacancies { get; set; } = new();
+    private readonly IJobVacancyService _jobVacancyService;
+    private readonly IApplicationService _applicationService;
 
-    private dynamic? _selectedJobVacancy;
-    public dynamic? SelectedJobVacancy
-    {
-        get => _selectedJobVacancy;
-        set { _selectedJobVacancy = value; OnPropertyChanged(); }
-    }
+    [ObservableProperty] private ObservableCollection<JobVacancy> _vacancies = new();
+    [ObservableProperty] private JobVacancy? _selectedJob;
+    [ObservableProperty] private string _message = string.Empty;
+    [ObservableProperty] private bool _hasMessage = false;
 
-    private string _searchText = "";
-    public string SearchText
+    public JobVacanciesViewModel(IJobVacancyService jobVacancyService, IApplicationService applicationService)
     {
-        get => _searchText;
-        set { _searchText = value; OnPropertyChanged(); }
-    }
-
-    private string? _selectedDepartmentFilter;
-    public string? SelectedDepartmentFilter
-    {
-        get => _selectedDepartmentFilter;
-        set { _selectedDepartmentFilter = value; OnPropertyChanged(); }
-    }
-
-    public JobVacanciesViewModel()
-    {
-        // TODO: Initialize job vacancies
+        _jobVacancyService = jobVacancyService;
+        _applicationService = applicationService;
+        _ = LoadJobVacanciesAsync();
     }
 
     public async Task LoadJobVacanciesAsync()
     {
-        // TODO: Load job vacancies
+        try
+        {
+            var jobs = await _jobVacancyService.GetAllOpenJobsAsync();
+            Vacancies.Clear();
+            foreach (var job in jobs) Vacancies.Add(job);
+        }
+        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
     }
 
-    public async Task ApplyForJobAsync()
+    [RelayCommand]
+    public async Task ApplyAsync()
     {
-        // TODO: Implement job application
+        if (SelectedJob == null) return;
+        try
+        {
+            var db = new DbContext(AppConfig.ConnectionString);
+            var applicantRepo = new ApplicantRepository(db);
+            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserID ?? string.Empty);
+            if (applicant == null) { Message = "Please complete your profile first!"; HasMessage = true; return; }
+
+            bool success = await _applicationService.SubmitApplicationAsync(applicant.ApplicantId, SelectedJob.VacancyId);
+            Message = success ? "Application submitted successfully!" : "You may have already applied for this job.";
+            HasMessage = true;
+        }
+        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
     }
 }

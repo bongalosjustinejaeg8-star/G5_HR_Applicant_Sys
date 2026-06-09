@@ -52,7 +52,6 @@ public partial class HRLoginViewModel : ViewModelBase
             );
 
             var user = await authService.LoginHRAsync(Email, Password);
-            Console.WriteLine($"User: {user?.Email ?? "null"}");
 
             if (user == null)
             {

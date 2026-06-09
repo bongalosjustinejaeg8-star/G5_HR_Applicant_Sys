@@ -1,8 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+using HRApplicantSystem.Data;
+using HRApplicantSystem.Data.Repositories;
+using HRApplicantSystem.Services.Implementations;
 using HRApplicantSystem.UI.ViewModels.Applicant;
 using HRApplicantSystem.UI.ViewModels.HR;
 
@@ -10,137 +10,89 @@ namespace HRApplicantSystem.UI.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    // currently displayed view
     [ObservableProperty]
     private ViewModelBase _currentView;
 
+    private static DbContext GetDb() => new DbContext(AppConfig.ConnectionString);
+
+    private static ApplicationService GetAppService()
+    {
+        var db = GetDb();
+        return new ApplicationService(
+            new ApplicationRepository(db),
+            new ApplicationStatusHistoryRepository(db),
+            new JobVacancyRepository(db)
+        );
+    }
+
+    private static ScreeningService GetScreeningService()
+    {
+        var db = GetDb();
+        return new ScreeningService(
+            new ApplicationRepository(db),
+            new ApplicationStatusHistoryRepository(db),
+            new ScreeningResultRepository(db)
+        );
+    }
+
+    private static InterviewScheduleService GetInterviewScheduleService()
+    {
+        var db = GetDb();
+        return new InterviewScheduleService(
+            new ApplicationRepository(db),
+            new InterviewScheduleRepository(db),
+            new ApplicationStatusHistoryRepository(db)
+        );
+    }
+
+    private static InterviewEvaluationService GetInterviewEvaluationService()
+    {
+        var db = GetDb();
+        return new InterviewEvaluationService(
+            new ApplicationRepository(db),
+            new InterviewScheduleRepository(db),
+            new InterviewEvaluationRepository(db),
+            new ApplicationStatusHistoryRepository(db)
+        );
+    }
+
+    private static JobVacancyService GetJobVacancyService()
+    {
+        var db = GetDb();
+        return new JobVacancyService(new JobVacancyRepository(db));
+    }
+
     public MainWindowViewModel()
     {
-        // start with landing view
         _currentView = new LandingViewModel(this);
     }
 
-    #region Authentication Navigation
-    // called when "Applicant" button is clicked
-    public void NavigateToApplicantLogin()
-    {
-        CurrentView = new ApplicantLoginViewModel(this);
-    }
-
-    // called when "HR / Staff" button is clicked
-    public void NavigateToHRLogin()
-    {
-        CurrentView = new HRLoginViewModel(this);
-    }
-
-    public void NavigateToLanding()
-    {
-        CurrentView = new LandingViewModel(this);
-    }
-
-    public void NavigateToRegister()
-    {
-        CurrentView = new RegisterViewModel(this);
-    }
+    #region Authentication
+    public void NavigateToApplicantLogin() => CurrentView = new ApplicantLoginViewModel(this);
+    public void NavigateToHRLogin() => CurrentView = new HRLoginViewModel(this);
+    public void NavigateToLanding() => CurrentView = new LandingViewModel(this);
+    public void NavigateToRegister() => CurrentView = new RegisterViewModel(this);
     #endregion
 
     #region HR Navigation
-    public void NavigateToHRDashboard()
-    {
-        // TODO: Implement when HRDashboardViewModel is created
-        // CurrentView = new HRDashboardViewModel(this);
-    }
-
-    public void NavigateToJobVacancyMgmt()
-    {
-        // TODO: Implement when JobVacancyMgmtViewModel is created
-        // CurrentView = new JobVacancyMgmtViewModel(this);
-    }
-
-    public void NavigateToApplicantList()
-    {
-        // TODO: Implement when ApplicantListViewModel is created
-        // CurrentView = new ApplicantListViewModel(this);
-    }
-
-    public void NavigateToApplicantReview()
-    {
-        // TODO: Implement when ApplicantReviewViewModel is created
-        // CurrentView = new HRApplicantReviewViewModel(this);
-    }
-
-    public void NavigateToScreening()
-    {
-        // TODO: Implement when ScreeningViewModel is created
-        // CurrentView = new ScreeningViewModel(this);
-    }
-
-    public void NavigateToInterviewSchedule()
-    {
-        // TODO: Implement when InterviewScheduleViewModel is created
-        // CurrentView = new InterviewScheduleViewModel(this);
-    }
-
-    public void NavigateToInterviewEvaluation()
-    {
-        // TODO: Implement when InterviewEvaluationViewModel is created
-        // CurrentView = new InterviewEvaluationViewModel(this);
-    }
-
-    public void NavigateToHiringDecision()
-    {
-        // TODO: Implement when HiringDecisionViewModel is created
-        // CurrentView = new HiringDecisionViewModel(this);
-    }
-
-    public void NavigateToReports()
-    {
-        // TODO: Implement when ReportsViewModel is created
-        // CurrentView = new ReportsViewModel(this);
-    }
-
-    public void NavigateToMaintenance()
-    {
-        // TODO: Implement when MaintenanceViewModel is created
-        // CurrentView = new MaintenanceViewModel(this);
-    }
+    public void NavigateToHRDashboard() => CurrentView = new HRDashboardViewModel(this);
+    public void NavigateToJobVacancyMgmt() => CurrentView = new JobVacancyMgmtViewModel();
+    public void NavigateToApplicantList() => CurrentView = new ApplicantListViewModel();
+    public void NavigateToApplicantReview() => CurrentView = new HRApplicantReviewViewModel(GetAppService());
+    public void NavigateToScreening() => CurrentView = new ScreeningViewModel(GetScreeningService());
+    public void NavigateToInterviewSchedule() => CurrentView = new InterviewScheduleViewModel(GetInterviewScheduleService());
+    public void NavigateToInterviewEvaluation() => CurrentView = new InterviewEvaluationViewModel(GetInterviewEvaluationService());
+    public void NavigateToHiringDecision() => CurrentView = new HiringDecisionViewModel();
+    public void NavigateToReports() => CurrentView = new ReportsViewModel();
+    public void NavigateToMaintenance() => CurrentView = new MaintenanceViewModel();
     #endregion
 
     #region Applicant Navigation
-    public void NavigateToApplicantDashboard()
-    {
-        // TODO: Implement when ApplicantDashboardViewModel is created
-        // CurrentView = new ApplicantDashboardViewModel(this);
-    }
-
-    public void NavigateToProfile()
-    {
-        // TODO: Implement when ProfileViewModel is created
-        // CurrentView = new ProfileViewModel(this);
-    }
-
-    public void NavigateToJobVacancies()
-    {
-        // TODO: Implement when JobVacanciesViewModel is created
-        // CurrentView = new JobVacanciesViewModel(this);
-    }
-
-    public void NavigateToMyApplications()
-    {
-        // TODO: Implement when MyApplicationsViewModel is created
-        // CurrentView = new MyApplicationsViewModel(this);
-    }
-
-    public void NavigateToMyDocuments()
-    {
-        // TODO: Implement when MyDocumentsViewModel is created
-        // CurrentView = new MyDocumentsViewModel(this);
-    }
-
-    public void NavigateToStatusTracking()
-    {
-        // TODO: Implement when StatusTrackingViewModel is created
-        // CurrentView = new StatusTrackingViewModel(this);
-    }
+    public void NavigateToApplicantDashboard() => CurrentView = new DashboardViewModel(this);
+    public void NavigateToProfile() => CurrentView = new ProfileViewModel();
+    public void NavigateToJobVacancies() => CurrentView = new JobVacancyViewModel(GetJobVacancyService(), GetAppService());
+    public void NavigateToMyApplication() => CurrentView = new MyApplicationViewModel(GetAppService());
+    public void NavigateToMyDocuments() => CurrentView = new MyDocumentsViewModel();
+    public void NavigateToStatusTracking() => CurrentView = new StatusTrackingViewModel();
     #endregion
 }
