@@ -9,7 +9,7 @@ using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Helpers;
 using HRApplicantSystem.Shared.Enums;
 using System;
-using HRApplicantSystem.Data;
+using HRApplicantSystem.Data;   
 using HRApplicantSystem.Data.Repositories;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
