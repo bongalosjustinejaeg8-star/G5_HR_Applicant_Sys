@@ -28,7 +28,7 @@ public partial class MyDocumentsViewModel : ViewModelBase
     /// Currently selected document.
     /// </summary>
     [ObservableProperty]
-    private dynamic? selectedDocument;
+    private object? selectedDocument;
 
     /// <summary>
     /// Status or message to display to the user.
