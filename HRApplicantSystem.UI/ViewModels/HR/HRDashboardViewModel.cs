@@ -114,6 +114,8 @@ public partial class HRDashboardViewModel : ViewModelBase
         _mainViewModel?.NavigateToApplicantList();
     }
 
+    
+
     [RelayCommand]
     public void GoToJobVacancyMgmt()
     {
