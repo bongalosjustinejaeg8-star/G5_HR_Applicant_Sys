@@ -114,17 +114,14 @@ public partial class DashboardViewModel : ViewModelBase
                 // Load upcoming interviews
                 var interviews = await interviewRepo.GetByApplicationIdAsync(latest.ApplicationId);
                 UpcomingInterviews.Clear();
-                if (interviews != null)
+                if (interviews != null && interviews.InterviewDate > DateTime.Now)
                 {
-                    foreach (var interview in interviews.Where(i => i.ScheduledAt > DateTime.Now).OrderBy(i => i.ScheduledAt))
+                    UpcomingInterviews.Add(new
                     {
-                        UpcomingInterviews.Add(new
-                        {
-                            ScheduledAt = interview.ScheduledAt.ToString("MMMM d, yyyy h:mm tt"),
-                            Mode = interview.Mode.ToString(),
-                            Location = interview.Location ?? "Online"
-                        });
-                    }
+                        ScheduledAt = interviews.InterviewDate.ToString("MMMM d, yyyy h:mm tt"),
+                        Mode = interviews.Mode.ToString(),
+                        Location = interviews.Location ?? "Online"
+                    });
                 }
 
                 Message = "Dashboard data loaded successfully.";

@@ -77,7 +77,9 @@ public class Department
 {
     public string DepartmentId { get; set; } = string.Empty;
     public string DepartmentName { get; set; } = string.Empty;
-
+    public string? Description { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? UpdatedAt { get; set; }
 
 }
 
@@ -130,10 +132,10 @@ public class JobVacancy
 public class Position
 {
     public string PositionId { get; set; } = string.Empty;
-    public string DepartmentId { get; set; } = string.Empty;
     public string PositionTitle { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
+    public string? Description { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? UpdatedAt { get; set; }
 }
 
 public class RequirementType
