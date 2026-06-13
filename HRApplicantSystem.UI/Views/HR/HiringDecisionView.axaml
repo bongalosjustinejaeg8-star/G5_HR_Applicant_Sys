@@ -1,0 +1,39 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
+             x:Class="HRApplicantSystem.UI.Views.HR.HiringDecisionView"
+             x:DataType="vm:HiringDecisionViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Hiring Decision" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <ListBox ItemsSource="{Binding ApplicantsForDecision}"
+             SelectedItem="{Binding SelectedApplicant}"
+             Height="200"
+             Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding FirstName} {Binding LastName}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Status}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <TextBlock Text="Final Decision" FontSize="16" FontWeight="Bold" Margin="0 10 0 5"/>
+    <RadioButton Content="Hire" Margin="0 0 0 5"/>
+    <RadioButton Content="Reject" Margin="0 0 0 10"/>
+
+    <TextBlock Text="Decision Remarks" Margin="0 0 0 5"/>
+    <TextBox Text="{Binding DecisionRemarks}"
+             PlaceholderText="Enter decision remarks..."
+             Height="80"
+             AcceptsReturn="True"
+             Margin="0 0 0 10"/>
+
+    <TextBlock Text="{Binding Message}" Foreground="Green" Margin="0 0 0 10"/>
+
+    <Button Content="Submit Decision" HorizontalAlignment="Right"/>
+  </StackPanel>
+</UserControl>

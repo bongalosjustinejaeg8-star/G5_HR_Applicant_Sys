@@ -25,8 +25,8 @@ public class ApplicationRepository : IApplicationRepository
         {
             applications.Add(new Application
             {
-                ApplicationId = reader.GetString(0),
-                ApplicantId = reader.GetString(1),
+                ApplicationId = reader.GetValue(0).ToString()!,
+                ApplicantId = reader.GetValue(1).ToString()!,
                 VacancyId = reader.GetString(2),
                 Status = Enum.Parse<ApplicationStatus>(reader.GetString(3)),
                 SubmittedAt = reader.GetDateTime(4),
@@ -48,8 +48,8 @@ public class ApplicationRepository : IApplicationRepository
         {
             return new Application
             {
-                ApplicationId = reader.GetString(0),
-                ApplicantId = reader.GetString(1),
+                ApplicationId = reader.GetValue(0).ToString()!,
+                ApplicantId = reader.GetValue(1).ToString()!,
                 VacancyId = reader.GetString(2),
                 Status = Enum.Parse<ApplicationStatus>(reader.GetString(3)),
                 SubmittedAt = reader.GetDateTime(4),
@@ -72,8 +72,8 @@ public class ApplicationRepository : IApplicationRepository
         {
             applications.Add(new Application
             {
-                ApplicationId = reader.GetString(0),
-                ApplicantId = reader.GetString(1),
+                ApplicationId = reader.GetValue(0).ToString()!,
+                ApplicantId = reader.GetValue(1).ToString()!,
                 VacancyId = reader.GetString(2),
                 Status = Enum.Parse<ApplicationStatus>(reader.GetString(3)),
                 SubmittedAt = reader.GetDateTime(4),

@@ -1,0 +1,51 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
+             x:Class="HRApplicantSystem.UI.Views.HR.HRLoginView"
+             x:DataType="vm:HRLoginViewModel">
+
+    <StackPanel VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Spacing="15"
+                Width="300">
+
+        <TextBlock Text="HR Login"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,20"/>
+
+        <TextBlock Text="Email" FontSize="12"/>
+        <TextBox PlaceholderText="Enter your email"
+                 Text="{Binding Email}"
+                 Padding="10"
+                 Height="40"/>
+
+        <TextBlock Text="Password" FontSize="12"/>
+        <TextBox PlaceholderText="Enter your password"
+                 PasswordChar="*"
+                 Text="{Binding Password}"
+                 Padding="10"
+                 Height="40"/>
+
+        <!-- error message shown when login fails -->
+        <TextBlock Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   HorizontalAlignment="Center"
+                   IsVisible="{Binding HasError}"/>
+
+        <Button Content="Login"
+                Command="{Binding LoginCommand}"
+                HorizontalAlignment="Stretch"
+                Padding="10"
+                Height="40"
+                Margin="0,20,0,0"/>
+
+        <Button Content="Back"
+                Command="{Binding GoBackCommand}"
+                HorizontalAlignment="Stretch"
+                Padding="10"
+                Height="40"/>
+
+    </StackPanel>
+</UserControl>

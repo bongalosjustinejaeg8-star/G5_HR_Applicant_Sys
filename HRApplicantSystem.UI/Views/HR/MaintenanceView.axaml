@@ -1,0 +1,52 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
+             x:Class="HRApplicantSystem.UI.Views.HR.MaintenanceView"
+             x:DataType="vm:MaintenanceViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="System Maintenance" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <TabControl>
+      <TabItem Header="Departments">
+        <StackPanel Margin="10">
+          <Button Content="+ Add Department" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+          <ListBox ItemsSource="{Binding Departments}" Height="250" Margin="0 0 0 10">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="5">
+                  <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                  <TextBlock Text="{Binding Description}"/>
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <StackPanel Orientation="Horizontal">
+            <Button Content="Edit" HorizontalAlignment="Left" Margin="0 0 10 0"/>
+            <Button Content="Delete" HorizontalAlignment="Left"/>
+          </StackPanel>
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="Positions">
+        <StackPanel Margin="10">
+          <Button Content="+ Add Position" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+          <ListBox ItemsSource="{Binding Positions}" Height="250" Margin="0 0 0 10">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="5">
+                  <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                  <TextBlock Text="{Binding Department}"/>
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <StackPanel Orientation="Horizontal">
+            <Button Content="Edit" HorizontalAlignment="Left" Margin="0 0 10 0"/>
+            <Button Content="Delete" HorizontalAlignment="Left"/>
+          </StackPanel>
+        </StackPanel>
+      </TabItem>
+    </TabControl>
+  </StackPanel>
+</UserControl>

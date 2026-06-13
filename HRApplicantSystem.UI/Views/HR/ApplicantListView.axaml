@@ -1,0 +1,36 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
+             x:Class="HRApplicantSystem.UI.Views.HR.ApplicantListView"
+             x:DataType="vm:ApplicantListViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Applicant List" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <TextBox Text="{Binding SearchText}" PlaceholderText="Search applicants..." Margin="0 0 0 10"/>
+
+    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
+      <TextBlock Text="Filter by Status:" VerticalAlignment="Center"/>
+      <ComboBox SelectedItem="{Binding SelectedStatus}" Margin="10 0 0 0">
+        <ComboBoxItem Content="All"/>
+        <ComboBoxItem Content="Submitted"/>
+        <ComboBoxItem Content="Under Review"/>
+        <ComboBoxItem Content="Shortlisted"/>
+        <ComboBoxItem Content="Hired"/>
+        <ComboBoxItem Content="Rejected"/>
+      </ComboBox>
+    </Grid>
+
+    <ListBox ItemsSource="{Binding Applicants}" Height="300">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding FirstName} {Binding LastName}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Email}"/>
+            <TextBlock Text="{Binding Status}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </StackPanel>
+</UserControl>

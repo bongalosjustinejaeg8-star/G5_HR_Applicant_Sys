@@ -25,8 +25,8 @@ public class InterviewScheduleRepository : IInterviewScheduleRepository
         {
             schedules.Add(new InterviewSchedule
             {
-                ScheduleId = reader.GetString(0),
-                ApplicationId = reader.GetString(1),
+                ScheduleId = reader.GetValue(0).ToString()!,
+                ApplicationId = reader.GetValue(1).ToString()!,
                 InterviewerId = reader.IsDBNull(2) ? null : reader.GetString(2),
                 InterviewDate = reader.GetDateTime(3),
                 Mode = Enum.Parse<InterviewMode>(reader.GetString(4)),
@@ -49,8 +49,8 @@ public class InterviewScheduleRepository : IInterviewScheduleRepository
         {
             return new InterviewSchedule
             {
-                ScheduleId = reader.GetString(0),
-                ApplicationId = reader.GetString(1),
+                ScheduleId = reader.GetValue(0).ToString()!,
+                ApplicationId = reader.GetValue(1).ToString()!,
                 InterviewerId = reader.IsDBNull(2) ? null : reader.GetString(2),
                 InterviewDate = reader.GetDateTime(3),
                 Mode = Enum.Parse<InterviewMode>(reader.GetString(4)),
@@ -73,8 +73,8 @@ public class InterviewScheduleRepository : IInterviewScheduleRepository
         {
             return new InterviewSchedule
             {
-                ScheduleId = reader.GetString(0),
-                ApplicationId = reader.GetString(1),
+                ScheduleId = reader.GetValue(0).ToString()!,
+                ApplicationId = reader.GetValue(1).ToString()!,
                 InterviewerId = reader.IsDBNull(2) ? null : reader.GetString(2),
                 InterviewDate = reader.GetDateTime(3),
                 Mode = Enum.Parse<InterviewMode>(reader.GetString(4)),

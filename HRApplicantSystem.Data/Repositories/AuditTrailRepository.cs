@@ -24,8 +24,8 @@ public class AuditTrailRepository : IAuditTrailRepository
         {
             audits.Add(new AuditTrail
             {
-                AuditId = reader.GetString(0),
-                UserId = reader.IsDBNull(1) ? null : reader.GetString(1),
+                AuditId = reader.GetValue(0).ToString()!,
+                UserId = reader.IsDBNull(1) ? null : reader.GetValue(1).ToString()!,
                 Action = reader.GetString(2),
                 TableAffected = reader.GetString(3),
                 RecordId = reader.GetString(4),
@@ -48,8 +48,8 @@ public class AuditTrailRepository : IAuditTrailRepository
         {
             audits.Add(new AuditTrail
             {
-                AuditId = reader.GetString(0),
-                UserId = reader.IsDBNull(1) ? null : reader.GetString(1),
+                AuditId = reader.GetValue(0).ToString()!,
+                UserId = reader.IsDBNull(1) ? null : reader.GetValue(1).ToString()!,
                 Action = reader.GetString(2),
                 TableAffected = reader.GetString(3),
                 RecordId = reader.GetString(4),

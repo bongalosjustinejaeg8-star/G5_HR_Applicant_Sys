@@ -1,0 +1,30 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels"
+             x:Class="HRApplicantSystem.UI.Views.LandingView"
+             x:DataType="vm:LandingViewModel">
+
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="20">
+
+                <TextBlock Text="HR Applicant System"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Please select your role to continue"
+                           HorizontalAlignment="Center"/>
+
+                <Button Content="Applicant"
+                        Width="200"
+                        HorizontalAlignment="Center"
+                        Command="{Binding GoToApplicantLoginCommand}"/>
+
+                <Button Content="HR / Staff"
+                        Width="200"
+                        HorizontalAlignment="Center"
+                        Command="{Binding GoToHRLoginCommand}"/>
+
+        </StackPanel>
+</UserControl>

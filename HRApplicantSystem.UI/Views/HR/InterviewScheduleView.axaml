@@ -1,0 +1,51 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
+             xmlns:m="using:HRApplicantSystem.Data.Models"
+             x:Class="HRApplicantSystem.UI.Views.HR.InterviewScheduleView"
+             x:DataType="vm:InterviewScheduleViewModel">
+
+  <StackPanel Margin="20">
+    <TextBlock Text="Interview Scheduling" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+
+    <ListBox ItemsSource="{Binding Applications}"
+             SelectedItem="{Binding SelectedApplication}"
+             Height="200"
+             Margin="0 0 0 10">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="m:Application">
+          <StackPanel Margin="5">
+            <TextBlock Text="{Binding Status}" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SubmittedAt}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <TextBlock Text="Interview Details" FontSize="16" FontWeight="Bold" Margin="0 10 0 5"/>
+
+    <TextBlock Text="Interview Date" Margin="0 0 0 5"/>
+    <DatePicker SelectedDate="{Binding InterviewDate}" Margin="0 0 0 10"/>
+
+    <TextBlock Text="Interviewer" Margin="0 0 0 5"/>
+    <TextBox Text="{Binding Interviewer}"
+             PlaceholderText="Enter interviewer name..."
+             Margin="0 0 0 10"/>
+
+    <TextBlock Text="Mode" Margin="0 0 0 5"/>
+    <ComboBox SelectedItem="{Binding Mode}" Margin="0 0 0 10">
+      <ComboBoxItem Content="Online"/>
+      <ComboBoxItem Content="Onsite"/>
+    </ComboBox>
+
+    <TextBlock Text="Location" Margin="0 0 0 5"/>
+    <TextBox Text="{Binding Location}"
+             PlaceholderText="Enter location or meeting link..."
+             Margin="0 0 0 10"/>
+
+    <TextBlock Text="{Binding Message}" Foreground="Green" Margin="0 0 0 10"/>
+
+    <Button Content="Save Interview Schedule"
+            HorizontalAlignment="Right"/>
+  </StackPanel>
+</UserControl>

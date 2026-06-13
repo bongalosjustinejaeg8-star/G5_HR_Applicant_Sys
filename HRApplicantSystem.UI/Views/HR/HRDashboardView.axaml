@@ -1,0 +1,103 @@
+<UserControl x:CompileBindings="False"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
+             x:Class="HRApplicantSystem.UI.Views.HR.HRDashboardView"
+             x:DataType="vm:HRDashboardViewModel">
+
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="20">
+
+      <!-- Header -->
+      <TextBlock Text="HR Dashboard"
+                 FontSize="28"
+                 FontWeight="Bold"
+                 Margin="0,0,0,10"/>
+
+      <!-- Stats Cards -->
+      <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+
+        <Border Background="#1E88E5" CornerRadius="12" Padding="16">
+          <StackPanel>
+            <TextBlock Text="Total Applicants" Foreground="White" Opacity="0.9"/>
+            <TextBlock Text="{Binding TotalApplicants}"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+          </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Background="#FB8C00" CornerRadius="12" Padding="16">
+          <StackPanel>
+            <TextBlock Text="Screening" Foreground="White" Opacity="0.9"/>
+            <TextBlock Text="{Binding ScreeningCount}"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+          </StackPanel>
+        </Border>
+
+        <Border Grid.Column="2" Background="#8E24AA" CornerRadius="12" Padding="16">
+          <StackPanel>
+            <TextBlock Text="Interview" Foreground="White" Opacity="0.9"/>
+            <TextBlock Text="{Binding InterviewCount}"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+          </StackPanel>
+        </Border>
+
+        <Border Grid.Column="3" Background="#43A047" CornerRadius="12" Padding="16">
+          <StackPanel>
+            <TextBlock Text="Hired" Foreground="White" Opacity="0.9"/>
+            <TextBlock Text="{Binding HiredCount}"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+          </StackPanel>
+        </Border>
+
+      </Grid>
+
+      <!-- Recent Activity Card -->
+      <Border Background="#FAFAFA"
+              CornerRadius="12"
+              Padding="16">
+
+        <StackPanel Spacing="10">
+
+          <TextBlock Text="Recent Activities"
+                     FontSize="18"
+                     FontWeight="Bold"/>
+
+          <ListBox ItemsSource="{Binding RecentActivities}"
+                   Height="220">
+
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border Padding="10"
+                        Margin="4"
+                        CornerRadius="8"
+                        Background="White">
+
+                  <StackPanel>
+                    <TextBlock Text="{Binding Description}"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Timestamp}"
+                               Opacity="0.6"
+                               FontSize="12"/>
+                  </StackPanel>
+
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+
+          </ListBox>
+
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+
+</UserControl>

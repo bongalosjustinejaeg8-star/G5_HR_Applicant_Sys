@@ -25,8 +25,8 @@ public class ScreeningResultRepository : IScreeningResultRepository
         {
             return new ScreeningResult
             {
-                ScreeningId = reader.GetString(0),
-                ApplicationId = reader.GetString(1),
+                ScreeningId = reader.GetValue(0).ToString()!,
+                ApplicationId = reader.GetValue(1).ToString()!,
                 ScreenedBy = reader.IsDBNull(2) ? null : reader.GetString(2),
                 Result = (ScreeningResults)Enum.Parse(typeof(ScreeningResults), reader.GetString(3)),
                 Remarks = reader.IsDBNull(4) ? null : reader.GetString(4),
