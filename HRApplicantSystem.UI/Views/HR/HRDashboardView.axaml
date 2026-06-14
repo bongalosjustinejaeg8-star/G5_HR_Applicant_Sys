@@ -76,7 +76,7 @@
         <Style Selector="Button"><Setter Property="Margin" Value="6"/></Style>
       </UniformGrid.Styles>
 
-      <Button Classes="tile" Command="{Binding OpenJobVacancyCommand}">
+      <Button Classes="tile" Command="{Binding GoToJobVacancyMgmt}">
         <StackPanel Spacing="6">
           <TextBlock Text="📄" FontSize="22"/>
           <TextBlock Text="Job Vacancy" FontWeight="SemiBold" Foreground="White"/>
@@ -84,7 +84,7 @@
         </StackPanel>
       </Button>
 
-      <Button Classes="tile" Command="{Binding OpenReportsCommand}">
+      <Button Classes="tile" Command="{Binding GoToReports}">
         <StackPanel Spacing="6">
           <TextBlock Text="📊" FontSize="22"/>
           <TextBlock Text="Reports" FontWeight="SemiBold" Foreground="White"/>
@@ -99,7 +99,7 @@
           <TextBlock Text="Total Applicants" Foreground="White" Opacity="0.85" FontSize="12"/>
         </StackPanel>
       </Button>
-
+        
       <Button Classes="tile stat orange">
         <StackPanel Spacing="6">
           <TextBlock Text="⏱" FontSize="20" Foreground="White"/>

@@ -17,9 +17,8 @@ public partial class ReportsViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<dynamic> _reportItems = new();
     [ObservableProperty] private string _reportTitle = "All Applicants";
     [ObservableProperty] private string _totalCount = string.Empty;
-    [ObservableProperty] private DateTime _startDate = DateTime.Now.AddMonths(-1);
-    [ObservableProperty] private DateTime _endDate = DateTime.Now;
-
+    [ObservableProperty] private DateTimeOffset? _startDate = DateTimeOffset.Now.AddMonths(-1);
+    [ObservableProperty] private DateTimeOffset? _endDate = DateTimeOffset.Now;
     public ReportsViewModel() { _ = LoadReportAsync(); }
     public ReportsViewModel(MainWindowViewModel mainViewModel) { _mainViewModel = mainViewModel; _ = LoadReportAsync(); }
 

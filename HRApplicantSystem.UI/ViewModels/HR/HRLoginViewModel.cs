@@ -76,4 +76,5 @@ public partial class HRLoginViewModel : ViewModelBase
             HasError = true;
         }
     }
+    [RelayCommand] private void GoBack() => _mainViewModel.NavigateToLanding();
 }

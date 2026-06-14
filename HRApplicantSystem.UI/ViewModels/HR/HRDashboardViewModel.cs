@@ -23,7 +23,7 @@ public partial class HRDashboardViewModel : ViewModelBase
     /// Total number of applicants in the system.
     /// </summary>
     [ObservableProperty]
-    private int totalApplicants = 0;
+    private int totalApplicants = 3;
 
     /// <summary>
     /// Number of applications pending review.

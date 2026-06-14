@@ -84,6 +84,19 @@ public partial class ProfileViewModel : ViewModelBase
         set { _hasMessage = value; OnPropertyChanged(); }
     }
 
+    public class EducationItem
+    {
+        public string Degree { get; set; } = string.Empty;
+        public string Institution { get; set; } = string.Empty;
+        public string GraduationYear { get; set; } = string.Empty;
+    }
+
+    public class ExperienceItem
+    {
+        public string JobTitle { get; set; } = string.Empty;
+        public string CompanyName { get; set; } = string.Empty;
+    }
+
     public ObservableCollection<dynamic> EducationList { get; set; } = new();
     public ObservableCollection<dynamic> WorkExperienceList { get; set; } = new();
 
