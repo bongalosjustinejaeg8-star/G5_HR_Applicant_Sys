@@ -7,13 +7,10 @@ using CommunityToolkit.Mvvm.Input;
 using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Shared.Helpers;
+using HRApplicantSystem.Data.Models;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
-/// <summary>
-/// ViewModel for managing applicant documents and video recordings.
-/// Handles loading, uploading, and deletion of application documents.
-/// </summary>
 public partial class MyDocumentsViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel? _mainViewModel;
@@ -112,11 +109,21 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-            // TODO: Implement document retrieval from DocumentRepository
-            // This would typically load documents from a documents table/repository
-            Message = $"Documents loaded for applicant {applicant.ApplicantId}";
+            var documentRepo = new ApplicantDocumentRepository(db);
+
+            var applicantDocuments =
+                await documentRepo.GetByApplicantIdAsync(applicant.ApplicantId);
+
+            foreach (var document in applicantDocuments)
+            {
+                Documents.Add(document);
+            }
+
+            Message = $"{Documents.Count} document(s) loaded successfully.";
             HasMessage = true;
-            Debug.WriteLine($"[MyDocumentsViewModel] Loaded {Documents.Count} documents");
+
+            Debug.WriteLine(
+                $"[MyDocumentsViewModel] Loaded {Documents.Count} documents");
         }
         catch (Exception ex)
         {
@@ -147,16 +154,23 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-            // TODO: Implement document upload logic
-            // 1. Open file dialog
-            // 2. Validate file type and size
-            // 3. Upload to storage
-            // 4. Save metadata to database
-            // 5. Reload documents
+           var db = new DbContext(AppConfig.ConnectionString);
+            var applicantRepo = new ApplicantRepository(db);
 
-            Message = "Document upload feature coming soon.";
+            var applicant = await applicantRepo.GetByAccountIdAsync(applicantId);
+
+            if (applicant == null)
+            {
+                Message = "Applicant profile not found.";
+                HasMessage = true;
+                return;
+            }
+
+            Message = "Upload document feature is currently unavailable.";
             HasMessage = true;
-            Debug.WriteLine("[MyDocumentsViewModel] Upload: Feature not yet implemented");
+
+            Debug.WriteLine(
+                $"[MyDocumentsViewModel] Upload requested for applicant {applicant.ApplicantId}");
         }
         catch (Exception ex)
         {
@@ -183,16 +197,10 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-            // TODO: Implement video recording logic
-            // 1. Launch recording interface
-            // 2. Allow applicant to record
-            // 3. Save video to storage
-            // 4. Create document entry
-            // 5. Reload documents
-
-            Message = "Video recording feature coming soon.";
+            Message = "Video recording feature is not yet implemented.";
             HasMessage = true;
-            Debug.WriteLine("[MyDocumentsViewModel] Record video: Feature not yet implemented");
+            Debug.WriteLine(
+                $"[MyDocumentsViewModel] Video recording requested by user {applicantId}");
         }
         catch (Exception ex)
         {
@@ -218,15 +226,32 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-            // TODO: Implement document deletion logic
-            // 1. Confirm deletion
-            // 2. Delete from storage
-            // 3. Remove from database
-            // 4. Reload documents
+           var document = SelectedDocument as ApplicantDocument;
 
-            Message = "Document deletion feature coming soon.";
+            if (document == null)
+            {
+                Message = "Invalid document selected.";
+                HasMessage = true;
+                return;
+            }
+
+            var db = new DbContext(AppConfig.ConnectionString);
+            var documentRepo = new ApplicantDocumentRepository(db);
+
+            var deleted = await documentRepo.DeleteAsync(document.DocumentId);
+
+            if (deleted)
+            {
+                await LoadDocumentsAsync();
+
+                Message = "Document deleted successfully.";
+            }
+            else
+            {
+                Message = "Failed to delete document.";
+            }
+
             HasMessage = true;
-            Debug.WriteLine("[MyDocumentsViewModel] Delete: Feature not yet implemented");
         }
         catch (Exception ex)
         {
