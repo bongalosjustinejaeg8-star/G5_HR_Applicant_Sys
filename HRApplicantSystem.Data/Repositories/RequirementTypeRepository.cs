@@ -26,12 +26,11 @@ public class RequirementTypeRepository : IRequirementTypeRepository
         {
             types.Add(new RequirementType
             {
-                RequirementTypeId = reader.GetString(0),
-                Name = reader.GetString(1),
-                Description = reader.IsDBNull(2) ? string.Empty : reader.GetString(2)
+                RequirementTypeId = Convert.ToString(reader["requirement_type_id"]) ?? "",
+                Name = Convert.ToString(reader["name"]) ?? "",
+                Description = Convert.ToString(reader["description"]) ?? ""
             });
         }
-
         return types;
     }
 }
