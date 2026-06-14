@@ -20,9 +20,10 @@ public partial class MyDocumentsViewModel : ViewModelBase
     private readonly MainWindowViewModel? _mainViewModel;
 
     [ObservableProperty]
-    private ObservableCollection<ApplicantDocument> documents = new();
+    private ObservableCollection<dynamic> documents = new();
+
     [ObservableProperty]
-    private ApplicantDocument? selectedDocument;
+    private object? selectedDocument;
 
     [ObservableProperty]
     private ObservableCollection<RequirementType> requirementTypes = new();
@@ -299,6 +300,7 @@ public partial class MyDocumentsViewModel : ViewModelBase
 }
 
     [RelayCommand]
+
     public async Task DeleteDocumentAsync()
     {
         Debug.WriteLine($"[DEBUG] Delete clicked. SelectedDocument is: {SelectedDocument}");
@@ -344,6 +346,7 @@ public partial class MyDocumentsViewModel : ViewModelBase
             Debug.WriteLine($"[MyDocumentsViewModel] DeleteDocumentAsync error: {ex}");
         }
     }
+
 
     [RelayCommand]
     public void GoBack()
