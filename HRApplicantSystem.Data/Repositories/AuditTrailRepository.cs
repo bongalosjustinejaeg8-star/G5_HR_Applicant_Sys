@@ -49,7 +49,7 @@ public class AuditTrailRepository : IAuditTrailRepository
             audits.Add(new AuditTrail
             {
                 AuditId = reader.GetValue(0).ToString()!,
-                UserId = reader.IsDBNull(1) ? null : reader.GetValue(1).ToString()!,
+                UserId = reader.IsDBNull(1) ? "" : reader.GetValue(1).ToString() ?? "",
                 Action = reader.GetString(2),
                 TableAffected = reader.GetString(3),
                 RecordId = reader.GetString(4),

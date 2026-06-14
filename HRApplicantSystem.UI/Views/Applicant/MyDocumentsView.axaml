@@ -7,11 +7,25 @@
   <StackPanel Margin="20">
     <TextBlock Text="My Documents" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
-    <Button Content="+ Upload Document" HorizontalAlignment="Left" Margin="0 0 0 10"/>
-    <Button Content="+ Record Video" HorizontalAlignment="Left" Margin="0 0 0 15"/>
+    <ComboBox ItemsSource="{Binding RequirementTypes}"
+              SelectedItem="{Binding SelectedRequirementType}"
+              DisplayMemberBinding="{Binding Name}"
+              PlaceholderText="Select document type"
+              HorizontalAlignment="Left"
+              Width="220"
+              Margin="0 0 0 10"/>
+
+    <Button Content="+ Upload Document" 
+        Command="{Binding UploadDocumentCommand}" 
+        HorizontalAlignment="Left" Margin="0 0 0 10"/>
+    <Button Content="+ Record Video" 
+        Command="{Binding RecordVideoCommand}"
+        HorizontalAlignment="Left" Margin="0 0 0 15"/>
 
     <TextBlock Text="Uploaded Documents" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
-    <ListBox ItemsSource="{Binding Documents}" Height="300" Margin="0 0 0 10">
+    <ListBox ItemsSource="{Binding Documents}" 
+             SelectedItem="{Binding SelectedDocument}"
+             Height="300" Margin="0 0 0 10">
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Margin="5">
@@ -26,8 +40,16 @@
     </ListBox>
 
     <Grid ColumnDefinitions="*,*" Margin="0 10 0 0">
-      <Button Content="Download" HorizontalAlignment="Left"/>
-      <Button Content="Delete" HorizontalAlignment="Right" Foreground="Red"/>
+      <Button Grid.Column="0" 
+              Content="Download" 
+              Command="{Binding DownloadDocumentCommand}" 
+              HorizontalAlignment="Left"/>
+
+      <Button Grid.Column="1" 
+              Content="Delete" 
+              Command="{Binding DeleteDocumentCommand}" 
+              HorizontalAlignment="Right" 
+              Foreground="Red"/>
     </Grid>
   </StackPanel>
 </UserControl>

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using Avalonia.Platform.Storage;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -26,6 +28,18 @@ public partial class MyDocumentsViewModel : ViewModelBase
     /// </summary>
     [ObservableProperty]
     private object? selectedDocument;
+
+    /// <summary>
+    /// Available requirement types for document upload.
+    /// </summary>
+    [ObservableProperty]
+    private ObservableCollection<RequirementType> requirementTypes = new();
+
+    /// <summary>
+    /// Currently selected requirement type for upload.
+    /// </summary>
+    [ObservableProperty]
+    private RequirementType? selectedRequirementType;
 
     /// <summary>
     /// Status or message to display to the user.
@@ -67,12 +81,39 @@ public partial class MyDocumentsViewModel : ViewModelBase
         try
         {
             await LoadDocumentsAsync();
+            await LoadRequirementTypesAsync();
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"[MyDocumentsViewModel] InitializeAsync error: {ex.Message}");
             Message = "Failed to initialize documents.";
             HasMessage = true;
+        }
+    }
+
+    /// <summary>
+    /// Loads available requirement types for the upload dropdown.
+    /// </summary>
+    private async Task LoadRequirementTypesAsync()
+    {
+        Debug.WriteLine("[MyDocumentsViewModel] LoadRequirementTypesAsync called");
+        try
+        {
+            var db = new DbContext(AppConfig.ConnectionString);
+            var requirementTypeRepo = new RequirementTypeRepository(db);
+            var types = await requirementTypeRepo.GetAllAsync();
+
+            RequirementTypes.Clear();
+            foreach (var type in types)
+            {
+                RequirementTypes.Add(type);
+            }
+
+            Debug.WriteLine($"[MyDocumentsViewModel] Loaded {RequirementTypes.Count} requirement types");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[MyDocumentsViewModel] LoadRequirementTypesAsync error: {ex}");
         }
     }
 
@@ -144,8 +185,33 @@ public partial class MyDocumentsViewModel : ViewModelBase
     public async Task UploadDocumentAsync()
     {
         Debug.WriteLine("[MyDocumentsViewModel] UploadDocumentAsync called");
+
+        if (SelectedRequirementType == null)
+        {
+            Message = "Please select a document type first.";
+            HasMessage = true;
+            return;
+        }
+
+        var mainWindow = Avalonia.Application.Current?.ApplicationLifetime
+            as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime;
+        var window = mainWindow?.MainWindow;
+        if (window == null) return;
+
+        var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Select Document or Video",
+            AllowMultiple = false
+        });
+
+        if (files.Count == 0) return;
+
+        var file = files[0];
+
         try
         {
+            IsLoading = true;
+
             var applicantId = SessionManager.CurrentUserId;
             if (string.IsNullOrEmpty(applicantId))
             {
@@ -154,9 +220,8 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-           var db = new DbContext(AppConfig.ConnectionString);
+            var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
-
             var applicant = await applicantRepo.GetByAccountIdAsync(applicantId);
 
             if (applicant == null)
@@ -166,47 +231,131 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-            Message = "Upload document feature is currently unavailable.";
-            HasMessage = true;
+            // Save file to local storage
+            var uploadsFolder = Path.Combine(
+                AppContext.BaseDirectory, "Uploads", applicant.ApplicantId.ToString());
 
-            Debug.WriteLine(
-                $"[MyDocumentsViewModel] Upload requested for applicant {applicant.ApplicantId}");
+            Directory.CreateDirectory(uploadsFolder);
+
+            var destFileName = $"{Guid.NewGuid()}_{file.Name}";
+            var destPath = Path.Combine(uploadsFolder, destFileName);
+
+            await using (var sourceStream = await file.OpenReadAsync())
+            await using (var destStream = File.Create(destPath))
+            {
+                await sourceStream.CopyToAsync(destStream);
+            }
+
+            // Create document entry in database
+            var documentRepo = new ApplicantDocumentRepository(db);
+
+            var newDocument = new ApplicantDocument
+            {
+                ApplicantId = applicant.ApplicantId,
+                RequirementTypeId = SelectedRequirementType.RequirementTypeId,
+                FilePath = destPath,
+                Status = HRApplicantSystem.Shared.Enums.DocumentStatus.Submitted 
+            };
+
+            await documentRepo.CreateAsync(newDocument);
+
+            // Reload documents
+            await LoadDocumentsAsync();
+
+            Message = $"{file.Name} uploaded successfully as {SelectedRequirementType.Name}.";
+            HasMessage = true;
         }
         catch (Exception ex)
         {
-            Message = $"Error uploading document: {ex.Message}";
+            Message = $"Error uploading file: {ex.Message}";
             HasMessage = true;
             Debug.WriteLine($"[MyDocumentsViewModel] UploadDocumentAsync error: {ex}");
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
     /// <summary>
-    /// Records a video for the applicant's application.
+    /// Opens the camera app for video recording.
     /// </summary>
     [RelayCommand]
-    public async Task RecordVideoAsync()
+    public void RecordVideo()
     {
-        Debug.WriteLine("[MyDocumentsViewModel] RecordVideoAsync called");
+        Debug.WriteLine("[MyDocumentsViewModel] RecordVideo called");
         try
         {
-            var applicantId = SessionManager.CurrentUserId;
-            if (string.IsNullOrEmpty(applicantId))
+            var processInfo = new System.Diagnostics.ProcessStartInfo
             {
-                Message = "User not authenticated. Please log in.";
-                HasMessage = true;
-                return;
-            }
+                FileName = "microsoft.windows.camera:",
+                UseShellExecute = true
+            };
 
-            Message = "Video recording feature is not yet implemented.";
+            System.Diagnostics.Process.Start(processInfo);
+
+            Message = "Recording started in Camera app. Please save the file then use 'Upload' to submit.";
             HasMessage = true;
-            Debug.WriteLine(
-                $"[MyDocumentsViewModel] Video recording requested by user {applicantId}");
         }
         catch (Exception ex)
         {
-            Message = $"Error recording video: {ex.Message}";
+            Message = $"Error opening camera: {ex.Message}";
             HasMessage = true;
-            Debug.WriteLine($"[MyDocumentsViewModel] RecordVideoAsync error: {ex}");
+            Debug.WriteLine($"[MyDocumentsViewModel] RecordVideo error: {ex}");
+        }
+    }
+
+    /// <summary>
+    /// Downloads the selected document to a chosen location.
+    /// </summary>
+    [RelayCommand]
+    public async Task DownloadDocumentAsync()
+    {
+        Debug.WriteLine("[MyDocumentsViewModel] DownloadDocumentAsync called");
+        if (SelectedDocument is not ApplicantDocument document)
+        {
+            Message = "Please select a document to download.";
+            HasMessage = true;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(document.FilePath) || !File.Exists(document.FilePath))
+        {
+            Message = "File not found on disk.";
+            HasMessage = true;
+            return;
+        }
+
+        var mainWindow = Avalonia.Application.Current?.ApplicationLifetime
+            as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime;
+        var window = mainWindow?.MainWindow;
+        if (window == null) return;
+
+        var suggestedName = Path.GetFileName(document.FilePath);
+
+        var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save Document",
+            SuggestedFileName = suggestedName
+        });
+
+        if (file != null)
+        {
+            try
+            {
+                await using var sourceStream = File.OpenRead(document.FilePath);
+                await using var destStream = await file.OpenWriteAsync();
+                await sourceStream.CopyToAsync(destStream);
+
+                Message = $"Saved to {file.Name}";
+                HasMessage = true;
+            }
+            catch (Exception ex)
+            {
+                Message = $"Error saving file: {ex.Message}";
+                HasMessage = true;
+                Debug.WriteLine($"[MyDocumentsViewModel] DownloadDocumentAsync error: {ex}");
+            }
         }
     }
 
@@ -226,7 +375,7 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-           var document = SelectedDocument as ApplicantDocument;
+            var document = SelectedDocument as ApplicantDocument;
 
             if (document == null)
             {
@@ -243,7 +392,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
             if (deleted)
             {
                 await LoadDocumentsAsync();
-
                 Message = "Document deleted successfully.";
             }
             else
