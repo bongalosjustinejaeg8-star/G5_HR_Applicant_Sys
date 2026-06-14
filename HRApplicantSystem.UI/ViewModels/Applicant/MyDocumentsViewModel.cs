@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.IO;
 using Avalonia.Platform.Storage;
 using System.Collections.ObjectModel;
@@ -17,45 +19,23 @@ public partial class MyDocumentsViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel? _mainViewModel;
 
-    /// <summary>
-    /// Collection of applicant documents.
-    /// </summary>
     [ObservableProperty]
-    private ObservableCollection<dynamic> documents = new();
-
-    /// <summary>
-    /// Currently selected document.
-    /// </summary>
+    private ObservableCollection<ApplicantDocument> documents = new();
     [ObservableProperty]
-    private object? selectedDocument;
+    private ApplicantDocument? selectedDocument;
 
-    /// <summary>
-    /// Available requirement types for document upload.
-    /// </summary>
     [ObservableProperty]
     private ObservableCollection<RequirementType> requirementTypes = new();
 
-    /// <summary>
-    /// Currently selected requirement type for upload.
-    /// </summary>
     [ObservableProperty]
     private RequirementType? selectedRequirementType;
 
-    /// <summary>
-    /// Status or message to display to the user.
-    /// </summary>
     [ObservableProperty]
     private string message = "";
 
-    /// <summary>
-    /// True when a message should be displayed.
-    /// </summary>
     [ObservableProperty]
     private bool hasMessage = false;
 
-    /// <summary>
-    /// True while documents are loading.
-    /// </summary>
     [ObservableProperty]
     private bool isLoading = false;
 
@@ -72,9 +52,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
         _ = InitializeAsync();
     }
 
-    /// <summary>
-    /// Initializes the ViewModel and loads documents on construction.
-    /// </summary>
     private async Task InitializeAsync()
     {
         Debug.WriteLine("[MyDocumentsViewModel] InitializeAsync called");
@@ -91,9 +68,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Loads available requirement types for the upload dropdown.
-    /// </summary>
     private async Task LoadRequirementTypesAsync()
     {
         Debug.WriteLine("[MyDocumentsViewModel] LoadRequirementTypesAsync called");
@@ -103,27 +77,20 @@ public partial class MyDocumentsViewModel : ViewModelBase
             var requirementTypeRepo = new RequirementTypeRepository(db);
             var types = await requirementTypeRepo.GetAllAsync();
 
-            RequirementTypes.Clear();
-            foreach (var type in types)
-            {
-                RequirementTypes.Add(type);
-            }
+            RequirementTypes = new ObservableCollection<RequirementType>(types);
 
             Debug.WriteLine($"[MyDocumentsViewModel] Loaded {RequirementTypes.Count} requirement types");
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[MyDocumentsViewModel] LoadRequirementTypesAsync error: {ex}");
-        }
+            Debug.WriteLine($"[MyDocumentsViewModel] LoadRequirementTypesAsync error: {ex.Message}");
+        }   
     }
 
-    /// <summary>
-    /// Loads all documents for the current applicant from the database.
-    /// </summary>
-    [RelayCommand]
+   [RelayCommand]
     public async Task LoadDocumentsAsync()
     {
-        Debug.WriteLine("[MyDocumentsViewModel] LoadDocumentsAsync called");
+        Debug.WriteLine(">>> DEBUG: LoadDocumentsAsync started <<<");
         try
         {
             IsLoading = true;
@@ -132,45 +99,38 @@ public partial class MyDocumentsViewModel : ViewModelBase
             var applicantId = SessionManager.CurrentUserId;
             if (string.IsNullOrEmpty(applicantId))
             {
-                Message = "User not authenticated. Please log in.";
-                HasMessage = true;
-                Debug.WriteLine("[MyDocumentsViewModel] No current user ID");
+                Debug.WriteLine(">>> DEBUG: No User ID found <<<");
                 return;
             }
-
+        
             var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
             var applicant = await applicantRepo.GetByAccountIdAsync(applicantId);
 
             if (applicant == null)
             {
-                Message = "Applicant profile not found.";
-                HasMessage = true;
-                Debug.WriteLine("[MyDocumentsViewModel] Applicant not found for user");
+                Debug.WriteLine(">>> DEBUG: Applicant not found in DB <<<");
                 return;
             }
 
             var documentRepo = new ApplicantDocumentRepository(db);
+            var applicantDocuments = await documentRepo.GetByApplicantIdAsync(applicant.ApplicantId);
 
-            var applicantDocuments =
-                await documentRepo.GetByApplicantIdAsync(applicant.ApplicantId);
+            var docList = applicantDocuments.ToList();
+            Debug.WriteLine($">>> DEBUG: Found {docList.Count} documents for ApplicantId: {applicant.ApplicantId} <<<");
 
-            foreach (var document in applicantDocuments)
+            foreach (var document in docList)
             {
+                Debug.WriteLine($">>> DEBUG: Adding document: {document.FilePath} <<<");
                 Documents.Add(document);
             }
 
-            Message = $"{Documents.Count} document(s) loaded successfully.";
+            Message = $"{Documents.Count} document(s) loaded.";
             HasMessage = true;
-
-            Debug.WriteLine(
-                $"[MyDocumentsViewModel] Loaded {Documents.Count} documents");
         }
         catch (Exception ex)
         {
-            Message = $"Error loading documents: {ex.Message}";
-            HasMessage = true;
-            Debug.WriteLine($"[MyDocumentsViewModel] LoadDocumentsAsync error: {ex}");
+            Debug.WriteLine($">>> DEBUG ERROR: {ex} <<<");
         }
         finally
         {
@@ -178,9 +138,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Uploads a new document for the applicant.
-    /// </summary>
     [RelayCommand]
     public async Task UploadDocumentAsync()
     {
@@ -231,7 +188,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 return;
             }
 
-            // Save file to local storage
             var uploadsFolder = Path.Combine(
                 AppContext.BaseDirectory, "Uploads", applicant.ApplicantId.ToString());
 
@@ -246,7 +202,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
                 await sourceStream.CopyToAsync(destStream);
             }
 
-            // Create document entry in database
             var documentRepo = new ApplicantDocumentRepository(db);
 
             var newDocument = new ApplicantDocument
@@ -259,7 +214,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
 
             await documentRepo.CreateAsync(newDocument);
 
-            // Reload documents
             await LoadDocumentsAsync();
 
             Message = $"{file.Name} uploaded successfully as {SelectedRequirementType.Name}.";
@@ -277,9 +231,7 @@ public partial class MyDocumentsViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Opens the camera app for video recording.
-    /// </summary>
+
     [RelayCommand]
     public void RecordVideo()
     {
@@ -305,67 +257,51 @@ public partial class MyDocumentsViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Downloads the selected document to a chosen location.
-    /// </summary>
-    [RelayCommand]
+   [RelayCommand]
     public async Task DownloadDocumentAsync()
     {
         Debug.WriteLine("[MyDocumentsViewModel] DownloadDocumentAsync called");
-        if (SelectedDocument is not ApplicantDocument document)
+        try
         {
-            Message = "Please select a document to download.";
-            HasMessage = true;
-            return;
-        }
-
-        if (string.IsNullOrEmpty(document.FilePath) || !File.Exists(document.FilePath))
-        {
-            Message = "File not found on disk.";
-            HasMessage = true;
-            return;
-        }
-
-        var mainWindow = Avalonia.Application.Current?.ApplicationLifetime
-            as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime;
-        var window = mainWindow?.MainWindow;
-        if (window == null) return;
-
-        var suggestedName = Path.GetFileName(document.FilePath);
-
-        var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Save Document",
-            SuggestedFileName = suggestedName
-        });
-
-        if (file != null)
-        {
-            try
+            if (SelectedDocument is not ApplicantDocument document)
             {
-                await using var sourceStream = File.OpenRead(document.FilePath);
-                await using var destStream = await file.OpenWriteAsync();
-                await sourceStream.CopyToAsync(destStream);
+                Message = "Please select a document.";
+                HasMessage = true;
+                return;
+            }
 
-                Message = $"Saved to {file.Name}";
-                HasMessage = true;
-            }
-            catch (Exception ex)
+            if (!File.Exists(document.FilePath))
             {
-                Message = $"Error saving file: {ex.Message}";
+                Message = "File not found.";
                 HasMessage = true;
-                Debug.WriteLine($"[MyDocumentsViewModel] DownloadDocumentAsync error: {ex}");
+                return;
             }
-        }
+
+            await Task.Run(() =>
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = document.FilePath,
+                    UseShellExecute = true
+                });
+            });
+
+        Message = "Document opened successfully.";
+        HasMessage = true;
     }
+    catch (Exception ex)
+    {
+        Message = $"Error opening document: {ex.Message}";
+        HasMessage = true;
+        Debug.WriteLine($"Download error: {ex}");
 
-    /// <summary>
-    /// Deletes the selected document.
-    /// </summary>
+    }
+}
+
     [RelayCommand]
     public async Task DeleteDocumentAsync()
     {
-        Debug.WriteLine("[MyDocumentsViewModel] DeleteDocumentAsync called");
+        Debug.WriteLine($"[DEBUG] Delete clicked. SelectedDocument is: {SelectedDocument}");
         try
         {
             if (SelectedDocument == null)
@@ -409,9 +345,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Navigates back to the applicant dashboard.
-    /// </summary>
     [RelayCommand]
     public void GoBack()
     {
