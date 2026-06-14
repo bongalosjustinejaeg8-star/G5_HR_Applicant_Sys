@@ -9,6 +9,5 @@ public partial class MyDocumentsView : UserControl
     { 
         InitializeComponent(); 
         
-        this.DataContext = new MyDocumentsViewModel(); 
     }
 }
