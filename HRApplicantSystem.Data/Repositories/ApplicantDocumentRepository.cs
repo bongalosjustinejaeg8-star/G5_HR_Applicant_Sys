@@ -28,7 +28,7 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
             {
                 DocumentId = reader.GetValue(0).ToString()!,
                 ApplicantId = reader.GetValue(1).ToString()!,
-                RequirementTypeId = reader.GetString(2),
+                RequirementTypeId = reader.GetValue(2).ToString()!,
                 FilePath = reader.GetString(3),
                 Status = Enum.Parse<DocumentStatus>(reader.GetString(4)),
                 Remarks = reader.IsDBNull(5) ? null : reader.GetString(5),
@@ -87,6 +87,32 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
         string query = "DELETE FROM ApplicantDocuments WHERE document_id = @id";
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@id", documentId);
+        int rowsAffected = await command.ExecuteNonQueryAsync();
+        return rowsAffected > 0;
+    }
+
+
+    public async Task<bool> UpdateAsync(ApplicantDocument document)
+    {
+        using var connection = _context.CreateConnection();
+        await connection.OpenAsync();
+    
+        string query = @"UPDATE ApplicantDocuments 
+                     SET applicant_id = @applicantId, 
+                         requirement_type_id = @requirementTypeId, 
+                         file_path = @filePath, 
+                         status = @status, 
+                         remarks = @remarks 
+                     WHERE document_id = @documentId";
+                     
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@documentId", document.DocumentId);
+        command.Parameters.AddWithValue("@applicantId", document.ApplicantId);
+        command.Parameters.AddWithValue("@requirementTypeId", document.RequirementTypeId);
+        command.Parameters.AddWithValue("@filePath", document.FilePath);
+        command.Parameters.AddWithValue("@status", document.Status.ToString());
+        command.Parameters.AddWithValue("@remarks", document.Remarks ?? (object)DBNull.Value);
+    
         int rowsAffected = await command.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }

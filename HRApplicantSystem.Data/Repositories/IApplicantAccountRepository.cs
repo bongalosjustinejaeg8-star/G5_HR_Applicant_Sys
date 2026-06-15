@@ -9,5 +9,6 @@ public interface IApplicantAccountRepository
     Task<ApplicantAccount?> GetByEmailAsync(string email);
     Task<bool> CreateAsync(ApplicantAccount account);
     Task<bool> UpdateAsync(ApplicantAccount account);
-    Task<bool> DeleteAsync(string id);
+    Task<bool> DeleteAsync(string Id);
 }
+    
