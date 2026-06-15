@@ -47,7 +47,7 @@ public partial class MyApplicationViewModel : ViewModelBase
 
     public MyApplicationViewModel(
     IApplicationService applicationService,
-    MainWindowViewModel mainViewModel)
+    MainWindowViewModel? mainViewModel)
     {
         _applicationService = applicationService;
         _mainViewModel = mainViewModel;
@@ -85,6 +85,6 @@ public partial class MyApplicationViewModel : ViewModelBase
 
 
     }
-    [RelayCommand] public void BackDash() => _mainViewModel?.NavigateToApplicantDashboard();
+    [RelayCommand] public void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
 
 }

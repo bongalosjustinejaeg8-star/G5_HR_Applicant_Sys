@@ -5,6 +5,10 @@
              x:DataType="vm:JobVacancyMgmtViewModel">
 
   <StackPanel Margin="20">
+  <Button Content="⬅ Back" 
+        Command="{Binding GoBackCommand}" 
+        Width="100" 
+        Margin="0 0 0 15" />
     <TextBlock Text="Job Vacancy Management" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
     <!-- Loading indicator -->

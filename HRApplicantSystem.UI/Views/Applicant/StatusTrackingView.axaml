@@ -5,6 +5,10 @@
              x:DataType="vm:StatusTrackingViewModel">
 
   <StackPanel Margin="20">
+ <Button Content="← Back to Dashboard"
+        Command="{Binding GoBackCommand}"
+        Margin="0,0,0,15"
+        HorizontalAlignment="Left"/>
     <TextBlock Text="Application Status Tracking" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
 
     <TextBlock Text="Timeline" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>

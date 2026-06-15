@@ -6,6 +6,10 @@
              x:DataType="vm:ApplicantReviewViewModel">
 
   <StackPanel Margin="20">
+  <Button Content="⬅ Back" 
+        Command="{Binding GoBackCommand}" 
+        Width="100" 
+        Margin="0 0 0 15" />
     <TextBlock Text="HR Applicant Review" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
     <TextBox Text="{Binding SearchText}"
