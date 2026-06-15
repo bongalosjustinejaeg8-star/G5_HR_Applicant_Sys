@@ -7,6 +7,10 @@
              x:DataType="vm:JobVacanciesViewModel">
 
   <StackPanel Margin="20">
+  <Button Content="← Back to Dashboard"
+                Command="{Binding GoBackCommand}"
+                Margin="0,0,0,15"
+                HorizontalAlignment="Left"/>
     <TextBlock Text="Job Vacancies" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
     <!-- Debug Message -->

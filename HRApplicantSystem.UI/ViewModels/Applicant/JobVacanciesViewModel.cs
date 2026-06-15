@@ -18,6 +18,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
 {
     private readonly IJobVacancyService _jobVacancyService;
     private readonly IApplicationService _applicationService;
+    private readonly MainWindowViewModel? _mainViewModel;
 
     public ObservableCollection<JobVacancy> Vacancies { get; } = new();
 
@@ -41,13 +42,20 @@ public partial class JobVacanciesViewModel : ViewModelBase
                              IApplicationService applicationService)
     {
         Debug.WriteLine("🔥 JobVacanciesViewModel CONSTRUCTOR HIT");
-
         Console.WriteLine("🔥 JobVacanciesViewModel CONSTRUCTOR HIT");
 
         _jobVacancyService = jobVacancyService;
         _applicationService = applicationService;
 
         _ = LoadJobVacanciesAsync();
+    }
+
+    public JobVacanciesViewModel(IJobVacancyService jobVacancyService,
+                             IApplicationService applicationService,
+                             MainWindowViewModel mainViewModel)
+        : this(jobVacancyService, applicationService)
+    {
+        _mainViewModel = mainViewModel;
     }
 
     public async Task LoadJobVacanciesAsync()
@@ -83,6 +91,9 @@ public partial class JobVacanciesViewModel : ViewModelBase
         foreach (var job in jobs)
             Vacancies.Add(job);
     }
+
+    [RelayCommand]
+    public void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
 
     [RelayCommand]
     public async Task ApplyAsync()

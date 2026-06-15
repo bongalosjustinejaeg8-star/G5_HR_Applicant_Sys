@@ -1,4 +1,5 @@
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Shared.Enums;
 
 namespace HRApplicantSystem.Services.Interfaces;

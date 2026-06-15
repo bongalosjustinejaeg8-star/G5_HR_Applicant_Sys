@@ -133,15 +133,15 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToProfile() => CurrentView = new ProfileViewModel(this);
 
     public void NavigateToJobVacancies()
-        => CurrentView = new JobVacanciesViewModel(GetJobVacancyService(), GetAppService());
+        => CurrentView = new JobVacanciesViewModel(GetJobVacancyService(), GetAppService(), this);
 
     public void NavigateToMyApplication()
         => CurrentView = new MyApplicationViewModel(GetAppService(), this);
 
     public void NavigateToMyDocuments()
-        => CurrentView = new MyDocumentsViewModel();
+        => CurrentView = new MyDocumentsViewModel(this);
 
     public void NavigateToStatusTracking()
-        => CurrentView = new StatusTrackingViewModel();
+        => CurrentView = new StatusTrackingViewModel(this);
     #endregion
 }
