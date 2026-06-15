@@ -20,10 +20,10 @@ public partial class MyDocumentsViewModel : ViewModelBase
     private readonly MainWindowViewModel? _mainViewModel;
 
     [ObservableProperty]
-    private ObservableCollection<dynamic> documents = new();
+    private ObservableCollection<ApplicantDocument> documents = new();
 
     [ObservableProperty]
-    private object? selectedDocument;
+    private ApplicantDocument? selectedDocument;
 
     [ObservableProperty]
     private ObservableCollection<RequirementType> requirementTypes = new();
@@ -100,7 +100,8 @@ public partial class MyDocumentsViewModel : ViewModelBase
             var applicantId = SessionManager.CurrentUserId;
             if (string.IsNullOrEmpty(applicantId))
             {
-                Debug.WriteLine(">>> DEBUG: No User ID found <<<");
+                Message = " DEBUG: No CurrentUserID found (not logged in.)";
+                HasMessage = true;
                 return;
             }
         
@@ -110,7 +111,8 @@ public partial class MyDocumentsViewModel : ViewModelBase
 
             if (applicant == null)
             {
-                Debug.WriteLine(">>> DEBUG: Applicant not found in DB <<<");
+                Message = $" DEBUG: No applicant profile found for AccountId: {applicantId}";
+                HasMessage = true;
                 return;
             }
 
@@ -118,19 +120,19 @@ public partial class MyDocumentsViewModel : ViewModelBase
             var applicantDocuments = await documentRepo.GetByApplicantIdAsync(applicant.ApplicantId);
 
             var docList = applicantDocuments.ToList();
-            Debug.WriteLine($">>> DEBUG: Found {docList.Count} documents for ApplicantId: {applicant.ApplicantId} <<<");
 
             foreach (var document in docList)
             {
-                Debug.WriteLine($">>> DEBUG: Adding document: {document.FilePath} <<<");
                 Documents.Add(document);
             }
 
-            Message = $"{Documents.Count} document(s) loaded.";
+            Message = $"DEBUG: applicantId={applicant.ApplicantId}, found {docList.Count} docs, Documents.Count={Documents.Count}";
             HasMessage = true;
         }
         catch (Exception ex)
         {
+            Message = $"DEBUG ERROR: {ex.Message}";
+            HasMessage = true;  
             Debug.WriteLine($">>> DEBUG ERROR: {ex} <<<");
         }
         finally
