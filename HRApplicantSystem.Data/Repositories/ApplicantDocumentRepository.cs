@@ -28,7 +28,7 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
             {
                 DocumentId = reader.GetValue(0).ToString()!,
                 ApplicantId = reader.GetValue(1).ToString()!,
-                RequirementTypeId = reader.GetString(2),
+                RequirementTypeId = reader.GetValue(2).ToString()!,
                 FilePath = reader.GetString(3),
                 Status = Enum.Parse<DocumentStatus>(reader.GetString(4)),
                 Remarks = reader.IsDBNull(5) ? null : reader.GetString(5),
