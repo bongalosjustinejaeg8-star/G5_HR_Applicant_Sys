@@ -18,6 +18,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
 {
     private readonly IJobVacancyService _jobVacancyService;
     private readonly IApplicationService _applicationService;
+    private readonly MainWindowViewModel? _mainViewModel;
 
     public ObservableCollection<JobVacancy> Vacancies { get; } = new();
 
@@ -38,12 +39,9 @@ public partial class JobVacanciesViewModel : ViewModelBase
         SelectedJob.Status == VacancyStatus.Open;
 
     public JobVacanciesViewModel(IJobVacancyService jobVacancyService,
-                             IApplicationService applicationService)
+                             IApplicationService applicationService, MainWindowViewModel mainViewModel)
     {
-        Debug.WriteLine("🔥 JobVacanciesViewModel CONSTRUCTOR HIT");
-
-        Console.WriteLine("🔥 JobVacanciesViewModel CONSTRUCTOR HIT");
-
+        _mainViewModel = mainViewModel;
         _jobVacancyService = jobVacancyService;
         _applicationService = applicationService;
 
@@ -52,20 +50,10 @@ public partial class JobVacanciesViewModel : ViewModelBase
 
     public async Task LoadJobVacanciesAsync()
     {
-        try
-        {
-            Console.WriteLine("🔥 LoadJobVacanciesAsync START");
             var jobs = await _jobVacancyService.GetOpenJobsAsync();
-            Console.WriteLine($"🔥 Jobs received: {jobs.Count()}");
             Vacancies.Clear();
             foreach (var job in jobs)
                 Vacancies.Add(job);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"🔥 ERROR: {ex.Message}");
-            Console.WriteLine($"🔥 STACK: {ex.StackTrace}");
-        }
     }
 
     partial void OnSearchTextChanged(string value)
@@ -95,7 +83,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
             var applicantRepo = new ApplicantRepository(db);
 
             // get actual applicant_id from account_id
-            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId?? string.Empty);
+            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? string.Empty);
 
             if (applicant == null)
             {
@@ -117,4 +105,5 @@ public partial class JobVacanciesViewModel : ViewModelBase
             HasMessage = true;
         }
     }
+    [RelayCommand] private void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
 }

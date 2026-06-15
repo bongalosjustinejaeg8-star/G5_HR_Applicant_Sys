@@ -21,7 +21,7 @@
 
         <Button Grid.Column="0"
                 Content="← Back to Dashboard"
-                Command="{Binding BackDashCommand}"
+                Command="{Binding GoBackCommand}"
                 Margin="0,0,15,0"/>
 
         <TextBlock Grid.Column="1"

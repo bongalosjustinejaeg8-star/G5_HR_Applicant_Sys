@@ -13,8 +13,7 @@
       </StackPanel>
 
       <!-- Status Message -->
-      <Border Background="#DCFCE7" CornerRadius="6" Padding="12"
-              IsVisible="{Binding HasMessage}">
+      <Border Background="#DCFCE7" CornerRadius="6" Padding="12" IsVisible="{Binding HasMessage}">
         <TextBlock Text="{Binding StatusMessage}" Foreground="#166534"/>
       </Border>
 
@@ -22,16 +21,16 @@
       <Border Background="#F9FAFB" CornerRadius="8" Padding="16">
         <StackPanel Spacing="10">
           <TextBlock Text="Personal Information" FontSize="16" FontWeight="Bold"/>
-          <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-            <TextBlock Text="First Name" Grid.Row="0" Grid.Column="0" FontSize="12" Foreground="#6B7280"/>
+          <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
+            <TextBlock Text="First Name" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" FontSize="12" Foreground="#6B7280"/>
             <TextBox Text="{Binding FirstName}" Grid.Row="0" Grid.Column="1" PlaceholderText="Enter first name" Height="36"/>
-            <TextBlock Text="Last Name" Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="#6B7280"/>
+            <TextBlock Text="Last Name" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontSize="12" Foreground="#6B7280"/>
             <TextBox Text="{Binding LastName}" Grid.Row="1" Grid.Column="1" PlaceholderText="Enter last name" Height="36"/>
-            <TextBlock Text="Email" Grid.Row="2" Grid.Column="0" FontSize="12" Foreground="#6B7280"/>
+            <TextBlock Text="Email" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontSize="12" Foreground="#6B7280"/>
             <TextBox Text="{Binding Email}" Grid.Row="2" Grid.Column="1" IsEnabled="False" Height="36"/>
-            <TextBlock Text="Phone" Grid.Row="3" Grid.Column="0" FontSize="12" Foreground="#6B7280"/>
+            <TextBlock Text="Phone" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontSize="12" Foreground="#6B7280"/>
             <TextBox Text="{Binding Phone}" Grid.Row="3" Grid.Column="1" PlaceholderText="Enter phone number" Height="36"/>
-            <TextBlock Text="Address" Grid.Row="4" Grid.Column="0" FontSize="12" Foreground="#6B7280"/>
+            <TextBlock Text="Address" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" FontSize="12" Foreground="#6B7280"/>
             <TextBox Text="{Binding Address}" Grid.Row="4" Grid.Column="1" PlaceholderText="Enter address" Height="36"/>
           </Grid>
         </StackPanel>
@@ -41,18 +40,21 @@
       <Border Background="#F9FAFB" CornerRadius="8" Padding="16">
         <StackPanel Spacing="10">
           <TextBlock Text="Education" FontSize="16" FontWeight="Bold"/>
+
           <!-- Add Education Form -->
-          <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="8">
+          <StackPanel Spacing="6">
             <TextBox Text="{Binding NewDegree}" PlaceholderText="Degree (e.g. BS Computer Science)" Height="36"/>
-            <TextBox Text="{Binding NewInstitution}" Grid.Column="1" PlaceholderText="School/University" Height="36"/>
-            <Button Content="+ Add" Grid.Column="2" Command="{Binding AddEducationCommand}"
-                    Background="#2563EB" Foreground="White" Padding="12,0" Height="36"/>
-          </Grid>
+            <TextBox Text="{Binding NewInstitution}" PlaceholderText="School / University" Height="36"/>
+            <TextBox Text="{Binding NewGraduationYear}" PlaceholderText="Graduation Year (e.g. 2024)" Height="36"/>
+            <Button Content="+ Add Education" Command="{Binding AddEducationCommand}"
+                    Background="#2563EB" Foreground="White" Padding="12,8" HorizontalAlignment="Left"/>
+          </StackPanel>
+
           <!-- Education List -->
-          <ListBox ItemsSource="{Binding EducationList}" MaxHeight="180">
-            <ListBox.ItemTemplate>
+          <ItemsControl ItemsSource="{Binding EducationList}">
+            <ItemsControl.ItemTemplate>
               <DataTemplate>
-                <Border Background="White" CornerRadius="6" Padding="10" Margin="0,2">
+                <Border Background="White" CornerRadius="6" Padding="12" Margin="0,4">
                   <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Spacing="2">
                       <TextBlock Text="{Binding Degree}" FontWeight="Bold" FontSize="13"/>
@@ -60,14 +62,14 @@
                       <TextBlock Text="{Binding GraduationYear}" Foreground="#9CA3AF" FontSize="11"/>
                     </StackPanel>
                     <Button Content="✕" Grid.Column="1"
-                            Command="{Binding $parent[UserControl].((vm:ProfileViewModel)DataContext).RemoveEducationCommand}"
+                            Command="{Binding $parent[ItemsControl].DataContext.RemoveEducationCommand}"
                             CommandParameter="{Binding}"
                             Background="Transparent" Foreground="#EF4444" Padding="8,0"/>
                   </Grid>
                 </Border>
               </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
         </StackPanel>
       </Border>
 
@@ -75,32 +77,34 @@
       <Border Background="#F9FAFB" CornerRadius="8" Padding="16">
         <StackPanel Spacing="10">
           <TextBlock Text="Work Experience" FontSize="16" FontWeight="Bold"/>
+
           <!-- Add Experience Form -->
-          <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="8">
+          <StackPanel Spacing="6">
             <TextBox Text="{Binding NewJobTitle}" PlaceholderText="Job Title" Height="36"/>
-            <TextBox Text="{Binding NewCompany}" Grid.Column="1" PlaceholderText="Company Name" Height="36"/>
-            <Button Content="+ Add" Grid.Column="2" Command="{Binding AddExperienceCommand}"
-                    Background="#2563EB" Foreground="White" Padding="12,0" Height="36"/>
-          </Grid>
+            <TextBox Text="{Binding NewCompany}" PlaceholderText="Company Name" Height="36"/>
+            <Button Content="+ Add Experience" Command="{Binding AddExperienceCommand}"
+                    Background="#2563EB" Foreground="White" Padding="12,8" HorizontalAlignment="Left"/>
+          </StackPanel>
+
           <!-- Experience List -->
-          <ListBox ItemsSource="{Binding WorkExperienceList}" MaxHeight="180">
-            <ListBox.ItemTemplate>
+          <ItemsControl ItemsSource="{Binding WorkExperienceList}">
+            <ItemsControl.ItemTemplate>
               <DataTemplate>
-                <Border Background="White" CornerRadius="6" Padding="10" Margin="0,2">
+                <Border Background="White" CornerRadius="6" Padding="12" Margin="0,4">
                   <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Spacing="2">
                       <TextBlock Text="{Binding JobTitle}" FontWeight="Bold" FontSize="13"/>
                       <TextBlock Text="{Binding CompanyName}" Foreground="#6B7280" FontSize="12"/>
                     </StackPanel>
                     <Button Content="✕" Grid.Column="1"
-                            Command="{Binding $parent[UserControl].((vm:ProfileViewModel)DataContext).RemoveExperienceCommand}"
+                            Command="{Binding $parent[ItemsControl].DataContext.RemoveExperienceCommand}"
                             CommandParameter="{Binding}"
                             Background="Transparent" Foreground="#EF4444" Padding="8,0"/>
                   </Grid>
                 </Border>
               </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
         </StackPanel>
       </Border>
 
@@ -108,7 +112,7 @@
       <Border Background="#F9FAFB" CornerRadius="8" Padding="16">
         <StackPanel Spacing="8">
           <TextBlock Text="Skills" FontSize="16" FontWeight="Bold"/>
-          <TextBox Text="{Binding Skills}" PlaceholderText="Enter your skills (e.g. C#, SQL, Communication)"
+          <TextBox Text="{Binding Skills}" PlaceholderText="e.g. C#, SQL, Communication"
                    Height="80" AcceptsReturn="True"/>
         </StackPanel>
       </Border>

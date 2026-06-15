@@ -17,10 +17,7 @@
 
     <!-- Search and Filter -->
     <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
-      <TextBox Text="{Binding SearchText}" PlaceholderText="Search jobs..." Margin="0 0 10 0"/>
-      <ComboBox SelectedItem="{Binding SelectedDepartmentFilter}">
-        <ComboBoxItem Content="All Departments"/>
-      </ComboBox>
+      <TextBox Text="{Binding SearchText}" PlaceholderText="Search jobs..." Margin="0,0,0,10"/>
     </Grid>
 
     <!-- Job Vacancies ListBox -->
@@ -41,17 +38,28 @@
             <TextBlock Text="{Binding CreatedAt, StringFormat='Posted: {0:yyyy-MM-dd}'}" FontSize="10" Foreground="Gray"/>
           </StackPanel>
         </DataTemplate>
-      </ListBox.ItemTemplate>
+      </ListBox.ItemTemplate> 
 
     </ListBox>
 
+    <!-- Add this AFTER the ListBox and BEFORE the Action Buttons -->
+    <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="0,10,0,0"
+            IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <StackPanel Spacing="6">
+        <TextBlock Text="{Binding SelectedJob.PositionTitle}" FontSize="16" FontWeight="Bold"/>
+        <TextBlock Text="{Binding SelectedJob.EmploymentType}" Foreground="#2563EB" FontSize="12"/>
+        <TextBlock Text="Qualifications:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+        <TextBlock Text="{Binding SelectedJob.Qualifications}" TextWrapping="Wrap" Foreground="#374151"/>
+      </StackPanel>
+  </Border>
+
     <!-- Action Buttons -->
-    <Grid ColumnDefinitions="*,*" Margin="0 10 0 0">
-      <Button Content="View Details" HorizontalAlignment="Left"/>
-      <Button Content="Apply Now" 
-              HorizontalAlignment="Right"
-              Command="{Binding ApplyCommand}"
-              IsEnabled="{Binding CanApply}"/>
-    </Grid>
+    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+      <Button Content="← Back" Command="{Binding GoBackCommand}"/>
+      <Button Content="Apply Now"
+              Command="{Binding ApplyAsyncCommand}"
+              IsEnabled="{Binding CanApply}"
+              Background="#2563EB" Foreground="White" Padding="15,8"/>
+</StackPanel>
   </StackPanel>
 </UserControl>
