@@ -9,7 +9,7 @@ using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Helpers;
 using HRApplicantSystem.Shared.Enums;
 using System;
-using HRApplicantSystem.Data;   
+using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Repositories;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
@@ -39,41 +39,21 @@ public partial class JobVacanciesViewModel : ViewModelBase
         SelectedJob.Status == VacancyStatus.Open;
 
     public JobVacanciesViewModel(IJobVacancyService jobVacancyService,
-                             IApplicationService applicationService)
+                             IApplicationService applicationService, MainWindowViewModel mainViewModel)
     {
-        Debug.WriteLine("🔥 JobVacanciesViewModel CONSTRUCTOR HIT");
-        Console.WriteLine("🔥 JobVacanciesViewModel CONSTRUCTOR HIT");
-
+        _mainViewModel = mainViewModel;
         _jobVacancyService = jobVacancyService;
         _applicationService = applicationService;
 
         _ = LoadJobVacanciesAsync();
     }
 
-    public JobVacanciesViewModel(IJobVacancyService jobVacancyService,
-                             IApplicationService applicationService,
-                             MainWindowViewModel mainViewModel)
-        : this(jobVacancyService, applicationService)
-    {
-        _mainViewModel = mainViewModel;
-    }
-
     public async Task LoadJobVacanciesAsync()
     {
-        try
-        {
-            Console.WriteLine("🔥 LoadJobVacanciesAsync START");
-            var jobs = await _jobVacancyService.GetOpenJobsAsync();
-            Console.WriteLine($"🔥 Jobs received: {jobs.Count()}");
-            Vacancies.Clear();
-            foreach (var job in jobs)
-                Vacancies.Add(job);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"🔥 ERROR: {ex.Message}");
-            Console.WriteLine($"🔥 STACK: {ex.StackTrace}");
-        }
+        var jobs = await _jobVacancyService.GetOpenJobsAsync();
+        Vacancies.Clear();
+        foreach (var job in jobs)
+            Vacancies.Add(job);
     }
 
     partial void OnSearchTextChanged(string value)
@@ -93,9 +73,6 @@ public partial class JobVacanciesViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
-
-    [RelayCommand]
     public async Task ApplyAsync()
     {
         if (SelectedJob == null) return;
@@ -106,7 +83,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
             var applicantRepo = new ApplicantRepository(db);
 
             // get actual applicant_id from account_id
-            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId?? string.Empty);
+            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? string.Empty);
 
             if (applicant == null)
             {
@@ -128,4 +105,5 @@ public partial class JobVacanciesViewModel : ViewModelBase
             HasMessage = true;
         }
     }
+    [RelayCommand] private void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
 }
