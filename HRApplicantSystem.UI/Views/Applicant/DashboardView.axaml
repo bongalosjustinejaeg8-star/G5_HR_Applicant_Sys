@@ -85,13 +85,16 @@
       </Grid>
       <!-- Navigation Buttons -->
       <!-- Navigation Buttons -->
-      <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
-        <Button Content="🔍 Job Vacancies" Command="{Binding GoToJobVacanciesCommand}" Padding="15,10" Background="#2563EB" Foreground="White"/>
-        <Button Content="📄 My Application" Command="{Binding GoToMyApplicationCommand}" Padding="15,10" Background="#059669" Foreground="White"/>
-        <Button Content="📁 My Documents" Command="{Binding GoToMyDocumentsCommand}" Padding="15,10" Background="#D97706" Foreground="White"/>
-        <Button Content="📊 Status" Command="{Binding GoToStatusTrackingCommand}" Padding="15,10" Background="#7C3AED" Foreground="White"/>
-        <Button Content="👤 Profile" Command="{Binding GoToProfileCommand}" Padding="15,10" Background="#6B7280" Foreground="White"/>
-        <Button Content="🚪 Logout" Command="{Binding LogoutCommand}" Padding="15,10" Background="#EF4444" Foreground="White"/>
+      <StackPanel Spacing="6">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Button Content="🔍 Browse &amp; Apply for Jobs" Command="{Binding GoToJobVacanciesCommand}" Padding="15,10" Background="#2563EB" Foreground="White"/>
+          <Button Content="📄 My Application" Command="{Binding GoToMyApplicationCommand}" Padding="15,10" Background="#059669" Foreground="White"/>
+          <Button Content="📊 Status Timeline" Command="{Binding GoToStatusTrackingCommand}" Padding="15,10" Background="#7C3AED" Foreground="White"/>
+          <Button Content="👤 Profile" Command="{Binding GoToProfileCommand}" Padding="15,10" Background="#6B7280" Foreground="White"/>
+          <Button Content="🚪 Logout" Command="{Binding LogoutCommand}" Padding="15,10" Background="#EF4444" Foreground="White"/>
+        </StackPanel>
+        <TextBlock Text="💡 Documents are uploaded as part of the job application process — click 'Browse &amp; Apply for Jobs' to apply and attach your documents."
+                   FontSize="11" Foreground="#6B7280" Margin="0,2,0,0"/>
       </StackPanel>
 
       <!-- Main Content -->

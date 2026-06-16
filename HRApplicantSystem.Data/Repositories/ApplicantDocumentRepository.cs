@@ -149,30 +149,4 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
         int rows = await command.ExecuteNonQueryAsync();
         return rows > 0;
     }
-
-
-    public async Task<bool> UpdateAsync(ApplicantDocument document)
-    {
-        using var connection = _context.CreateConnection();
-        await connection.OpenAsync();
-    
-        string query = @"UPDATE ApplicantDocuments 
-                     SET applicant_id = @applicantId, 
-                         requirement_type_id = @requirementTypeId, 
-                         file_path = @filePath, 
-                         status = @status, 
-                         remarks = @remarks 
-                     WHERE document_id = @documentId";
-                     
-        using var command = new MySqlCommand(query, connection);
-        command.Parameters.AddWithValue("@documentId", document.DocumentId);
-        command.Parameters.AddWithValue("@applicantId", document.ApplicantId);
-        command.Parameters.AddWithValue("@requirementTypeId", document.RequirementTypeId);
-        command.Parameters.AddWithValue("@filePath", document.FilePath);
-        command.Parameters.AddWithValue("@status", document.Status.ToString());
-        command.Parameters.AddWithValue("@remarks", document.Remarks ?? (object)DBNull.Value);
-    
-        int rowsAffected = await command.ExecuteNonQueryAsync();
-        return rowsAffected > 0;
-    }
 }

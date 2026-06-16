@@ -4,227 +4,220 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Models;
+using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Enums;
-using HRApplicantSystem.Shared.Helpers;
 
 namespace HRApplicantSystem.UI.ViewModels.HR;
 
-/// <summary>
-/// ViewModel for HR Job Vacancy Management module.
-/// Handles CRUD operations and status management for job vacancies.
-/// </summary>
 public partial class JobVacancyMgmtViewModel : ViewModelBase
 {
     private readonly IJobVacancyMgmtService _jobVacancyMgmtService;
+    private readonly MainWindowViewModel? _mainViewModel;
 
-    /// <summary>
-    /// Collection of all job vacancies (open and closed).
-    /// Bound to ListBox in JobVacancyMgmtView.
-    /// </summary>
     public ObservableCollection<JobVacancy> Vacancies { get; } = new();
+    public ObservableCollection<Department> Departments { get; } = new();
 
-    [ObservableProperty]
-    private JobVacancy? selectedJobVacancy;
+    [ObservableProperty] private JobVacancy? selectedJobVacancy;
+    [ObservableProperty] private string message = "";
+    [ObservableProperty] private bool hasMessage;
+    [ObservableProperty] private bool isLoading;
 
-    [ObservableProperty]
-    private string message = "";
+    // Controls whether the Add/Edit form panel is visible
+    [ObservableProperty] private bool isFormVisible = false;
 
-    [ObservableProperty]
-    private bool hasMessage;
+    // True when editing an existing record; false when adding a new one
+    [ObservableProperty] private bool isEditing = false;
 
-    [ObservableProperty]
-    private bool isLoading;
+    // Form field bindings
+    [ObservableProperty] private string formPositionTitle = "";
+    [ObservableProperty] private string formQualifications = "";
+    [ObservableProperty] private string formEmploymentType = "Full-Time";
+    [ObservableProperty] private Department? formDepartment;
+    [ObservableProperty] private string formTitle = "Add New Job Vacancy";
+
+    public ObservableCollection<string> EmploymentTypes { get; } = new()
+    {
+        "Full-Time", "Part-Time", "Contract", "Internship", "Temporary"
+    };
 
     public JobVacancyMgmtViewModel(IJobVacancyMgmtService jobVacancyMgmtService)
     {
         _jobVacancyMgmtService = jobVacancyMgmtService;
-        Message = "Initializing...";
-        HasMessage = true;
-
-        // Fire-and-forget with proper async handling
-        _ = LoadJobVacanciesAsync();
+        _ = InitAsync();
     }
 
-    /// <summary>
-    /// Loads all job vacancies from the database.
-    /// </summary>
+    public JobVacancyMgmtViewModel(IJobVacancyMgmtService jobVacancyMgmtService, MainWindowViewModel mainViewModel)
+    {
+        _jobVacancyMgmtService = jobVacancyMgmtService;
+        _mainViewModel = mainViewModel;
+        _ = InitAsync();
+    }
+
+    private async Task InitAsync()
+    {
+        await LoadDepartmentsAsync();
+        await LoadJobVacanciesAsync();
+    }
+
+    private async Task LoadDepartmentsAsync()
+    {
+        try
+        {
+            var db = new DbContext(AppConfig.ConnectionString);
+            var deptRepo = new DepartmentRepository(db);
+            var depts = await deptRepo.GetAllAsync();
+            Departments.Clear();
+            foreach (var d in depts) Departments.Add(d);
+        }
+        catch (Exception ex) { Message = $"Could not load departments: {ex.Message}"; HasMessage = true; }
+    }
+
     public async Task LoadJobVacanciesAsync()
     {
         try
         {
             IsLoading = true;
-            Vacancies.Clear();
-
             var jobs = await _jobVacancyMgmtService.GetAllJobsAsync();
-            var jobList = jobs.ToList();
-
-            foreach (var job in jobList)
-            {
+            Vacancies.Clear();
+            foreach (var job in jobs.OrderByDescending(j => j.CreatedAt))
                 Vacancies.Add(job);
-            }
-
-            Message = $"Loaded {jobList.Count} job vacancies";
-            HasMessage = true;
         }
-        catch (Exception ex)
-        {
-            Message = $"Error loading vacancies: {ex.Message}";
-            HasMessage = true;
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+        catch (Exception ex) { Message = $"Error loading vacancies: {ex.Message}"; HasMessage = true; }
+        finally { IsLoading = false; }
     }
 
-    /// <summary>
-    /// Adds a new job vacancy to the database.
-    /// </summary>
+    // Open the form pre-filled for editing the selected vacancy
     [RelayCommand]
-    public async Task AddJobVacancyAsync(JobVacancy? vacancy)
+    public void OpenEditForm()
     {
-        if (vacancy == null)
-        {
-            Message = "Please provide job vacancy details.";
-            HasMessage = true;
-            return;
-        }
-
-        try
-        {
-            vacancy.VacancyId = Guid.NewGuid().ToString();
-            vacancy.CreatedAt = DateTime.Now;
-            vacancy.Status = VacancyStatus.Open;
-
-            bool success = await _jobVacancyMgmtService.CreateJobVacancyAsync(vacancy);
-
-            if (success)
-            {
-                Vacancies.Add(vacancy);
-                Message = "Job vacancy added successfully!";
-            }
-            else
-            {
-                Message = "Failed to add job vacancy.";
-            }
-
-            HasMessage = true;
-        }
-        catch (Exception ex)
-        {
-            Message = $"Error adding vacancy: {ex.Message}";
-            HasMessage = true;
-        }
-    }
-
-    /// <summary>
-    /// Updates the selected job vacancy.
-    /// </summary>
-    [RelayCommand]
-    public async Task EditJobVacancyAsync(JobVacancy? vacancy)
-    {
-        if (vacancy == null)
+        if (SelectedJobVacancy == null)
         {
             Message = "Please select a vacancy to edit.";
             HasMessage = true;
             return;
         }
 
+        FormPositionTitle  = SelectedJobVacancy.PositionTitle;
+        FormQualifications = SelectedJobVacancy.Qualifications ?? "";
+        FormEmploymentType = SelectedJobVacancy.EmploymentType;
+        FormDepartment     = Departments.FirstOrDefault(d => d.DepartmentId == SelectedJobVacancy.DepartmentId);
+        FormTitle          = "Edit Job Vacancy";
+        IsEditing          = true;
+        IsFormVisible      = true;
+        HasMessage         = false;
+    }
+
+    // Open the form blank for adding a new vacancy
+    [RelayCommand]
+    public void OpenAddForm()
+    {
+        FormPositionTitle  = "";
+        FormQualifications = "";
+        FormEmploymentType = "Full-Time";
+        FormDepartment     = Departments.FirstOrDefault();
+        FormTitle          = "Add New Job Vacancy";
+        IsEditing          = false;
+        IsFormVisible      = true;
+        HasMessage         = false;
+    }
+
+    // Dismiss the form without saving
+    [RelayCommand]
+    public void CancelForm()
+    {
+        IsFormVisible = false;
+        HasMessage    = false;
+    }
+
+    // Save — creates or updates depending on IsEditing
+    [RelayCommand]
+    public async Task SaveVacancyAsync()
+    {
+        if (string.IsNullOrWhiteSpace(FormPositionTitle))
+        {
+            Message = "Position title is required.";
+            HasMessage = true;
+            return;
+        }
+        if (FormDepartment == null)
+        {
+            Message = "Please select a department.";
+            HasMessage = true;
+            return;
+        }
+
         try
         {
-            bool success = await _jobVacancyMgmtService.UpdateJobVacancyAsync(vacancy);
+            bool success;
 
-            if (success)
+            if (IsEditing && SelectedJobVacancy != null)
             {
-                Message = "Job vacancy updated successfully!";
+                // Edit existing record
+                SelectedJobVacancy.PositionTitle  = FormPositionTitle.Trim();
+                SelectedJobVacancy.Qualifications = FormQualifications.Trim();
+                SelectedJobVacancy.EmploymentType = FormEmploymentType;
+                SelectedJobVacancy.DepartmentId   = FormDepartment.DepartmentId;
+
+                success = await _jobVacancyMgmtService.UpdateJobVacancyAsync(SelectedJobVacancy);
+                Message = success ? "✅ Job vacancy updated successfully." : "Failed to update vacancy.";
             }
             else
             {
-                Message = "Failed to update job vacancy.";
+                // Create new record
+                var newVacancy = new JobVacancy
+                {
+                    VacancyId     = Guid.NewGuid().ToString(),
+                    PositionTitle  = FormPositionTitle.Trim(),
+                    Qualifications = FormQualifications.Trim(),
+                    EmploymentType = FormEmploymentType,
+                    DepartmentId   = FormDepartment.DepartmentId,
+                    Status         = VacancyStatus.Open,
+                    CreatedAt      = DateTime.Now
+                };
+
+                success = await _jobVacancyMgmtService.CreateJobVacancyAsync(newVacancy);
+                Message = success ? "✅ Job vacancy added successfully." : "Failed to add vacancy.";
             }
 
-            HasMessage = true;
+            HasMessage    = true;
+            IsFormVisible = success ? false : true;
+
+            if (success) await LoadJobVacanciesAsync();
         }
-        catch (Exception ex)
-        {
-            Message = $"Error updating vacancy: {ex.Message}";
-            HasMessage = true;
-        }
+        catch (Exception ex) { Message = $"Error: {ex.Message}"; HasMessage = true; }
     }
 
-    /// <summary>
-    /// Closes the selected job vacancy (changes status to Closed).
-    /// </summary>
     [RelayCommand]
     public async Task CloseJobVacancyAsync()
     {
-        if (SelectedJobVacancy == null)
-        {
-            Message = "Please select a vacancy to close.";
-            HasMessage = true;
-            return;
-        }
-
+        if (SelectedJobVacancy == null) { Message = "Please select a vacancy to close."; HasMessage = true; return; }
         try
         {
-            bool success = await _jobVacancyMgmtService.CloseJobVacancyAsync(
-                SelectedJobVacancy.VacancyId);
-
-            if (success)
-            {
-                SelectedJobVacancy.Status = VacancyStatus.Closed;
-                Message = "Job vacancy closed successfully!";
-            }
-            else
-            {
-                Message = "Failed to close job vacancy.";
-            }
-
+            bool ok = await _jobVacancyMgmtService.CloseJobVacancyAsync(SelectedJobVacancy.VacancyId);
+            Message = ok ? "✅ Vacancy closed." : "Failed to close vacancy.";
             HasMessage = true;
+            if (ok) await LoadJobVacanciesAsync();
         }
-        catch (Exception ex)
-        {
-            Message = $"Error closing vacancy: {ex.Message}";
-            HasMessage = true;
-        }
+        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
     }
 
-    /// <summary>
-    /// Reopens a closed job vacancy (changes status back to Open).
-    /// </summary>
     [RelayCommand]
     public async Task ReopenJobVacancyAsync()
     {
-        if (SelectedJobVacancy == null)
-        {
-            Message = "Please select a vacancy to reopen.";
-            HasMessage = true;
-            return;
-        }
-
+        if (SelectedJobVacancy == null) { Message = "Please select a vacancy to reopen."; HasMessage = true; return; }
         try
         {
-            bool success = await _jobVacancyMgmtService.OpenJobVacancyAsync(
-                SelectedJobVacancy.VacancyId);
-
-            if (success)
-            {
-                SelectedJobVacancy.Status = VacancyStatus.Open;
-                Message = "Job vacancy reopened successfully!";
-            }
-            else
-            {
-                Message = "Failed to reopen job vacancy.";
-            }
-
+            bool ok = await _jobVacancyMgmtService.OpenJobVacancyAsync(SelectedJobVacancy.VacancyId);
+            Message = ok ? "✅ Vacancy reopened." : "Failed to reopen vacancy.";
             HasMessage = true;
+            if (ok) await LoadJobVacanciesAsync();
         }
-        catch (Exception ex)
-        {
-            Message = $"Error reopening vacancy: {ex.Message}";
-            HasMessage = true;
-        }
+        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
     }
+
+    [RelayCommand]
+    private void GoBack() => _mainViewModel?.NavigateToHRDashboard();
 }

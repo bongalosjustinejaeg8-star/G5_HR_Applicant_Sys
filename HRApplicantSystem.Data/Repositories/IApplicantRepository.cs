@@ -6,8 +6,8 @@ public interface IApplicantRepository
 {
     Task<IEnumerable<Applicant>> GetAllAsync();
     Task<Applicant?> GetByIdAsync(string id);
-    Task<ApplicantAccount?> GetByAccountIdAsync(string accountId);
-    Task<bool> CreateAsync(ApplicantAccount account);
-    Task<bool> UpdateAsync(ApplicantAccount account);
+    Task<Applicant?> GetByAccountIdAsync(string accountId);
+    Task<bool> CreateAsync(Applicant applicant);
+    Task<bool> UpdateAsync(Applicant applicant);
     Task<bool> DeleteAsync(string id);
 }

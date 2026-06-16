@@ -1,5 +1,4 @@
 using HRApplicantSystem.Data.Models;
-using HRApplicantSystem.Shared.Helpers;
 using HRApplicantSystem.Services.Interfaces;
 
 namespace HRApplicantSystem.Services.Implementations;

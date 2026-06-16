@@ -6,73 +6,207 @@
              x:Class="HRApplicantSystem.UI.Views.Applicant.JobVacanciesView"
              x:DataType="vm:JobVacanciesViewModel">
 
-  <StackPanel Margin="20">
-    <TextBlock Text="Job Vacancies" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+  <UserControl.Styles>
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#2563EB"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.success">
+      <Setter Property="Background" Value="#059669"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="#DC2626"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="Button.back">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="12,7"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Foreground" Value="#374151"/>
+    </Style>
+  </UserControl.Styles>
 
-    <!-- Debug Message -->
-    <TextBlock Text="{Binding Message}"
-               IsVisible="{Binding HasMessage}"
-               Foreground="Blue"
-               Margin="0 0 0 10"/>
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="16">
 
-    <!-- Search and Filter -->
-    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
-      <TextBox Text="{Binding SearchText}" PlaceholderText="Search jobs..." Margin="0,0,0,10"/>
-    </Grid>
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- PANEL A — Job list (hidden when in apply mode) -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <StackPanel IsVisible="{Binding IsInApplyMode, Converter={x:Static BoolConverters.Not}}" Spacing="14">
 
-    <!-- Job Vacancies ListBox -->
-    <ListBox ItemsSource="{Binding Vacancies}"
-             SelectedItem="{Binding SelectedJob}"
-             Height="300"
-             Margin="0 0 0 10">
+        <!-- Header -->
+        <Grid ColumnDefinitions="Auto,*">
+          <Button Grid.Column="0" Content="← Back" Command="{Binding GoBackCommand}" Classes="back" Margin="0,0,12,0"/>
+          <TextBlock Grid.Column="1" Text="Job Vacancies" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+        </Grid>
 
-      <ListBox.ItemTemplate>
-        <DataTemplate x:DataType="m:JobVacancy">
-          <StackPanel Margin="5">
-            <TextBlock Text="{Binding PositionTitle}" FontSize="14" FontWeight="Bold"/>
-            <TextBlock Text="{Binding DepartmentId}" FontSize="11"/>
-            <StackPanel Orientation="Horizontal" Margin="0 2 0 0">
-              <TextBlock Text="Type: " FontSize="10"/>
-              <TextBlock Text="{Binding EmploymentType}" FontSize="10"/>
-            </StackPanel>
-            <TextBlock Text="{Binding CreatedAt, StringFormat='Posted: {0:yyyy-MM-dd}'}" FontSize="10" Foreground="Gray"/>
+        <!-- Message banner -->
+        <Border IsVisible="{Binding HasMessage}"
+                Background="#EFF6FF" BorderBrush="#BFDBFE"
+                BorderThickness="1" CornerRadius="8" Padding="14,10">
+          <TextBlock Text="{Binding Message}" FontSize="13" Foreground="#1D4ED8" TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Search -->
+        <TextBox Text="{Binding SearchText}" PlaceholderText="Search job titles…" CornerRadius="6"/>
+
+        <!-- Job list -->
+        <ListBox ItemsSource="{Binding Vacancies}"
+                 SelectedItem="{Binding SelectedJob}"
+                 Height="260"
+                 Background="White"
+                 BorderBrush="#E5E7EB"
+                 BorderThickness="1"
+                 CornerRadius="8">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="m:JobVacancy">
+              <StackPanel Margin="10,8" Spacing="3">
+                <TextBlock Text="{Binding PositionTitle}" FontSize="14" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding EmploymentType}" FontSize="11" Foreground="#6B7280"/>
+                <TextBlock Text="{Binding CreatedAt, StringFormat='Posted: {0:MMM d, yyyy}'}" FontSize="10" Foreground="#9CA3AF"/>
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Selected job detail card -->
+        <Border Background="#F0F9FF" BorderBrush="#BAE6FD"
+                BorderThickness="1" CornerRadius="10" Padding="16"
+                IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding SelectedJob.PositionTitle}" FontSize="16" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SelectedJob.EmploymentType}" Foreground="#2563EB" FontSize="12"/>
+            <TextBlock Text="Qualifications:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+            <TextBlock Text="{Binding SelectedJob.Qualifications}" TextWrapping="Wrap" Foreground="#374151" FontSize="13"/>
           </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate> 
+        </Border>
 
-  </ListBox>
+        <!-- Apply button -->
+        <Button Content="Apply Now →"
+                Command="{Binding EnterApplyModeCommand}"
+                IsEnabled="{Binding CanApply}"
+                Classes="primary"
+                HorizontalAlignment="Left"/>
 
-    <!-- Add this AFTER the ListBox and BEFORE the Action Buttons -->
-    <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="0,10,0,0"
-            IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">
-      <StackPanel Spacing="6">
-        <TextBlock Text="{Binding SelectedJob.PositionTitle}" FontSize="16" FontWeight="Bold"/>
-        <TextBlock Text="{Binding SelectedJob.EmploymentType}" Foreground="#2563EB" FontSize="12"/>
-        <TextBlock Text="Qualifications:" FontWeight="SemiBold" Margin="0,8,0,0"/>
-        <TextBlock Text="{Binding SelectedJob.Qualifications}" TextWrapping="Wrap" Foreground="#374151"/>
       </StackPanel>
-    </Border>
 
-    <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="0,10,0,0"
-            IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">
-      <StackPanel Spacing="6">
-        <TextBlock Text="{Binding SelectedJob.PositionTitle}" FontSize="16" FontWeight="Bold"/>
-        <TextBlock Text="{Binding SelectedJob.EmploymentType}" Foreground="#2563EB" FontSize="12"/>
-        <TextBlock Text="Qualifications:" FontWeight="SemiBold" Margin="0,8,0,0"/>
-        <TextBlock Text="{Binding SelectedJob.Qualifications}" TextWrapping="Wrap" Foreground="#374151"/>
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- PANEL B — Document upload + submit (shown when in apply mode) -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <StackPanel IsVisible="{Binding IsInApplyMode}" Spacing="14">
+
+        <!-- Header -->
+        <Grid ColumnDefinitions="Auto,*">
+          <Button Grid.Column="0" Content="← Back to Jobs" Command="{Binding CancelApplyCommand}" Classes="back" Margin="0,0,12,0"/>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock Text="Apply for Position" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SelectedJob.PositionTitle}" FontSize="14" Foreground="#2563EB"/>
+          </StackPanel>
+        </Grid>
+
+        <!-- Message banner -->
+        <Border IsVisible="{Binding HasMessage}"
+                Background="#EFF6FF" BorderBrush="#BFDBFE"
+                BorderThickness="1" CornerRadius="8" Padding="14,10">
+          <TextBlock Text="{Binding Message}" FontSize="13" Foreground="#1D4ED8" TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Missing documents count badge -->
+        <Border CornerRadius="8" Padding="14,10"
+                Background="#FEF9C3" BorderBrush="#FDE047" BorderThickness="1">
+          <TextBlock Text="{Binding MissingDocumentLabel}" FontSize="13" Foreground="#92400E"/>
+        </Border>
+
+        <!-- Document upload section -->
+        <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="16">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Upload Required Documents" FontSize="15" FontWeight="SemiBold"/>
+            <TextBlock Text="Required: Resume, ID, Transcript, Certificate  |  Optional: Other"
+                       FontSize="11" Foreground="#6B7280"/>
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <ComboBox Grid.Column="0"
+                        ItemsSource="{Binding RequirementTypes}"
+                        SelectedItem="{Binding SelectedRequirementType}"
+                        PlaceholderText="Select document type…">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <Button Grid.Column="1"
+                      Content="+ Upload"
+                      Command="{Binding UploadDocumentCommand}"
+                      Classes="primary"/>
+            </Grid>
+
+            <!-- Uploaded docs list -->
+            <TextBlock Text="Uploaded Documents" FontWeight="SemiBold" Margin="0,8,0,0"/>
+            <ListBox ItemsSource="{Binding AttachedDocuments}"
+                     SelectedItem="{Binding SelectedDocument}"
+                     Height="160"
+                     Background="#F9FAFB"
+                     BorderBrush="#E5E7EB"
+                     BorderThickness="1"
+                     CornerRadius="6">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="m:ApplicantDocument">
+                  <Grid ColumnDefinitions="*,Auto" Margin="8,6">
+                    <StackPanel Grid.Column="0" Spacing="2">
+                      <TextBlock Text="{Binding DocumentTypeName}" FontWeight="SemiBold" FontSize="13"/>
+                      <TextBlock Text="{Binding FileName}" FontSize="11" Foreground="#6B7280"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="#D1FAE5" CornerRadius="999" Padding="8,3">
+                      <TextBlock Text="{Binding Status}" FontSize="10" Foreground="#065F46"/>
+                    </Border>
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Button Content="Remove Selected"
+                    Command="{Binding RemoveDocumentCommand}"
+                    IsEnabled="{Binding SelectedDocument, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Classes="danger"
+                    HorizontalAlignment="Left"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Submit application button — only enabled when all required docs are uploaded -->
+        <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="8" Padding="16">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Ready to submit?" FontWeight="SemiBold" FontSize="14"/>
+            <TextBlock Text="Upload all required documents above, then click Submit. Your documents will be reviewed by HR."
+                       FontSize="12" Foreground="#374151" TextWrapping="Wrap"/>
+            <Button Content="Submit Application ✓"
+                    Command="{Binding SubmitApplicationCommand}"
+                    IsEnabled="{Binding CanSubmitApplication}"
+                    Classes="success"
+                    HorizontalAlignment="Left"/>
+          </StackPanel>
+        </Border>
+
       </StackPanel>
-  </Border>
 
-    <!-- Action Buttons -->
-    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-      <Button Content="← Back" Command="{Binding GoBackCommand}"/>
-      <Button Content="Apply Now"
-              Command="{Binding ApplyAsync}"
-              IsEnabled="{Binding CanApply}"
-              Background="#2563EB"
-              Foreground="White"
-              Padding="15,8"
-        ToolTip.Tip="Select a job first"/>
-</StackPanel>
-  </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>

@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
              x:Class="HRApplicantSystem.UI.Views.HR.HiringDecisionView"
-             x:DataType="vm:HiringDecisionViewModel"
-             xmlns:conv="clr-namespace:HRApplicantSystem.UI.Converters">
+             x:DataType="vm:HiringDecisionViewModel">
 
   <UserControl.Styles>
     <Style Selector="TextBlock">
@@ -100,35 +99,19 @@
 
             <!-- Decision radio buttons -->
             <StackPanel Spacing="10">
-
-              <!-- ACCEPT -->
-              <Border Background="White"
-                      BorderBrush="#D1FAE5"
-                      BorderThickness="1"
-                      CornerRadius="8"
-                      Padding="14,12">
-
+              <Border Background="White" BorderBrush="#D1FAE5" BorderThickness="1"
+                      CornerRadius="8" Padding="14,12">
                 <RadioButton Content="✅  Accept applicant"
+                             IsChecked="{Binding Decision, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                              GroupName="Decision"
-                             FontSize="14"
-                             Foreground="#059669"
-                             IsChecked="{Binding Decision, Converter={x:Static conv:StringEqualsConverter.Instance}, ConverterParameter=Accept}" />
+                             FontSize="14" Foreground="#059669"/>
               </Border>
-
-              <!-- REJECT -->
-              <Border Background="White"
-                      BorderBrush="#FEE2E2"
-                      BorderThickness="1"
-                      CornerRadius="8"
-                      Padding="14,12">
-
+              <Border Background="White" BorderBrush="#FEE2E2" BorderThickness="1"
+                      CornerRadius="8" Padding="14,12">
                 <RadioButton Content="❌  Reject applicant"
                              GroupName="Decision"
-                             FontSize="14"
-                             Foreground="#DC2626"
-                             IsChecked="{Binding Decision, Converter={x:Static conv:StringEqualsConverter.Instance}, ConverterParameter=Reject}" />
+                             FontSize="14" Foreground="#DC2626"/>
               </Border>
-
             </StackPanel>
 
             <!-- Remarks -->

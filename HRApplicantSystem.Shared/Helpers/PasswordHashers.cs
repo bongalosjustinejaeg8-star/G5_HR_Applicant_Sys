@@ -12,14 +12,3 @@ public class PasswordHasher
         return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
     }
 }
-
-class Program
-{
-    public static void Main()
-    {
-        var hasher = new PasswordHasher();
-        var hash = hasher.Hash("hr123");
-        Console.WriteLine(hash);
-    }
-}
-

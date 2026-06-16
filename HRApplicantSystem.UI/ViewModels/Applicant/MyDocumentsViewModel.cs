@@ -1,8 +1,4 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.IO;
-using Avalonia.Platform.Storage;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +12,6 @@ using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Shared.Enums;
 using HRApplicantSystem.Shared.Helpers;
-using HRApplicantSystem.Data.Models;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
@@ -226,10 +221,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
         {
             StatusMessage = ex.Message;
             HasMessage = true;
-        }
-        finally
-        {
-            IsLoading = false;
         }
     }
 

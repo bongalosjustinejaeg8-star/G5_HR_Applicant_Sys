@@ -119,19 +119,4 @@ public class ApplicantAccountRepository : IApplicantAccountRepository
         int rowsAffected = await command.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
-
-    Task<IEnumerable<ApplicantAccount>> IApplicantAccountRepository.GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<ApplicantAccount?> IApplicantAccountRepository.GetByIdAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<ApplicantAccount?> GetByAccountIdAsync(string accountId)
-    {
-        throw new NotImplementedException();
-    }
 }

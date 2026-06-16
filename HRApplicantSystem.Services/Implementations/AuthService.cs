@@ -85,6 +85,34 @@ public class AuthService : IAuthService
         return await _applicantAccountRepo.CreateAsync(newAccount);
     }
 
+
+    public async Task<bool> RegisterHRAsync(
+        string username,
+        string email,
+        string password,
+        string roleId)
+    {
+        // prevent duplicate email
+        var existing = await _userRepo.GetByEmailAsync(email);
+
+        if (existing != null)
+            return false;
+
+        string hashedPassword = _passwordHasher.Hash(password);
+
+        var newUser = new User
+        {
+            Username = username,
+            Email = email,
+            RoleId = roleId,
+            PasswordHash = hashedPassword,
+            IsActive = true
+        };
+
+        return await _userRepo.CreateAsync(newUser);
+    }
+
+
     public async Task<bool> ChangePasswordAsync(string accountId, string newPassword)
     {
         // step 1: find the account

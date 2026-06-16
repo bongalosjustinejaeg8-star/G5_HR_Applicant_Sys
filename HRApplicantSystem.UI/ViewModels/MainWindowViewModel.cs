@@ -99,7 +99,7 @@ public class MainWindowViewModel : ViewModelBase
         => CurrentView = new HRDashboardViewModel(this);
 
     public void NavigateToJobVacancyMgmt()
-        => CurrentView = new JobVacancyMgmtViewModel(GetJobVacancyMgmtService());
+        => CurrentView = new JobVacancyMgmtViewModel(GetJobVacancyMgmtService(), this);
 
     public void NavigateToApplicantList()
         => CurrentView = new ApplicantListViewModel(this);

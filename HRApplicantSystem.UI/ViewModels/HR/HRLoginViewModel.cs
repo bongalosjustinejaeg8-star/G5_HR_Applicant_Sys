@@ -74,6 +74,12 @@ public partial class HRLoginViewModel : ViewModelBase
             Console.WriteLine(ex.StackTrace);
             ErrorMessage = ex.Message;
             HasError = true;
+
+            await authService.RegisterHRAsync(
+            "hr1",
+            "hr1@system.com",
+            "hr123",
+            "cbd1254b-6996-11f1-b923-f894c21dce1e");
         }
     }
     [RelayCommand] private void GoBack() => _mainViewModel.NavigateToLanding();

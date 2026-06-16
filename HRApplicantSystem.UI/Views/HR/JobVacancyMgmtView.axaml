@@ -1,60 +1,233 @@
-<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+<UserControl x:CompileBindings="False"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
              x:Class="HRApplicantSystem.UI.Views.HR.JobVacancyMgmtView"
              x:DataType="vm:JobVacancyMgmtViewModel">
 
-  <StackPanel Margin="20">
-  <Button Content="⬅ Back" 
-        Command="{Binding GoBackCommand}" 
-        Width="100" 
-        Margin="0 0 0 15" />
-    <TextBlock Text="Job Vacancy Management" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+  <UserControl.Styles>
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#2563EB"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.success">
+      <Setter Property="Background" Value="#059669"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="Button.warning">
+      <Setter Property="Background" Value="#D97706"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="#DC2626"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="Button.back">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="12,7"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Foreground" Value="#374151"/>
+    </Style>
+    <Style Selector="Button.ghost">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="12,7"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="TextBox">
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="10,8"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+  </UserControl.Styles>
 
-    <!-- Loading indicator -->
-    <ProgressBar IsIndeterminate="{Binding IsLoading}" Margin="0 0 0 10"/>
+  <ScrollViewer>
+    <Grid Margin="24" RowDefinitions="Auto,*">
 
-    <!-- Message display -->
-    <TextBlock Text="{Binding Message}" 
-               IsVisible="{Binding HasMessage}"
-               Foreground="Blue" 
-               Margin="0 0 0 10"/>
+      <!-- ─── Top header row (always visible) ─── -->
+      <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,16">
+        <Button Grid.Column="0" Content="← Back" Command="{Binding GoBackCommand}" Classes="back" Margin="0,0,12,0"/>
+        <TextBlock Grid.Column="1" Text="Job Vacancy Management" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+        <Button Grid.Column="2" Content="+ Add New Vacancy" Command="{Binding OpenAddFormCommand}"
+                Classes="primary" Margin="0,0,8,0"/>
+        <ProgressBar Grid.Column="3" IsIndeterminate="{Binding IsLoading}"
+                     Width="120" VerticalAlignment="Center"/>
+      </Grid>
 
-    <!-- Add New Job Opening Button -->
-    <Button Content="+ Add New Job Opening" 
-            HorizontalAlignment="Left" 
-            Margin="0 0 0 10"/>
+      <!-- ─── Main content area ─── -->
+      <Grid Grid.Row="1" ColumnDefinitions="*,Auto,380">
 
-    <TextBlock Text="Active Job Openings" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+        <!-- Left: vacancy list + action buttons -->
+        <StackPanel Grid.Column="0" Spacing="12">
 
-    <!-- Job Vacancies ListBox -->
-    <ListBox ItemsSource="{Binding Vacancies}"
-             SelectedItem="{Binding SelectedJobVacancy}"
-             Height="250"
-             Margin="0 0 0 10">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Margin="5">
-            <TextBlock Text="{Binding PositionTitle}" FontWeight="Bold" FontSize="12"/>
-            <TextBlock Text="{Binding DepartmentId}" FontSize="11"/>
-            <StackPanel Orientation="Horizontal" Margin="0 2 0 0">
-              <TextBlock Text="Status: " FontSize="10"/>
-              <TextBlock Text="{Binding Status}" FontSize="10" Foreground="Green"/>
-            </StackPanel>
-            <TextBlock Text="{Binding CreatedAt, StringFormat='Created: {0:yyyy-MM-dd}'}" FontSize="10" Foreground="Gray"/>
+          <!-- Message banner -->
+          <Border IsVisible="{Binding HasMessage}"
+                  Background="#EFF6FF" BorderBrush="#BFDBFE"
+                  BorderThickness="1" CornerRadius="8" Padding="14,10">
+            <TextBlock Text="{Binding Message}" FontSize="13" Foreground="#1D4ED8" TextWrapping="Wrap"/>
+          </Border>
+
+          <!-- Table header -->
+          <Border Background="#F9FAFB" BorderBrush="#E5E7EB"
+                  BorderThickness="1,1,1,0" CornerRadius="10,10,0,0" Padding="14,10">
+            <Grid ColumnDefinitions="*,140,100,90">
+              <TextBlock Grid.Column="0" Text="Position Title" FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+              <TextBlock Grid.Column="1" Text="Employment Type" FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+              <TextBlock Grid.Column="2" Text="Status" FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+              <TextBlock Grid.Column="3" Text="Created" FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+            </Grid>
+          </Border>
+
+          <!-- Vacancy rows -->
+          <ListBox ItemsSource="{Binding Vacancies}"
+                   SelectedItem="{Binding SelectedJobVacancy}"
+                   Background="White"
+                   BorderBrush="#E5E7EB"
+                   BorderThickness="1,0,1,1"
+                   CornerRadius="0,0,10,10"
+                   Padding="0"
+                   MaxHeight="400">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border Padding="14,12" BorderBrush="#F3F4F6" BorderThickness="0,0,0,1">
+                  <Grid ColumnDefinitions="*,140,100,90">
+                    <StackPanel Grid.Column="0">
+                      <TextBlock Text="{Binding PositionTitle}" FontSize="14" FontWeight="SemiBold"/>
+                      <TextBlock Text="{Binding DepartmentId}" FontSize="11" Foreground="#9CA3AF"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding EmploymentType}" FontSize="13"
+                               Foreground="#374151" VerticalAlignment="Center"/>
+                    <Border Grid.Column="2" CornerRadius="999" Padding="8,3" VerticalAlignment="Center">
+                      <Border.Background>
+                        <Binding Path="Status">
+                          <Binding.Converter>
+                            <!-- simple approach: show green for Open, red for Closed via Foreground only -->
+                          </Binding.Converter>
+                        </Binding>
+                      </Border.Background>
+                      <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Medium"/>
+                    </Border>
+                    <TextBlock Grid.Column="3"
+                               Text="{Binding CreatedAt, StringFormat='{}{0:MMM d}'}"
+                               FontSize="12" Foreground="#6B7280" VerticalAlignment="Center"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <!-- Action buttons row -->
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="✏ Edit Selected"
+                    Command="{Binding OpenEditFormCommand}"
+                    IsEnabled="{Binding SelectedJobVacancy, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Classes="primary"/>
+            <Button Content="🔒 Close Vacancy"
+                    Command="{Binding CloseJobVacancyCommand}"
+                    IsEnabled="{Binding SelectedJobVacancy, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Classes="warning"/>
+            <Button Content="🔓 Reopen Vacancy"
+                    Command="{Binding ReopenJobVacancyCommand}"
+                    IsEnabled="{Binding SelectedJobVacancy, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Classes="success"/>
           </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
 
-    <!-- Action Buttons -->
-    <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-      <Button Content="Edit" HorizontalAlignment="Left" Margin="0 0 10 0"/>
-      <Button Content="Close" 
-              HorizontalAlignment="Left" 
-              Margin="0 0 10 0"
-              Command="{Binding CloseJobVacancyCommand}"/>
-      <Button Content="Reopen" HorizontalAlignment="Left"/>
-    </StackPanel>
-  </StackPanel>
+        </StackPanel>
+
+        <!-- Spacer -->
+        <Border Grid.Column="1" Width="20"/>
+
+        <!-- Right: Add / Edit form panel -->
+        <Border Grid.Column="2"
+                IsVisible="{Binding IsFormVisible}"
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="20">
+          <StackPanel Spacing="14">
+
+            <TextBlock Text="{Binding FormTitle}" FontSize="17" FontWeight="Bold"/>
+
+            <!-- Position Title -->
+            <StackPanel Spacing="4">
+              <TextBlock Text="Position Title *" FontSize="12" FontWeight="Medium" Foreground="#374151"/>
+              <TextBox Text="{Binding FormPositionTitle}" PlaceholderText="e.g. Software Engineer"/>
+            </StackPanel>
+
+            <!-- Department -->
+            <StackPanel Spacing="4">
+              <TextBlock Text="Department *" FontSize="12" FontWeight="Medium" Foreground="#374151"/>
+              <ComboBox ItemsSource="{Binding Departments}"
+                        SelectedItem="{Binding FormDepartment}"
+                        HorizontalAlignment="Stretch"
+                        PlaceholderText="Select department…">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DepartmentName}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <!-- Employment Type -->
+            <StackPanel Spacing="4">
+              <TextBlock Text="Employment Type *" FontSize="12" FontWeight="Medium" Foreground="#374151"/>
+              <ComboBox ItemsSource="{Binding EmploymentTypes}"
+                        SelectedItem="{Binding FormEmploymentType}"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
+            <!-- Qualifications -->
+            <StackPanel Spacing="4">
+              <TextBlock Text="Qualifications" FontSize="12" FontWeight="Medium" Foreground="#374151"/>
+              <TextBox Text="{Binding FormQualifications}"
+                       PlaceholderText="Required skills and experience…"
+                       AcceptsReturn="True"
+                       Height="100"
+                       TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- Form buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+              <Button Content="Save"
+                      Command="{Binding SaveVacancyCommand}"
+                      Classes="success"/>
+              <Button Content="Cancel"
+                      Command="{Binding CancelFormCommand}"
+                      Classes="ghost"/>
+            </StackPanel>
+
+          </StackPanel>
+        </Border>
+
+      </Grid>
+    </Grid>
+  </ScrollViewer>
 </UserControl>
