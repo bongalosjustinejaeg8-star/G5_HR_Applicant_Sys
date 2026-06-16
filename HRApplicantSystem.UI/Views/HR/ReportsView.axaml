@@ -1,35 +1,203 @@
-<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+<UserControl x:CompileBindings="False"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
              x:Class="HRApplicantSystem.UI.Views.HR.ReportsView"
              x:DataType="vm:ReportsViewModel">
 
-  <StackPanel Margin="20">
-    <TextBlock Text="Reports" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="#1A1A1A"/>
+    </Style>
+    <Style Selector="Button.filter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,7"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Foreground" Value="#374151"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.filter:pointerover">
+      <Setter Property="Background" Value="#F3F4F6"/>
+    </Style>
+    <Style Selector="Button.action">
+      <Setter Property="Background" Value="#1D4ED8"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,8"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.action.secondary">
+      <Setter Property="Background" Value="#059669"/>
+    </Style>
+  </UserControl.Styles>
 
-    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
-      <StackPanel>
-        <TextBlock Text="Report Type" FontSize="14" FontWeight="Bold"/>
-        <ComboBox SelectedItem="{Binding SelectedReportType}" Margin="0 5 10 0">
-          <ComboBoxItem Content="Recruitment Summary"/>
-          <ComboBoxItem Content="Applicant Status"/>
-          <ComboBoxItem Content="Interview Results"/>
-          <ComboBoxItem Content="Hiring Analytics"/>
-        </ComboBox>
-      </StackPanel>
-      <StackPanel>
-        <TextBlock Text="Date Range" FontSize="14" FontWeight="Bold"/>
-        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-          <DatePicker SelectedDate="{Binding StartDate}" Margin="0 0 5 0"/>
-          <DatePicker SelectedDate="{Binding EndDate}"/>
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="0">
+
+      <!-- Header -->
+      <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,24">
+        <Button Grid.Column="0"
+                Content="← Back"
+                Command="{Binding GoBackCommand}"
+                Classes="filter"
+                Margin="0,0,12,0"/>
+        <TextBlock Grid.Column="1"
+                   Text="Reports"
+                   FontSize="20"
+                   FontWeight="Medium"
+                   VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+          <Button Content="Export .txt"
+                  Command="{Binding ExportToTextCommand}"
+                  Classes="action"/>
+          <Button Content="Export .csv"
+                  Command="{Binding ExportToCsvCommand}"
+                  Classes="action secondary"/>
         </StackPanel>
-      </StackPanel>
-    </Grid>
+      </Grid>
 
-    <Button Content="Generate Report" HorizontalAlignment="Left" Margin="0 0 0 10"/>
-    <Button Content="Export to PDF" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+      <!-- Filters Row -->
+      <Border Background="White"
+              BorderBrush="#E5E7EB"
+              BorderThickness="1"
+              CornerRadius="10"
+              Padding="16"
+              Margin="0,0,0,16">
+        <StackPanel Spacing="12">
 
-    <TextBlock Text="Report Preview" FontSize="16" FontWeight="Bold" Margin="0 10 0 10"/>
-    <TextBlock Text="{Binding ReportData}" TextWrapping="Wrap" Height="300"/>
-  </StackPanel>
+          <TextBlock Text="Filter by status"
+                     FontSize="12"
+                     Foreground="#6B7280"/>
+
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="All" Command="{Binding FilterAllCommand}" Classes="filter"/>
+            <Button Content="Submitted" Command="{Binding FilterSubmittedCommand}" Classes="filter"/>
+            <Button Content="Under review" Command="{Binding FilterUnderReviewCommand}" Classes="filter"/>
+            <Button Content="Shortlisted" Command="{Binding FilterShortlistedCommand}" Classes="filter"/>
+            <Button Content="Accepted" Command="{Binding FilterAcceptedCommand}" Classes="filter"/>
+            <Button Content="Rejected" Command="{Binding FilterRejectedCommand}" Classes="filter"/>
+          </StackPanel>
+
+          <Separator Background="#F3F4F6"/>
+
+          <TextBlock Text="Filter by date"
+                     FontSize="12"
+                     Foreground="#6B7280"/>
+
+          <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <TextBlock Text="From" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding StartDate}"/>
+            <TextBlock Text="To" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding EndDate}"/>
+            <Button Content="Apply"
+                    Command="{Binding ApplyDateFilterCommand}"
+                    Classes="action"
+                    Padding="16,7"/>
+          </StackPanel>
+
+        </StackPanel>
+      </Border>
+
+      <!-- Report Header -->
+      <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+        <StackPanel Grid.Column="0">
+          <TextBlock Text="{Binding ReportTitle}"
+                     FontSize="16"
+                     FontWeight="Medium"/>
+          <TextBlock Text="{Binding TotalCount}"
+                     FontSize="13"
+                     Foreground="#6B7280"/>
+        </StackPanel>
+      </Grid>
+
+      <!-- Message -->
+      <Border IsVisible="{Binding HasMessage}"
+              Background="#EFF6FF"
+              BorderBrush="#BFDBFE"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="14,10"
+              Margin="0,0,0,12">
+        <TextBlock Text="{Binding Message}"
+                   FontSize="13"
+                   Foreground="#1D4ED8"
+                   TextWrapping="Wrap"/>
+      </Border>
+
+      <!-- Loading -->
+      <TextBlock IsVisible="{Binding IsLoading}"
+                 Text="Loading..."
+                 FontSize="13"
+                 Foreground="#6B7280"
+                 Margin="0,0,0,12"/>
+
+      <!-- Table Header -->
+      <Border Background="#F9FAFB"
+              BorderBrush="#E5E7EB"
+              BorderThickness="1,1,1,0"
+              CornerRadius="10,10,0,0"
+              Padding="16,10">
+        <Grid ColumnDefinitions="*,*,Auto,Auto">
+          <TextBlock Grid.Column="0" Text="Full name" FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+          <TextBlock Grid.Column="1" Text="Position" FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+          <TextBlock Grid.Column="2" Text="Status" FontSize="12" FontWeight="Medium" Foreground="#6B7280" Width="120"/>
+          <TextBlock Grid.Column="3" Text="Submitted" FontSize="12" FontWeight="Medium" Foreground="#6B7280" Width="110"/>
+        </Grid>
+      </Border>
+
+      <!-- Table Rows -->
+      <ListBox ItemsSource="{Binding ReportItems}"
+               Background="White"
+               BorderBrush="#E5E7EB"
+               BorderThickness="1,0,1,1"
+               CornerRadius="0,0,10,10"
+               Padding="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Padding="16,12"
+                    BorderBrush="#F3F4F6"
+                    BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="*,*,Auto,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding FullName}"
+                           FontSize="14"
+                           VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Position}"
+                           FontSize="13"
+                           Foreground="#6B7280"
+                           VerticalAlignment="Center"/>
+                <Border Grid.Column="2"
+                        Background="#EFF6FF"
+                        BorderBrush="#BFDBFE"
+                        BorderThickness="1"
+                        CornerRadius="999"
+                        Padding="10,3"
+                        Width="110"
+                        Margin="0,0,8,0">
+                  <TextBlock Text="{Binding Status}"
+                             FontSize="12"
+                             Foreground="#1D4ED8"
+                             HorizontalAlignment="Center"/>
+                </Border>
+                <TextBlock Grid.Column="3"
+                           Text="{Binding SubmittedAt}"
+                           FontSize="13"
+                           Foreground="#6B7280"
+                           Width="100"
+                           VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+    </StackPanel>
+  </ScrollViewer>
+
 </UserControl>

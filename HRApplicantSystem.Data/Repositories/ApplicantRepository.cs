@@ -24,8 +24,8 @@ public class ApplicantRepository : IApplicantRepository
         {
             applicants.Add(new Applicant
             {
-                ApplicantId = reader.GetValue(0).ToString()!,
-                AccountId = reader.GetValue(1).ToString()!,
+                ApplicantId = Convert.ToString(reader.GetValue(0))!,
+                AccountId = Convert.ToString(reader.GetValue(1))!,
                 FullName = reader.GetString(2),
                 Address = reader.IsDBNull(3) ? null : reader.GetString(3),
                 ContactNo = reader.IsDBNull(4) ? null : reader.GetString(4),
@@ -49,8 +49,8 @@ public class ApplicantRepository : IApplicantRepository
         {
             return new Applicant
             {
-                ApplicantId = reader.GetValue(0).ToString()!,
-                AccountId = reader.GetValue(1).ToString()!,
+                ApplicantId = Convert.ToString(reader.GetValue(0))!,
+                AccountId = Convert.ToString(reader.GetValue(1))!,
                 FullName = reader.GetString(2),
                 Address = reader.IsDBNull(3) ? null : reader.GetString(3),
                 ContactNo = reader.IsDBNull(4) ? null : reader.GetString(4),
@@ -74,8 +74,8 @@ public class ApplicantRepository : IApplicantRepository
         {
             return new Applicant
             {
-                ApplicantId = reader.GetValue(0).ToString()!,
-                AccountId = reader.GetValue(1).ToString()!,
+                ApplicantId = Convert.ToString(reader.GetValue(0))!,
+                AccountId = Convert.ToString(reader.GetValue(1))!,
                 FullName = reader.GetString(2),
                 Address = reader.IsDBNull(3) ? null : reader.GetString(3),
                 ContactNo = reader.IsDBNull(4) ? null : reader.GetString(4),

@@ -136,7 +136,7 @@ public partial class DashboardViewModel : ViewModelBase
         catch (Exception ex)
         {
             CurrentApplicationStatus = $"Error: {ex.Message}";
-            Message = $"Error loading dashboard: {ex.Message}";
+            Message = $"Error loading dashboard: {ex.Message} | {ex.StackTrace}";
             Debug.WriteLine($"[DashboardViewModel] LoadDashboardDataAsync error: {ex}");
         }
         finally

@@ -28,7 +28,7 @@ public class DepartmentRepository : IDepartmentRepository
         {
             list.Add(new Department
             {
-                DepartmentId = reader.GetValue(0).ToString()!,
+                DepartmentId = Convert.ToString(reader.GetValue(0))!,
                 DepartmentName = reader.GetString(1)
             });
         }

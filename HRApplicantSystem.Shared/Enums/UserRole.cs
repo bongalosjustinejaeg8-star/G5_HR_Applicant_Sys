@@ -4,7 +4,6 @@ public enum UserRole
 {
     None,
     HRManager,
-    HRStaff,
     Admin
 
 }

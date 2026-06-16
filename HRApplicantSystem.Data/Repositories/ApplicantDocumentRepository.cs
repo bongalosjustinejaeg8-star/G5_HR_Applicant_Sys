@@ -34,23 +34,23 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
         {
             docs.Add(new ApplicantDocument
             {
-                DocumentId = reader.GetValue(0)?.ToString() ?? "",
-                ApplicantId = reader.GetValue(1)?.ToString() ?? "",
+                DocumentId = Convert.ToString(reader.GetValue(0)) ?? "",
+                ApplicantId = Convert.ToString(reader.GetValue(1)) ?? "",
 
                 // 🔥 FIX: NO GetString (prevents Guid/string crash)
-                RequirementTypeId = reader.GetValue(2)?.ToString() ?? "",
+                RequirementTypeId = Convert.ToString(reader.GetValue(2)) ?? "",
 
-                FilePath = reader.GetValue(3)?.ToString() ?? "",
+                FilePath = Convert.ToString(reader.GetValue(3)) ?? "",
 
                 Status = Enum.TryParse<DocumentStatus>(
-                    reader.GetValue(4)?.ToString(),
+                    Convert.ToString(reader.GetValue(4)),
                     out var status)
                     ? status
                     : DocumentStatus.Missing,
 
                 Remarks = reader.IsDBNull(5)
                     ? null
-                    : reader.GetValue(5)?.ToString(),
+                    : Convert.ToString(reader.GetValue(5)),
 
                 SubmittedAt = reader.IsDBNull(6)
                     ? DateTime.MinValue
@@ -80,23 +80,23 @@ public class ApplicantDocumentRepository : IApplicantDocumentRepository
         {
             return new ApplicantDocument
             {
-                DocumentId = reader.GetValue(0)?.ToString() ?? "",
-                ApplicantId = reader.GetValue(1)?.ToString() ?? "",
+                DocumentId = Convert.ToString(reader.GetValue(0)) ?? "",
+                ApplicantId = Convert.ToString(reader.GetValue(1)) ?? "",
 
                 // 🔥 FIX HERE TOO
-                RequirementTypeId = reader.GetValue(2)?.ToString() ?? "",
+                RequirementTypeId = Convert.ToString(reader.GetValue(2)) ?? "",
 
-                FilePath = reader.GetValue(3)?.ToString() ?? "",
+                FilePath = Convert.ToString(reader.GetValue(3)) ?? "",
 
                 Status = Enum.TryParse<DocumentStatus>(
-                    reader.GetValue(4)?.ToString(),
+                    Convert.ToString(reader.GetValue(4)),
                     out var status)
                     ? status
                     : DocumentStatus.Missing,
 
                 Remarks = reader.IsDBNull(5)
                     ? null
-                    : reader.GetValue(5)?.ToString(),
+                    : Convert.ToString(reader.GetValue(5)),
 
                 SubmittedAt = reader.IsDBNull(6)
                     ? DateTime.MinValue

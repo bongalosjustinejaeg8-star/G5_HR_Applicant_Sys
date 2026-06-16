@@ -20,20 +20,11 @@ public partial class JobVacanciesViewModel : ViewModelBase
 
     public ObservableCollection<JobVacancy> Vacancies { get; } = new();
 
-    [ObservableProperty]
-    private JobVacancy? selectedJob;
-
-    [ObservableProperty]
-    private string searchText = "";
-
-    [ObservableProperty]
-    private string message = "";
-
-    [ObservableProperty]
-    private bool hasMessage;
-
-    [ObservableProperty]
-    private bool canApply;
+    [ObservableProperty] private JobVacancy? selectedJob;
+    [ObservableProperty] private string searchText = "";
+    [ObservableProperty] private string message = "";
+    [ObservableProperty] private bool hasMessage;
+    [ObservableProperty] private bool canApply;
 
     public JobVacanciesViewModel(
         IJobVacancyService jobVacancyService,
@@ -43,14 +34,13 @@ public partial class JobVacanciesViewModel : ViewModelBase
         _mainViewModel = mainViewModel;
         _jobVacancyService = jobVacancyService;
         _applicationService = applicationService;
-
         _ = LoadJobVacanciesAsync();
     }
 
     public async Task LoadJobVacanciesAsync()
     {
+        // fetch all open vacancies and populate the list
         var jobs = await _jobVacancyService.GetOpenJobsAsync();
-
         Vacancies.Clear();
         foreach (var job in jobs)
             Vacancies.Add(job);
@@ -58,11 +48,13 @@ public partial class JobVacanciesViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value)
     {
+        // trigger search whenever the search box changes
         _ = SearchAsync(value);
     }
 
     public async Task SearchAsync(string keyword)
     {
+        // empty keyword reloads all open jobs; otherwise filter by keyword
         var jobs = string.IsNullOrWhiteSpace(keyword)
             ? await _jobVacancyService.GetOpenJobsAsync()
             : await _jobVacancyService.SearchJobsAsync(keyword);
@@ -74,6 +66,7 @@ public partial class JobVacanciesViewModel : ViewModelBase
 
     partial void OnSelectedJobChanged(JobVacancy? value)
     {
+        // enable the apply button whenever a job is selected
         CanApply = true;
         OnPropertyChanged(nameof(CanApply));
     }
@@ -81,17 +74,16 @@ public partial class JobVacanciesViewModel : ViewModelBase
     [RelayCommand]
     public async Task ApplyAsync()
     {
-        if (SelectedJob == null)
-            return;
+        if (SelectedJob == null) return;
 
         try
         {
             var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
 
-            var applicant =
-                await applicantRepo.GetByAccountIdAsync(
-                    SessionManager.CurrentUserId ?? string.Empty);
+            // look up the applicant profile linked to the current session account
+            var applicant = await applicantRepo.GetByAccountIdAsync(
+                SessionManager.CurrentUserId ?? string.Empty);
 
             if (applicant == null)
             {
@@ -100,11 +92,10 @@ public partial class JobVacanciesViewModel : ViewModelBase
                 return;
             }
 
+            // submit — no userId passed since applicants are not in the Users table
             bool success = await _applicationService.SubmitApplicationAsync(
-              applicant.ApplicantId,
-              SelectedJob.VacancyId,
-               SessionManager.CurrentUserId ?? string.Empty
-            );  
+                applicant.ApplicantId,
+                SelectedJob.VacancyId);
 
             Message = success
                 ? "Application submitted successfully!"
@@ -121,8 +112,5 @@ public partial class JobVacanciesViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void GoBack()
-        => _mainViewModel?.NavigateToApplicantDashboard();
-
-    
+    private void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
 }

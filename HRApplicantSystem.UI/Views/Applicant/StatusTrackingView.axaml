@@ -1,35 +1,124 @@
-<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+<UserControl x:CompileBindings="False"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HRApplicantSystem.UI.ViewModels.Applicant"
              x:Class="HRApplicantSystem.UI.Views.Applicant.StatusTrackingView"
              x:DataType="vm:StatusTrackingViewModel">
 
-  <StackPanel Margin="20">
-    <TextBlock Text="Application Status Tracking" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="#1A1A1A"/>
+    </Style>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#E5E5E5"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding" Value="14"/>
+      <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+  </UserControl.Styles>
 
-    <TextBlock Text="Timeline" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-    <ListBox ItemsSource="{Binding StatusHistory}" Height="400">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Margin="10" Background="#F0F0F0">
-            <TextBlock Text="{Binding StatusName}" FontSize="14" FontWeight="Bold" Foreground="Blue"/>
-            <TextBlock Text="{Binding ChangedDate, StringFormat='Changed on: {0}'}" FontSize="12"/>
-            <TextBlock Text="{Binding Details, StringFormat='Details: {0}'}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-              <TextBlock Text="{Binding ChangedBy, StringFormat='By: {0}'}" FontSize="11" Foreground="Gray" Margin="0,0,20,0"/>
-              <TextBlock Text="{Binding ChangedTime, StringFormat='Time: {0}'}" FontSize="11" Foreground="Gray"/>
-            </StackPanel>
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="0">
+
+      <!-- Header -->
+      <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,20">
+        <Button Grid.Column="0"
+                Content="← Back"
+                Command="{Binding GoBackCommand}"
+                Padding="12,7"
+                Margin="0,0,14,0"
+                Background="Transparent"
+                BorderBrush="#CCCCCC"
+                BorderThickness="1"
+                CornerRadius="6"
+                Foreground="#555555"/>
+        <TextBlock Grid.Column="1"
+                   Text="Application status tracking"
+                   FontSize="20"
+                   FontWeight="Medium"
+                   VerticalAlignment="Center"/>
+      </Grid>
+
+      <!-- Current Status Card -->
+      <Border Background="#F0FDF4"
+              BorderBrush="#86EFAC"
+              BorderThickness="1"
+              CornerRadius="10"
+              Padding="16"
+              Margin="0,0,0,20">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Grid.Column="0" Spacing="4">
+            <TextBlock Text="CURRENT STATUS"
+                       FontSize="11"
+                       Foreground="#6B7280"
+                       FontWeight="Medium"/>
+            <TextBlock Text="{Binding CurrentStatus}"
+                       FontSize="18"
+                       FontWeight="Medium"
+                       Foreground="#16A34A"/>
+            <TextBlock Text="{Binding LastUpdated, StringFormat='Last updated: {0}'}"
+                       FontSize="12"
+                       Foreground="#6B7280"/>
           </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+          <Border Grid.Column="1"
+                  Background="#DCFCE7"
+                  BorderBrush="#86EFAC"
+                  BorderThickness="1"
+                  CornerRadius="999"
+                  Padding="12,6"
+                  VerticalAlignment="Center">
+            <TextBlock Text="Active"
+                       FontSize="13"
+                       FontWeight="Medium"
+                       Foreground="#16A34A"/>
+          </Border>
+        </Grid>
+      </Border>
 
-    <Border Background="#E8F5E9" Padding="15" CornerRadius="5" Margin="0,20,0,0">
-      <StackPanel>
-        <TextBlock Text="Current Status" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
-        <TextBlock Text="{Binding CurrentStatus}" FontSize="16" Foreground="Green" FontWeight="Bold"/>
-        <TextBlock Text="{Binding LastUpdated, StringFormat='Last Updated: {0}'}" FontSize="12" Foreground="Gray" Margin="0,5,0,0"/>
-      </StackPanel>
-    </Border>
-  </StackPanel>
+      <!-- Timeline Label -->
+      <TextBlock Text="TIMELINE"
+                 FontSize="11"
+                 FontWeight="Medium"
+                 Foreground="#6B7280"
+                 Margin="0,0,0,14"/>
+
+      <!-- Timeline List -->
+      <ListBox ItemsSource="{Binding StatusHistory}"
+               Background="Transparent"
+               BorderThickness="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="card">
+              <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="6">
+                  <TextBlock Text="{Binding StatusName}"
+                             FontSize="14"
+                             FontWeight="Medium"/>
+                  <TextBlock Text="{Binding Details}"
+                             FontSize="13"
+                             Foreground="#6B7280"
+                             TextWrapping="Wrap"/>
+                  <StackPanel Orientation="Horizontal" Spacing="16">
+                    <TextBlock Text="{Binding ChangedBy, StringFormat='By: {0}'}"
+                               FontSize="12"
+                               Foreground="#9CA3AF"/>
+                    <TextBlock Text="{Binding ChangedDate}"
+                               FontSize="12"
+                               Foreground="#9CA3AF"/>
+                    <TextBlock Text="{Binding ChangedTime}"
+                               FontSize="12"
+                               Foreground="#9CA3AF"/>
+                  </StackPanel>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+    </StackPanel>
+  </ScrollViewer>
+
 </UserControl>

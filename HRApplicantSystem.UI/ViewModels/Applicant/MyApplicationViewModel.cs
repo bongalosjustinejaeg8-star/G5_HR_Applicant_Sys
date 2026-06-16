@@ -24,7 +24,13 @@ public partial class MyApplicationViewModel : ViewModelBase
     public Application? SelectedApplication
     {
         get => _selectedApplication;
-        set { _selectedApplication = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsEditable)); OnPropertyChanged(nameof(IsLocked)); }
+        set
+        {
+            _selectedApplication = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsEditable));
+            OnPropertyChanged(nameof(IsLocked));
+        }
     }
 
     [ObservableProperty] private string _positionTitle = string.Empty;
@@ -34,7 +40,8 @@ public partial class MyApplicationViewModel : ViewModelBase
     [ObservableProperty] private string _message = string.Empty;
     [ObservableProperty] private bool _hasMessage = false;
 
-    public bool IsEditable => SelectedApplication?.Status == ApplicationStatus.Draft || SelectedApplication?.Status == ApplicationStatus.Submitted;
+    public bool IsEditable => SelectedApplication?.Status == ApplicationStatus.Draft
+                           || SelectedApplication?.Status == ApplicationStatus.Submitted;
     public bool IsLocked => SelectedApplication != null && !IsEditable;
 
     public MyApplicationViewModel(IApplicationService applicationService)
@@ -57,13 +64,24 @@ public partial class MyApplicationViewModel : ViewModelBase
             var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
             var vacancyRepo = new JobVacancyRepository(db);
-            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? string.Empty);
-            if (applicant == null) { Message = "Please complete your profile first."; HasMessage = true; return; }
 
+            // look up the applicant profile linked to the current session account
+            var applicant = await applicantRepo.GetByAccountIdAsync(
+                SessionManager.CurrentUserId ?? string.Empty);
+
+            if (applicant == null)
+            {
+                Message = "Please complete your profile first.";
+                HasMessage = true;
+                return;
+            }
+
+            // load all applications for this applicant
             var apps = await _applicationService.GetByApplicantIdAsync(applicant.ApplicantId);
             Applications.Clear();
             foreach (var app in apps) Applications.Add(app);
 
+            // auto-select the most recent application
             var latest = apps.OrderByDescending(a => a.SubmittedAt).FirstOrDefault();
             if (latest != null)
             {
@@ -72,7 +90,9 @@ public partial class MyApplicationViewModel : ViewModelBase
                 PositionTitle = vacancy?.PositionTitle ?? "Unknown Position";
                 CurrentStatus = latest.Status.ToString();
                 SubmittedAt = $"Submitted: {latest.SubmittedAt:MMMM d, yyyy}";
-                IsLockedMessage = latest.IsLocked ? "⚠️ Application is locked — HR is reviewing." : "✅ Application is editable.";
+                IsLockedMessage = latest.IsLocked
+                    ? "⚠️ Application is locked — HR is reviewing."
+                    : "✅ Application is editable.";
             }
             else
             {
@@ -86,22 +106,35 @@ public partial class MyApplicationViewModel : ViewModelBase
     public async Task SubmitApplicationAsync()
     {
         if (SelectedApplication == null) return;
+
         try
         {
             var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
-            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId?? string.Empty);
+
+            // look up the applicant profile linked to the current session account
+            var applicant = await applicantRepo.GetByAccountIdAsync(
+                SessionManager.CurrentUserId ?? string.Empty);
+
             if (applicant == null) return;
+
+            // submit — no userId passed since applicants are not in the Users table
             bool success = await _applicationService.SubmitApplicationAsync(
-            applicant.ApplicantId,
-            SelectedApplication.VacancyId,
-            SessionManager.CurrentUserId ?? string.Empty
-            );
-            Console.WriteLine($"DEBUG: SessionManager.CurrentUserId = '{SessionManager.CurrentUserId}'");
+                applicant.ApplicantId,
+                SelectedApplication.VacancyId);
+
+            Message = success ? "Application submitted!" : "Failed to submit.";
+            HasMessage = true;
+
             await LoadApplicationsAsync();
         }
-        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
+        catch (Exception ex)
+        {
+            Message = ex.Message + " | " + ex.StackTrace;
+            HasMessage = true;
+        }
     }
 
-    [RelayCommand] private void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
+    [RelayCommand]
+    private void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
 }

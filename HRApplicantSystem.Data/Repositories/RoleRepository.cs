@@ -27,8 +27,8 @@ public class RoleRepository : IRoleRepository
         {
             roles.Add(new Role
             {
-                RoleId = reader.GetValue(0).ToString()!,
-                RoleName = reader.GetValue(1).ToString()!,
+                RoleId = Convert.ToString(reader.GetValue(0))!,
+                RoleName = Convert.ToString(reader.GetValue(1))!,
                 Permissions = reader.IsDBNull(2)
                               ? null
                               : reader.GetString(2)
@@ -50,8 +50,8 @@ public class RoleRepository : IRoleRepository
         {
             return new Role
             {
-                RoleId = reader.GetValue(0).ToString()!,
-                RoleName = reader.GetValue(1).ToString()!,
+                RoleId = Convert.ToString(reader.GetValue(0))!,
+                RoleName = Convert.ToString(reader.GetValue(1))!,
                 Permissions = reader.IsDBNull(2)
                               ? null
                               : reader.GetString(2)

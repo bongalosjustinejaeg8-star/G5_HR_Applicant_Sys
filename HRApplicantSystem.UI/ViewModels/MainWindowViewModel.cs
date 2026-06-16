@@ -141,6 +141,6 @@ public class MainWindowViewModel : ViewModelBase
     => CurrentView = new MyDocumentsViewModel(this);
 
     public void NavigateToStatusTracking()
-        => CurrentView = new StatusTrackingViewModel();
+        => CurrentView = new StatusTrackingViewModel(this);
     #endregion
 }
