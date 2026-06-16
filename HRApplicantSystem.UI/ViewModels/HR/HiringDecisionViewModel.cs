@@ -7,8 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Data.Repositories;
-using HRApplicantSystem.Services.Implementations;
-using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Enums;
 using HRApplicantSystem.Shared.Helpers;
 
@@ -17,7 +15,6 @@ namespace HRApplicantSystem.UI.ViewModels.HR;
 public partial class HiringDecisionViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel? _mainViewModel;
-    private readonly IHiringDecisionService? _hiringDecisionService;
 
     [ObservableProperty] private ObservableCollection<dynamic> _applicants = new();
     [ObservableProperty] private object? _selectedApplicant;
@@ -25,22 +22,32 @@ public partial class HiringDecisionViewModel : ViewModelBase
     [ObservableProperty] private string _remarks = string.Empty;
     [ObservableProperty] private string _message = string.Empty;
     [ObservableProperty] private bool _hasMessage = false;
+
+    // role restriction — only HRManager or Admin can submit decisions
     [ObservableProperty] private bool _canDecide = false;
     [ObservableProperty] private string _roleWarning = string.Empty;
 
     public HiringDecisionViewModel()
     {
-        CanDecide = SessionManager.CurrentUserRole == UserRole.HRManager || SessionManager.CurrentUserRole == UserRole.Admin;
-        RoleWarning = CanDecide ? string.Empty : "⚠️ Only HR Manager or Admin can make hiring decisions.";
+        CheckRole();
         _ = LoadApplicantsAsync();
     }
 
     public HiringDecisionViewModel(MainWindowViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
-        CanDecide = SessionManager.CurrentUserRole == UserRole.HRManager || SessionManager.CurrentUserRole == UserRole.Admin;
-        RoleWarning = CanDecide ? string.Empty : "⚠️ Only HR Manager or Admin can make hiring decisions.";
+        CheckRole();
         _ = LoadApplicantsAsync();
+    }
+
+    private void CheckRole()
+    {
+        // role restriction: only HRManager or Admin can make final hiring decisions
+        CanDecide = SessionManager.CurrentUserRole == UserRole.HRManager
+                 || SessionManager.CurrentUserRole == UserRole.Admin;
+        RoleWarning = CanDecide
+            ? string.Empty
+            : "⚠️ Access denied — only HR Manager or Admin can make final hiring decisions.";
     }
 
     private async Task LoadApplicantsAsync()
@@ -53,7 +60,13 @@ public partial class HiringDecisionViewModel : ViewModelBase
             var vacancyRepo = new JobVacancyRepository(db);
 
             var apps = await appRepo.GetAllAsync();
-            var eligible = apps.Where(a => a.Status == ApplicationStatus.ForFinalReview || a.Status == ApplicationStatus.ForInterview || a.Status == ApplicationStatus.Shortlisted);
+
+            // only show apps eligible for final decision
+            var eligible = apps.Where(a =>
+                a.Status == ApplicationStatus.ForFinalReview ||
+                a.Status == ApplicationStatus.Shortlisted ||
+                a.Status == ApplicationStatus.ForInterview);
+
             Applicants.Clear();
             foreach (var app in eligible)
             {
@@ -62,30 +75,40 @@ public partial class HiringDecisionViewModel : ViewModelBase
                 Applicants.Add(new
                 {
                     ApplicationId = app.ApplicationId,
-                    FirstName = applicant?.FullName ?? "Unknown",
+                    FullName = applicant?.FullName ?? "Unknown",
                     Position = vacancy?.PositionTitle ?? "Unknown",
                     Status = app.Status.ToString()
                 });
             }
         }
-        catch (Exception ex) { Console.WriteLine(ex.Message); }
+        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
     }
 
     [RelayCommand]
     private async Task SubmitDecision()
     {
-        if (SelectedApplicant == null || !CanDecide) return;
+        if (SelectedApplicant == null) return;
+
+        // enforce role restriction
+        if (!CanDecide)
+        {
+            Message = "⚠️ Access denied — only HR Manager or Admin can submit hiring decisions.";
+            HasMessage = true;
+            return;
+        }
+
         try
         {
+            var appId = ((dynamic)SelectedApplicant).ApplicationId as string ?? string.Empty;
             var db = new DbContext(AppConfig.ConnectionString);
             var decisionRepo = new HiringDecisionRepository(db);
             var appRepo = new ApplicationRepository(db);
             var historyRepo = new ApplicationStatusHistoryRepository(db);
 
-            var appId = ((dynamic)SelectedApplicant).ApplicationId as string ?? string.Empty;
             var app = await appRepo.GetByIdAsync(appId);
             if (app == null) return;
 
+            // save hiring decision record
             var hiringDecision = new HiringDecision
             {
                 ApplicationId = appId,
@@ -96,19 +119,26 @@ public partial class HiringDecisionViewModel : ViewModelBase
             };
             await decisionRepo.CreateAsync(hiringDecision);
 
-            var newStatus = Decision == "Accepted" ? ApplicationStatus.Accepted : ApplicationStatus.Rejected;
+            // update application status based on decision
+            var newStatus = Decision == "Accepted"
+                ? ApplicationStatus.Accepted
+                : ApplicationStatus.Rejected;
+
             await appRepo.UpdateStatusAsync(appId, newStatus);
+
+            // log status change — changedBy is an HR user_id
             await historyRepo.CreateAsync(new ApplicationStatusHistory
             {
                 ApplicationId = appId,
                 ChangedBy = SessionManager.CurrentUserId,
                 OldStatus = app.Status,
                 NewStatus = newStatus,
-                Remarks = Remarks
+                Remarks = $"Final decision: {Decision}. {Remarks}"
             });
 
-            Message = $"Decision submitted: {Decision}";
+            Message = $"✅ Decision submitted — applicant {Decision.ToLower()}.";
             HasMessage = true;
+            Remarks = string.Empty;
             await LoadApplicantsAsync();
         }
         catch (Exception ex) { Message = ex.Message; HasMessage = true; }

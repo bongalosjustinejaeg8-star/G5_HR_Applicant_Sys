@@ -7,151 +7,236 @@
              Background="#0B0B0F">
 
   <UserControl.Resources>
-    <SolidColorBrush x:Key="Card"        Color="#15151C"/>
-    <SolidColorBrush x:Key="CardBorder"  Color="#26262F"/>
-    <SolidColorBrush x:Key="TextDim"     Color="#9CA3AF"/>
+    <SolidColorBrush x:Key="Card"       Color="#15151C"/>
+    <SolidColorBrush x:Key="CardBorder" Color="#26262F"/>
+    <SolidColorBrush x:Key="TextDim"    Color="#9CA3AF"/>
   </UserControl.Resources>
 
   <UserControl.Styles>
     <Style Selector="Button.tile">
-      <Setter Property="Background" Value="{StaticResource Card}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource CardBorder}"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="Padding" Value="16"/>
-      <Setter Property="Foreground" Value="White"/>
-      <Setter Property="HorizontalAlignment" Value="Stretch"/>
-      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="Background"               Value="{StaticResource Card}"/>
+      <Setter Property="BorderBrush"              Value="{StaticResource CardBorder}"/>
+      <Setter Property="BorderThickness"          Value="1"/>
+      <Setter Property="CornerRadius"             Value="12"/>
+      <Setter Property="Padding"                  Value="16"/>
+      <Setter Property="Foreground"               Value="White"/>
+      <Setter Property="HorizontalAlignment"      Value="Stretch"/>
+      <Setter Property="VerticalAlignment"        Value="Stretch"/>
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="VerticalContentAlignment" Value="Top"/>
-      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Cursor"                   Value="Hand"/>
     </Style>
-    <Style Selector="Button.tile:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#1E1E26"/>
-      <Setter Property="BorderBrush" Value="#3A3A47"/>
-    </Style>
-
     <Style Selector="Button.stat.blue">   <Setter Property="Background" Value="#1E88E5"/><Setter Property="BorderBrush" Value="#1976D2"/></Style>
     <Style Selector="Button.stat.orange"> <Setter Property="Background" Value="#FB8C00"/><Setter Property="BorderBrush" Value="#EF6C00"/></Style>
     <Style Selector="Button.stat.purple"> <Setter Property="Background" Value="#8E24AA"/><Setter Property="BorderBrush" Value="#6A1B9A"/></Style>
     <Style Selector="Button.stat.green">  <Setter Property="Background" Value="#43A047"/><Setter Property="BorderBrush" Value="#2E7D32"/></Style>
-
+    <Style Selector="Button.stat.red">    <Setter Property="Background" Value="#E53935"/><Setter Property="BorderBrush" Value="#C62828"/></Style>
+    <Style Selector="Button.stat.teal">   <Setter Property="Background" Value="#00897B"/><Setter Property="BorderBrush" Value="#00695C"/></Style>
     <Style Selector="Button.logout">
-      <Setter Property="Background" Value="#1F1F27"/>
-      <Setter Property="Foreground" Value="White"/>
-      <Setter Property="BorderBrush" Value="#33333D"/>
+      <Setter Property="Background"      Value="#1F1F27"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderBrush"     Value="#33333D"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="8"/>
-      <Setter Property="Padding" Value="14,8"/>
-      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="CornerRadius"    Value="8"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="Cursor"          Value="Hand"/>
     </Style>
     <Style Selector="Button.ghost">
-      <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="White"/>
-      <Setter Property="BorderBrush" Value="#33333D"/>
+      <Setter Property="Background"      Value="Transparent"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderBrush"     Value="#33333D"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="8"/>
-      <Setter Property="Padding" Value="12,6"/>
+      <Setter Property="CornerRadius"    Value="8"/>
+      <Setter Property="Padding"         Value="12,6"/>
+    </Style>
+    <Style Selector="Button.action">
+      <Setter Property="Background"      Value="#2563EB"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius"    Value="8"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="Cursor"          Value="Hand"/>
     </Style>
   </UserControl.Styles>
 
-  <Grid RowDefinitions="Auto,Auto,*" Margin="20" RowSpacing="16">
+  <ScrollViewer>
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="20" RowSpacing="16">
 
-    <!-- Header -->
-    <Border Grid.Row="0" CornerRadius="14" Padding="22"
-            Background="#111119" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
-      <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-        <StackPanel Spacing="4">
-          <TextBlock Text="HR Dashboard" FontSize="24" FontWeight="Bold" Foreground="White"/>
-          <TextBlock Text="{Binding WelcomeMessage}" Foreground="{StaticResource TextDim}"/>
-        </StackPanel>
-        <Button Grid.Column="1" Classes="logout" Content="Logout" Command="{Binding Logout}"/>
-      </Grid>
-    </Border>
-
-    <!-- Uniform tiles grid: 6 equal columns, 2 rows, small spacing -->
-    <UniformGrid Grid.Row="1" Columns="6" Rows="1"
-                 HorizontalAlignment="Stretch">
-      <UniformGrid.Styles>
-        <Style Selector="Button"><Setter Property="Margin" Value="6"/></Style>
-      </UniformGrid.Styles>
-
-      <Button Classes="tile" Command="{Binding GoToJobVacancyMgmt}">
-        <StackPanel Spacing="6">
-          <TextBlock Text="📄" FontSize="22"/>
-          <TextBlock Text="Job Vacancy" FontWeight="SemiBold" Foreground="White"/>
-          <TextBlock Text="Add • Edit • Remove" Foreground="{StaticResource TextDim}" FontSize="12"/>
-        </StackPanel>
-      </Button>
-
-      <Button Classes="tile" Command="{Binding GoToReports}">
-        <StackPanel Spacing="6">
-          <TextBlock Text="📊" FontSize="22"/>
-          <TextBlock Text="Reports" FontWeight="SemiBold" Foreground="White"/>
-          <TextBlock Text="Audit Trail" Foreground="{StaticResource TextDim}" FontSize="12"/>
-        </StackPanel>
-      </Button>
-
-      <Button Classes="tile stat blue">
-        <StackPanel Spacing="6">
-          <TextBlock Text="👥" FontSize="20" Foreground="White"/>
-          <TextBlock Text="{Binding TotalApplicants}" FontSize="26" FontWeight="Bold" Foreground="White"/>
-          <TextBlock Text="Total Applicants" Foreground="White" Opacity="0.85" FontSize="12"/>
-        </StackPanel>
-      </Button>
-        
-      <Button Classes="tile stat orange">
-        <StackPanel Spacing="6">
-          <TextBlock Text="⏱" FontSize="20" Foreground="White"/>
-          <TextBlock Text="{Binding PendingReview}" FontSize="26" FontWeight="Bold" Foreground="White"/>
-          <TextBlock Text="Pending Review" Foreground="White" Opacity="0.85" FontSize="12"/>
-        </StackPanel>
-      </Button>
-
-      <Button Classes="tile stat purple">
-        <StackPanel Spacing="6">
-          <TextBlock Text="★" FontSize="20" Foreground="White"/>
-          <TextBlock Text="{Binding Shortlisted}" FontSize="26" FontWeight="Bold" Foreground="White"/>
-          <TextBlock Text="Shortlisted" Foreground="White" Opacity="0.85" FontSize="12"/>
-        </StackPanel>
-      </Button>
-
-      <Button Classes="tile stat green">
-        <StackPanel Spacing="6">
-          <TextBlock Text="✓" FontSize="20" Foreground="White"/>
-          <TextBlock Text="{Binding Accepted}" FontSize="26" FontWeight="Bold" Foreground="White"/>
-          <TextBlock Text="Accepted" Foreground="White" Opacity="0.85" FontSize="12"/>
-        </StackPanel>
-      </Button>
-    </UniformGrid>
-
-    <!-- Recent activities -->
-    <Border Grid.Row="2" CornerRadius="14" Padding="20"
-            Background="#111119" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
-      <Grid RowDefinitions="Auto,*" RowSpacing="12">
+      <!-- Header -->
+      <Border Grid.Row="0" CornerRadius="14" Padding="22"
+              Background="#111119" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
         <Grid ColumnDefinitions="*,Auto">
-          <StackPanel Spacing="2">
-            <TextBlock Text="Recent Activities" FontSize="16" FontWeight="Bold" Foreground="White"/>
-            <TextBlock Text="Latest actions across the system" Foreground="{StaticResource TextDim}" FontSize="12"/>
+          <StackPanel Spacing="4">
+            <TextBlock Text="HR Dashboard" FontSize="24" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="{Binding WelcomeMessage}" Foreground="{StaticResource TextDim}"/>
           </StackPanel>
-          <Button Grid.Column="1" Classes="ghost" Content="⟳  Refresh" Command="{Binding RefreshCommand}"/>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+            <Button Classes="ghost" Content="⟳  Refresh" Command="{Binding RefreshCommand}"/>
+            <Button Classes="logout" Content="Logout" Command="{Binding LogoutCommand}"/>
+          </StackPanel>
         </Grid>
+      </Border>
 
-        <ListBox Grid.Row="1" ItemsSource="{Binding RecentActivities}"
-                 Background="Transparent" BorderThickness="0">
-          <ListBox.ItemTemplate>
-            <DataTemplate>
-              <Border Background="#181820" BorderBrush="{StaticResource CardBorder}" BorderThickness="0,0,0,0"
-                      CornerRadius="10" Padding="12" Margin="0,0,0,8">
-                <StackPanel Spacing="4">
-                  <TextBlock Text="{Binding Description}" Foreground="White"/>
-                  <TextBlock Text="{Binding Timestamp}" Foreground="{StaticResource TextDim}" FontSize="11"/>
-                </StackPanel>
-              </Border>
-            </DataTemplate>
-          </ListBox.ItemTemplate>
-        </ListBox>
+      <!-- Stat tiles -->
+      <UniformGrid Grid.Row="1" Columns="6" Rows="1">
+        <UniformGrid.Styles>
+          <Style Selector="Button"><Setter Property="Margin" Value="6"/></Style>
+        </UniformGrid.Styles>
+
+        <Button Classes="tile" Command="{Binding GoToApplicantListCommand}">
+          <StackPanel Spacing="6">
+            <TextBlock Text="👥" FontSize="22"/>
+            <TextBlock Text="Applicants" FontWeight="SemiBold" Foreground="White"/>
+            <TextBlock Text="View &amp; manage" Foreground="{StaticResource TextDim}" FontSize="12"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="tile" Command="{Binding GoToJobVacancyMgmtCommand}">
+          <StackPanel Spacing="6">
+            <TextBlock Text="📄" FontSize="22"/>
+            <TextBlock Text="Job Vacancies" FontWeight="SemiBold" Foreground="White"/>
+            <TextBlock Text="Add • Edit • Remove" Foreground="{StaticResource TextDim}" FontSize="12"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="tile stat blue">
+          <StackPanel Spacing="6">
+            <TextBlock Text="📋" FontSize="20" Foreground="White"/>
+            <TextBlock Text="{Binding TotalApplicants}" FontSize="26" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Total Applications" Foreground="White" Opacity="0.85" FontSize="12"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="tile stat orange">
+          <StackPanel Spacing="6">
+            <TextBlock Text="⏱" FontSize="20" Foreground="White"/>
+            <TextBlock Text="{Binding PendingReview}" FontSize="26" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Pending Review" Foreground="White" Opacity="0.85" FontSize="12"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="tile stat purple">
+          <StackPanel Spacing="6">
+            <TextBlock Text="★" FontSize="20" Foreground="White"/>
+            <TextBlock Text="{Binding Shortlisted}" FontSize="26" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Shortlisted" Foreground="White" Opacity="0.85" FontSize="12"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="tile stat teal">
+          <StackPanel Spacing="6">
+            <TextBlock Text="🎯" FontSize="20" Foreground="White"/>
+            <TextBlock Text="{Binding ForFinalReview}" FontSize="26" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="For Final Review" Foreground="White" Opacity="0.85" FontSize="12"/>
+          </StackPanel>
+        </Button>
+      </UniformGrid>
+
+      <!-- Accepted / Rejected row -->
+      <Grid Grid.Row="2" ColumnDefinitions="*,*,*" ColumnSpacing="12">
+
+        <!-- Pending hiring decisions -->
+        <Border Grid.Column="0" CornerRadius="14" Padding="20"
+                Background="#111119" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="2">
+                <TextBlock Text="Pending Hiring Decisions" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="Awaiting final decision" Foreground="{StaticResource TextDim}" FontSize="12"/>
+              </StackPanel>
+              <Button Grid.Column="1" Classes="action" Content="Go →"
+                      Command="{Binding GoToHiringDecisionCommand}"
+                      Padding="12,6" FontSize="12"/>
+            </Grid>
+            <ListBox ItemsSource="{Binding PendingDecisions}"
+                     Background="Transparent" BorderThickness="0" MaxHeight="200">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="#181820" CornerRadius="8" Padding="10" Margin="0,0,0,6">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding FullName}" Foreground="White" FontWeight="Medium"/>
+                        <TextBlock Text="{Binding Position}" Foreground="{StaticResource TextDim}" FontSize="12"/>
+                      </StackPanel>
+                      <Border Grid.Column="1" Background="#1E3A5F" CornerRadius="999"
+                              Padding="8,3" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Status}" Foreground="#60A5FA" FontSize="11"/>
+                      </Border>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </StackPanel>
+        </Border>
+
+        <!-- Accepted -->
+        <Border Grid.Column="1" CornerRadius="14" Padding="20"
+                Background="#0D2818" BorderBrush="#1A4731" BorderThickness="1">
+          <StackPanel Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="✓" FontSize="32" Foreground="#4ADE80" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding Accepted}" FontSize="40" FontWeight="Bold"
+                       Foreground="#4ADE80" HorizontalAlignment="Center"/>
+            <TextBlock Text="Accepted" Foreground="#86EFAC" FontSize="14"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Rejected -->
+        <Border Grid.Column="2" CornerRadius="14" Padding="20"
+                Background="#2D0E0E" BorderBrush="#4B1A1A" BorderThickness="1">
+          <StackPanel Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="✕" FontSize="32" Foreground="#F87171" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding Rejected}" FontSize="40" FontWeight="Bold"
+                       Foreground="#F87171" HorizontalAlignment="Center"/>
+            <TextBlock Text="Rejected" Foreground="#FCA5A5" FontSize="14"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
       </Grid>
-    </Border>
-  </Grid>
+
+      <!-- Recent activity -->
+      <Border Grid.Row="3" CornerRadius="14" Padding="20"
+              Background="#111119" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*" RowSpacing="12">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="2">
+              <TextBlock Text="Recent Applications" FontSize="16" FontWeight="Bold" Foreground="White"/>
+              <TextBlock Text="Latest submissions across all vacancies" Foreground="{StaticResource TextDim}" FontSize="12"/>
+            </StackPanel>
+            <Button Grid.Column="1" Classes="ghost" Content="View all"
+                    Command="{Binding GoToApplicantListCommand}"/>
+          </Grid>
+          <ListBox Grid.Row="1" ItemsSource="{Binding RecentActivities}"
+                   Background="Transparent" BorderThickness="0">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border Background="#181820" CornerRadius="10" Padding="14,10" Margin="0,0,0,8">
+                  <Grid ColumnDefinitions="*,Auto,Auto">
+                    <StackPanel Spacing="2">
+                      <TextBlock Text="{Binding Description}" Foreground="White" FontWeight="Medium"/>
+                      <TextBlock Text="{Binding Timestamp}" Foreground="{StaticResource TextDim}" FontSize="11"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="#1E3A5F" CornerRadius="999"
+                            Padding="10,3" Margin="8,0" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Status}" Foreground="#60A5FA" FontSize="11"/>
+                    </Border>
+                    <Border Grid.Column="2" CornerRadius="999" Padding="10,3" VerticalAlignment="Center"
+                            Background="#2D1A00">
+                      <TextBlock Text="{Binding IsLocked, StringFormat='{}🔒 Locked'}"
+                                 IsVisible="{Binding IsLocked}"
+                                 Foreground="#FCD34D" FontSize="11"/>
+                    </Border>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+      </Border>
+
+    </Grid>
+  </ScrollViewer>
 </UserControl>

@@ -117,7 +117,7 @@ public class MainWindowViewModel : ViewModelBase
         => CurrentView = new InterviewEvaluationViewModel(GetInterviewEvaluationService());
 
     public void NavigateToHiringDecision()
-        => CurrentView = new HiringDecisionViewModel();
+    => CurrentView = new HiringDecisionViewModel(this);
 
     public void NavigateToReports()
         => CurrentView = new ReportsViewModel();

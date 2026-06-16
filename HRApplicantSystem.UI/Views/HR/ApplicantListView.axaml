@@ -1,36 +1,120 @@
-<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+<UserControl x:CompileBindings="False"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HRApplicantSystem.UI.ViewModels.HR"
              x:Class="HRApplicantSystem.UI.Views.HR.ApplicantListView"
              x:DataType="vm:ApplicantListViewModel">
 
-  <StackPanel Margin="20">
-    <TextBlock Text="Applicant List" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="#1A1A1A"/>
+    </Style>
+    <Style Selector="Button.action">
+      <Setter Property="Background"      Value="#1D4ED8"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius"    Value="6"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+    </Style>
+    <Style Selector="Button.secondary">
+      <Setter Property="Background"      Value="#059669"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius"    Value="6"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+    </Style>
+    <Style Selector="Button.tertiary">
+      <Setter Property="Background"      Value="#7C3AED"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius"    Value="6"/>
+      <Setter Property="Padding"         Value="14,8"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+    </Style>
+    <Style Selector="Button.back">
+      <Setter Property="Background"      Value="Transparent"/>
+      <Setter Property="BorderBrush"     Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="6"/>
+      <Setter Property="Padding"         Value="12,7"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="Foreground"      Value="#374151"/>
+    </Style>
+  </UserControl.Styles>
 
-    <TextBox Text="{Binding SearchText}" PlaceholderText="Search applicants..." Margin="0 0 0 10"/>
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="16">
 
-    <Grid ColumnDefinitions="*,*" Margin="0 0 0 10">
-      <TextBlock Text="Filter by Status:" VerticalAlignment="Center"/>
-      <ComboBox SelectedItem="{Binding SelectedStatus}" Margin="10 0 0 0">
-        <ComboBoxItem Content="All"/>
-        <ComboBoxItem Content="Submitted"/>
-        <ComboBoxItem Content="Under Review"/>
-        <ComboBoxItem Content="Shortlisted"/>
-        <ComboBoxItem Content="Hired"/>
-        <ComboBoxItem Content="Rejected"/>
-      </ComboBox>
-    </Grid>
+      <!-- Header -->
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+        <Button Grid.Column="0" Content="← Back" Command="{Binding GoBackCommand}" Classes="back" Margin="0,0,12,0"/>
+        <TextBlock Grid.Column="1" Text="Applicant List" FontSize="20" FontWeight="Medium" VerticalAlignment="Center"/>
+        <Button Grid.Column="2" Content="▶ Start Review" Command="{Binding StartReviewCommand}"
+                Classes="action" IsEnabled="{Binding HasSelected}" Margin="0,0,8,0"/>
+        <Button Grid.Column="3" Content="★ Shortlist" Command="{Binding ShortlistCommand}"
+                Classes="secondary" IsEnabled="{Binding HasSelected}" Margin="0,0,8,0"/>
+        <Button Grid.Column="4" Content="🎯 Final Review" Command="{Binding MoveToFinalReviewCommand}"
+                Classes="tertiary" IsEnabled="{Binding HasSelected}"/>
+      </Grid>
 
-    <ListBox ItemsSource="{Binding Applicants}" Height="300">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Margin="5">
-            <TextBlock Text="{Binding FirstName} {Binding LastName}" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Email}"/>
-            <TextBlock Text="{Binding Status}"/>
-          </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
-  </StackPanel>
+      <!-- Lock status banner -->
+      <Border IsVisible="{Binding HasSelected}"
+              Background="#FEF9C3" BorderBrush="#FDE047"
+              BorderThickness="1" CornerRadius="8" Padding="14,10">
+        <TextBlock Text="{Binding LockStatus}" FontSize="13" Foreground="#854D0E"/>
+      </Border>
+
+      <!-- Message -->
+      <Border IsVisible="{Binding HasMessage}"
+              Background="#EFF6FF" BorderBrush="#BFDBFE"
+              BorderThickness="1" CornerRadius="8" Padding="14,10">
+        <TextBlock Text="{Binding Message}" FontSize="13" Foreground="#1D4ED8" TextWrapping="Wrap"/>
+      </Border>
+
+      <!-- Table header -->
+      <Border Background="#F9FAFB" BorderBrush="#E5E7EB"
+              BorderThickness="1,1,1,0" CornerRadius="10,10,0,0" Padding="16,10">
+        <Grid ColumnDefinitions="*,*,Auto,Auto,Auto">
+          <TextBlock Grid.Column="0" Text="Full name"    FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+          <TextBlock Grid.Column="1" Text="Position"     FontSize="12" FontWeight="Medium" Foreground="#6B7280"/>
+          <TextBlock Grid.Column="2" Text="Status"       FontSize="12" FontWeight="Medium" Foreground="#6B7280" Width="120"/>
+          <TextBlock Grid.Column="3" Text="Submitted"    FontSize="12" FontWeight="Medium" Foreground="#6B7280" Width="100"/>
+          <TextBlock Grid.Column="4" Text="Lock"         FontSize="12" FontWeight="Medium" Foreground="#6B7280" Width="70"/>
+        </Grid>
+      </Border>
+
+      <!-- Table rows -->
+      <ListBox ItemsSource="{Binding Applicants}"
+               SelectedItem="{Binding SelectedApplicant}"
+               Background="White" BorderBrush="#E5E7EB"
+               BorderThickness="1,0,1,1" CornerRadius="0,0,10,10"
+               Padding="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Padding="16,12" BorderBrush="#F3F4F6" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="*,*,Auto,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding FullName}" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{Binding Position}" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
+                <Border Grid.Column="2" Background="#EFF6FF" BorderBrush="#BFDBFE"
+                        BorderThickness="1" CornerRadius="999" Padding="10,3" Width="110" Margin="0,0,8,0">
+                  <TextBlock Text="{Binding Status}" FontSize="11" Foreground="#1D4ED8" HorizontalAlignment="Center"/>
+                </Border>
+                <TextBlock Grid.Column="3" Text="{Binding SubmittedAt}" FontSize="12"
+                           Foreground="#6B7280" Width="100" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="🔒" FontSize="16" Width="70"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           IsVisible="{Binding IsLocked}"/>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>
