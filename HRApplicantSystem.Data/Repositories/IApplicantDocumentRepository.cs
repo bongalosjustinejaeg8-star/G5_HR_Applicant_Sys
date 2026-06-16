@@ -8,4 +8,5 @@ public interface IApplicantDocumentRepository
     Task<ApplicantDocument?> GetByIdAsync(string documentId);
     Task<bool> CreateAsync(ApplicantDocument document);
     Task<bool> DeleteAsync(string documentId);
+    Task<bool> UpdateAsync(ApplicantDocument document);
 }

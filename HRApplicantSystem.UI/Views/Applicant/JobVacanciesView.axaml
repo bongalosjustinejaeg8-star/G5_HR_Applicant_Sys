@@ -10,9 +10,9 @@
     <TextBlock Text="Job Vacancies" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
     <!-- Debug Message -->
-    <TextBlock Text="{Binding Message}" 
+    <TextBlock Text="{Binding Message}"
                IsVisible="{Binding HasMessage}"
-               Foreground="Blue" 
+               Foreground="Blue"
                Margin="0 0 0 10"/>
 
     <!-- Search and Filter -->
@@ -40,7 +40,18 @@
         </DataTemplate>
       </ListBox.ItemTemplate> 
 
-    </ListBox>
+  </ListBox>
+
+    <!-- Add this AFTER the ListBox and BEFORE the Action Buttons -->
+    <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="0,10,0,0"
+            IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <StackPanel Spacing="6">
+        <TextBlock Text="{Binding SelectedJob.PositionTitle}" FontSize="16" FontWeight="Bold"/>
+        <TextBlock Text="{Binding SelectedJob.EmploymentType}" Foreground="#2563EB" FontSize="12"/>
+        <TextBlock Text="Qualifications:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+        <TextBlock Text="{Binding SelectedJob.Qualifications}" TextWrapping="Wrap" Foreground="#374151"/>
+      </StackPanel>
+    </Border>
 
     <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="0,10,0,0"
             IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">

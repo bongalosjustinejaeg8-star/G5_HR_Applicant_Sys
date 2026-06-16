@@ -6,6 +6,10 @@
              x:DataType="vm:InterviewEvaluationViewModel">
 
   <StackPanel Margin="20">
+  <Button Content="⬅ Back" 
+        Command="{Binding GoBackCommand}" 
+        Width="100" 
+        Margin="0 0 0 15" />
     <TextBlock Text="Interview Evaluation" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
     <ListBox ItemsSource="{Binding Applications}"
