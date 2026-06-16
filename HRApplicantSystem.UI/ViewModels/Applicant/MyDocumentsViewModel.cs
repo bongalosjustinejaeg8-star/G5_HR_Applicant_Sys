@@ -4,11 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Platform.Storage;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Data.Repositories;
@@ -21,14 +18,22 @@ public partial class MyDocumentsViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel? _mainViewModel;
 
-    public ObservableCollection<ApplicantDocument> Documents { get; }
-        = new();
+    public ObservableCollection<ApplicantDocument> Documents { get; } = new();
+
+    public ObservableCollection<RequirementTypeOption> RequirementTypes { get; } = new()
+    {
+        new() { Id = "79263f6b-68c0-11f1-baa4-f894c21dce1e", Name = "Resume" },
+        new() { Id = "79264256-68c0-11f1-baa4-f894c21dce1e", Name = "ID" },
+        new() { Id = "7926434c-68c0-11f1-baa4-f894c21dce1e", Name = "Transcript" },
+        new() { Id = "79264402-68c0-11f1-baa4-f894c21dce1e", Name = "Certificate" },
+        new() { Id = "7926447c-68c0-11f1-baa4-f894c21dce1e", Name = "Other" }
+    };
+
+    [ObservableProperty]
+    private RequirementTypeOption? selectedRequirementType;
 
     [ObservableProperty]
     private ApplicantDocument? selectedDocument;
-
-    [ObservableProperty]
-    private string documentType = "";
 
     [ObservableProperty]
     private string filePath = "";
@@ -44,11 +49,9 @@ public partial class MyDocumentsViewModel : ViewModelBase
         _ = LoadDocumentsAsync();
     }
 
-    public MyDocumentsViewModel(
-        MainWindowViewModel mainViewModel)
+    public MyDocumentsViewModel(MainWindowViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
-
         _ = LoadDocumentsAsync();
     }
 
@@ -56,31 +59,24 @@ public partial class MyDocumentsViewModel : ViewModelBase
     {
         try
         {
-            var db =
-                new DbContext(
-                    AppConfig.ConnectionString);
+            var db = new DbContext(AppConfig.ConnectionString);
 
-            var applicantRepo =
-                new ApplicantRepository(db);
-
-            var docRepo =
-                new ApplicantDocumentRepository(db);
+            var applicantRepo = new ApplicantRepository(db);
+            var docRepo = new ApplicantDocumentRepository(db);
 
             var applicant =
-                await applicantRepo.GetByAccountIdAsync(
-                    SessionManager.CurrentUserId ?? "");
+                await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? "");
 
             if (applicant == null)
                 return;
 
-            var docs =
-                await docRepo.GetByApplicantIdAsync(
-                    applicant.ApplicantId);
-
             Documents.Clear();
 
-            foreach (var doc in docs)
-                Documents.Add(doc);
+            var docs =
+                await docRepo.GetByApplicantIdAsync(applicant.ApplicantId);
+
+            foreach (var d in docs)
+                Documents.Add(d);
         }
         catch (Exception ex)
         {
@@ -94,207 +90,163 @@ public partial class MyDocumentsViewModel : ViewModelBase
     {
         try
         {
-            if (Avalonia.Application.Current?.ApplicationLifetime
-                is not IClassicDesktopStyleApplicationLifetime desktop)
+            if (SelectedRequirementType == null)
             {
-                StatusMessage = "Window unavailable.";
+                StatusMessage = "Please select a document type.";
                 HasMessage = true;
                 return;
             }
 
-            var files =
-                await desktop.MainWindow!
-                    .StorageProvider
-                    .OpenFilePickerAsync(
-                        new FilePickerOpenOptions
-                        {
-                            Title = "Upload Document",
-                            AllowMultiple = false
-                        });
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is not IClassicDesktopStyleApplicationLifetime desktop)
+                return;
+
+            var files = await desktop.MainWindow!
+                .StorageProvider
+                .OpenFilePickerAsync(new()
+                {
+                    AllowMultiple = false,
+                    Title = "Select Document"
+                });
 
             if (files.Count == 0)
                 return;
 
-            FilePath =
-                files[0]
-                .Path
-                .LocalPath;
+            var fullPath = files[0].Path.LocalPath;
 
-            await UploadDocumentAsync();
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = ex.Message;
-            HasMessage = true;
-        }
-    }
-
-    public async Task UploadDocumentAsync()
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(FilePath))
+            if (!File.Exists(fullPath))
             {
-                StatusMessage =
-                    "Please select a file.";
-
+                StatusMessage = "File not found.";
                 HasMessage = true;
-
                 return;
             }
 
-            if (!File.Exists(FilePath))
-            {
-                StatusMessage =
-                    "File not found.";
-
-                HasMessage = true;
-
-                return;
-            }
-
-            var ext =
-                Path
-                .GetExtension(FilePath)
-                .ToLower();
+            var ext = Path.GetExtension(fullPath).ToLower();
 
             if (ext == ".zip")
             {
-                StatusMessage =
-                    "ZIP files are not allowed.";
-
+                StatusMessage = "ZIP files are not allowed.";
                 HasMessage = true;
-
                 return;
             }
 
-            var db =
-                new DbContext(
-                    AppConfig.ConnectionString);
+            FilePath = fullPath;
 
-            var applicantRepo =
-                new ApplicantRepository(db);
+            await UploadAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+            HasMessage = true;
+        }
+    }
 
-            var docRepo =
-                new ApplicantDocumentRepository(db);
+    private async Task UploadAsync()
+    {
+        try
+        {
+            var db = new DbContext(AppConfig.ConnectionString);
+
+            var applicantRepo = new ApplicantRepository(db);
+            var docRepo = new ApplicantDocumentRepository(db);
 
             var applicant =
-                await applicantRepo
-                    .GetByAccountIdAsync(
-                        SessionManager.CurrentUserId ?? "");
+                await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? "");
 
             if (applicant == null)
             {
-                StatusMessage =
-                    "Applicant not found.";
-
+                StatusMessage = "Applicant not found.";
                 HasMessage = true;
-
                 return;
             }
 
-            await docRepo.CreateAsync(
-                new ApplicantDocument
-                {
-                    ApplicantId =
-                        applicant.ApplicantId,
+            var requirementId = SelectedRequirementType?.Id?.Trim();
 
-                    RequirementTypeId =
-                        DocumentType,
+            // SAFE GUARD (prevents FK + length + invalid values)
+            if (string.IsNullOrWhiteSpace(requirementId) || requirementId.Length != 36)
+            {
+                StatusMessage = "Invalid document type selected.";
+                HasMessage = true;
+                return;
+            }
 
-                    FilePath =
-                        FilePath,
+            await docRepo.CreateAsync(new ApplicantDocument
+            {
+                ApplicantId = applicant.ApplicantId,
 
-                    Status =
-                        DocumentStatus.Submitted
-                });
+                RequirementTypeId = requirementId,
 
-            StatusMessage =
-                "Document uploaded.";
+                FilePath = FilePath,
 
+                Status = DocumentStatus.Submitted,
+
+                SubmittedAt = DateTime.Now
+            });
+
+            StatusMessage = "Upload successful.";
             HasMessage = true;
 
             FilePath = "";
+            SelectedRequirementType = null;
 
             await LoadDocumentsAsync();
         }
         catch (Exception ex)
         {
             StatusMessage = ex.Message;
-
             HasMessage = true;
-        }
-        if (string.IsNullOrWhiteSpace(DocumentType))
-        {
-            StatusMessage =
-                "Document type required.";
-
-            HasMessage = true;
-
-            return;
         }
     }
 
     [RelayCommand]
-    public void OpenDocument()
+    private void OpenDocument()
     {
         try
         {
             if (SelectedDocument == null)
                 return;
 
-            if (!File.Exists(
-                SelectedDocument.FilePath))
+            if (!File.Exists(SelectedDocument.FilePath))
+            {
+                StatusMessage = "File not found.";
+                HasMessage = true;
                 return;
+            }
 
-            Process.Start(
-                new ProcessStartInfo
-                {
-                    FileName =
-                        SelectedDocument.FilePath,
-
-                    UseShellExecute =
-                        true
-                });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = SelectedDocument.FilePath,
+                UseShellExecute = true
+            });
         }
         catch (Exception ex)
         {
             StatusMessage = ex.Message;
-
             HasMessage = true;
         }
     }
 
     [RelayCommand]
-    public async Task DeleteSelectedDocumentAsync()
+    private async Task DeleteSelectedDocumentAsync()
     {
         try
         {
             if (SelectedDocument == null)
                 return;
 
-            var db =
-                new DbContext(
-                    AppConfig.ConnectionString);
+            var db = new DbContext(AppConfig.ConnectionString);
+            var repo = new ApplicantDocumentRepository(db);
 
-            var repo =
-                new ApplicantDocumentRepository(
-                    db);
-
-            await repo.DeleteAsync(
-                SelectedDocument.DocumentId);
+            await repo.DeleteAsync(SelectedDocument.DocumentId);
 
             await LoadDocumentsAsync();
 
-            StatusMessage =
-                "Document deleted.";
-
+            StatusMessage = "Document deleted.";
             HasMessage = true;
         }
         catch (Exception ex)
         {
             StatusMessage = ex.Message;
-
             HasMessage = true;
         }
     }
@@ -302,7 +254,12 @@ public partial class MyDocumentsViewModel : ViewModelBase
     [RelayCommand]
     private void GoBack()
     {
-        _mainViewModel
-            ?.NavigateToApplicantDashboard();
+        _mainViewModel?.NavigateToApplicantDashboard();
+    }
+
+    public class RequirementTypeOption
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
     }
 }

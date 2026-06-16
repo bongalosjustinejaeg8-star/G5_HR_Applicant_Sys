@@ -98,17 +98,23 @@ public class ApplicationRepository : IApplicationRepository
 
     public async Task<bool> CreateAsync(Application application)
     {
+        // Generate the ID here and assign it back so the caller can use it
+        application.ApplicationId = Guid.NewGuid().ToString();
+
         using var connection = _context.CreateConnection();
         await connection.OpenAsync();
+
         string query = @"INSERT INTO Applications (application_id, applicant_id, vacancy_id, status, submitted_at, is_locked)
-                         VALUES (@applicationId, @applicantId, @vacancyId, @status, @submittedAt, @isLocked)";
+                     VALUES (@applicationId, @applicantId, @vacancyId, @status, @submittedAt, @isLocked)";
+
         using var command = new MySqlCommand(query, connection);
-        command.Parameters.AddWithValue("@applicationId", Guid.NewGuid().ToString());
+        command.Parameters.AddWithValue("@applicationId", application.ApplicationId); // use the assigned ID
         command.Parameters.AddWithValue("@applicantId", application.ApplicantId);
         command.Parameters.AddWithValue("@vacancyId", application.VacancyId);
         command.Parameters.AddWithValue("@status", application.Status.ToString());
         command.Parameters.AddWithValue("@submittedAt", DateTime.Now);
         command.Parameters.AddWithValue("@isLocked", application.IsLocked);
+
         int rowsAffected = await command.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }

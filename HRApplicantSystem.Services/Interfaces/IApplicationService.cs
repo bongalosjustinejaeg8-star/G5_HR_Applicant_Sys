@@ -7,7 +7,7 @@ namespace HRApplicantSystem.Services.Interfaces;
 public interface IApplicationService
 {
     // Applicant side
-    Task<bool> SubmitApplicationAsync(string applicantId, string vacancyId);
+    Task<bool> SubmitApplicationAsync(string applicantId, string vacancyId, string userId);
     Task<bool> CanEditAsync(string applicationId);
     Task<Application?> GetByIdAsync(string applicationId);
     Task<IEnumerable<Application>> GetByApplicantIdAsync(string applicantId);

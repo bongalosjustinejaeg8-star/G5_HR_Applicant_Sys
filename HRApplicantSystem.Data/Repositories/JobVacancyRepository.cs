@@ -18,24 +18,24 @@ public class JobVacancyRepository : IJobVacancyRepository
     // =========================
     private static JobVacancy Map(System.Data.Common.DbDataReader reader)
     {
-        var statusRaw = reader.IsDBNull(5)
-            ? "Open"
-            : reader.GetString(5);
-
-        Enum.TryParse<VacancyStatus>(
-            statusRaw.Trim(),
-            ignoreCase: true,
-            out var status);
-
         return new JobVacancy
         {
-            VacancyId = reader.GetValue(0).ToString()!,
-            DepartmentId = reader.GetValue(1).ToString()!,
-            PositionTitle = reader.GetString(2),
-            Qualifications = reader.IsDBNull(3) ? null : reader.GetString(3),
-            EmploymentType = reader.GetString(4),
-            Status = status,
-            CreatedAt = reader.GetDateTime(6)
+            VacancyId = reader["vacancy_id"]?.ToString() ?? "",
+            DepartmentId = reader["department_id"]?.ToString() ?? "",
+            PositionTitle = reader["position_title"]?.ToString() ?? "",
+            Qualifications = reader["qualifications"]?.ToString(),
+            EmploymentType = reader["employment_type"]?.ToString() ?? "",
+
+            Status = Enum.TryParse<VacancyStatus>(
+                reader["status"]?.ToString(),
+                true,
+                out var status)
+                ? status
+                : VacancyStatus.Closed,
+
+            CreatedAt = reader["created_at"] == DBNull.Value
+                ? DateTime.MinValue
+                : Convert.ToDateTime(reader["created_at"])
         };
     }
 

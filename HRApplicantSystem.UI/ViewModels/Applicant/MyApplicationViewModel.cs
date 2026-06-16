@@ -92,9 +92,12 @@ public partial class MyApplicationViewModel : ViewModelBase
             var applicantRepo = new ApplicantRepository(db);
             var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId?? string.Empty);
             if (applicant == null) return;
-            bool success = await _applicationService.SubmitApplicationAsync(applicant.ApplicantId, SelectedApplication.VacancyId);
-            Message = success ? "Application submitted!" : "Failed to submit.";
-            HasMessage = true;
+            bool success = await _applicationService.SubmitApplicationAsync(
+            applicant.ApplicantId,
+            SelectedApplication.VacancyId,
+            SessionManager.CurrentUserId ?? string.Empty
+            );
+            Console.WriteLine($"DEBUG: SessionManager.CurrentUserId = '{SessionManager.CurrentUserId}'");
             await LoadApplicationsAsync();
         }
         catch (Exception ex) { Message = ex.Message; HasMessage = true; }

@@ -138,7 +138,7 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToMyApplication() => CurrentView = new MyApplicationViewModel(this, GetAppService());
 
     public void NavigateToMyDocuments()
-        => CurrentView = new MyDocumentsViewModel();
+    => CurrentView = new MyDocumentsViewModel(this);
 
     public void NavigateToStatusTracking()
         => CurrentView = new StatusTrackingViewModel();

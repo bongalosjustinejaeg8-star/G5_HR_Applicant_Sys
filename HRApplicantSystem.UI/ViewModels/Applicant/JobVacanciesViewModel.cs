@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,9 +6,9 @@ using HRApplicantSystem.Data.Models;
 using HRApplicantSystem.Services.Interfaces;
 using HRApplicantSystem.Shared.Helpers;
 using HRApplicantSystem.Shared.Enums;
-using System;
-using HRApplicantSystem.Data;   
+using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Repositories;
+using System;
 
 namespace HRApplicantSystem.UI.ViewModels.Applicant;
 
@@ -34,12 +32,13 @@ public partial class JobVacanciesViewModel : ViewModelBase
     [ObservableProperty]
     private bool hasMessage;
 
-    public bool CanApply =>
-        SelectedJob != null &&
-        SelectedJob.Status == VacancyStatus.Open;
+    [ObservableProperty]
+    private bool canApply;
 
-    public JobVacanciesViewModel(IJobVacancyService jobVacancyService,
-                             IApplicationService applicationService, MainWindowViewModel mainViewModel)
+    public JobVacanciesViewModel(
+        IJobVacancyService jobVacancyService,
+        IApplicationService applicationService,
+        MainWindowViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
         _jobVacancyService = jobVacancyService;
@@ -50,10 +49,11 @@ public partial class JobVacanciesViewModel : ViewModelBase
 
     public async Task LoadJobVacanciesAsync()
     {
-            var jobs = await _jobVacancyService.GetOpenJobsAsync();
-            Vacancies.Clear();
-            foreach (var job in jobs)
-                Vacancies.Add(job);
+        var jobs = await _jobVacancyService.GetOpenJobsAsync();
+
+        Vacancies.Clear();
+        foreach (var job in jobs)
+            Vacancies.Add(job);
     }
 
     partial void OnSearchTextChanged(string value)
@@ -72,18 +72,26 @@ public partial class JobVacanciesViewModel : ViewModelBase
             Vacancies.Add(job);
     }
 
+    partial void OnSelectedJobChanged(JobVacancy? value)
+    {
+        CanApply = true;
+        OnPropertyChanged(nameof(CanApply));
+    }
+
     [RelayCommand]
     public async Task ApplyAsync()
     {
-        if (SelectedJob == null) return;
+        if (SelectedJob == null)
+            return;
 
         try
         {
             var db = new DbContext(AppConfig.ConnectionString);
             var applicantRepo = new ApplicantRepository(db);
 
-            // get actual applicant_id from account_id
-            var applicant = await applicantRepo.GetByAccountIdAsync(SessionManager.CurrentUserId ?? string.Empty);
+            var applicant =
+                await applicantRepo.GetByAccountIdAsync(
+                    SessionManager.CurrentUserId ?? string.Empty);
 
             if (applicant == null)
             {
@@ -93,17 +101,28 @@ public partial class JobVacanciesViewModel : ViewModelBase
             }
 
             bool success = await _applicationService.SubmitApplicationAsync(
-                applicant.ApplicantId,  // ← use applicant_id not account_id
-                SelectedJob.VacancyId);
+              applicant.ApplicantId,
+              SelectedJob.VacancyId,
+               SessionManager.CurrentUserId ?? string.Empty
+            );  
 
-            Message = success ? "Application submitted successfully!" : "You may have already applied.";
+            Message = success
+                ? "Application submitted successfully!"
+                : "You may have already applied or job is closed.";
+
             HasMessage = true;
         }
         catch (Exception ex)
         {
             Message = ex.Message;
+            Console.WriteLine(Message);
             HasMessage = true;
         }
     }
-    [RelayCommand] private void GoBack() => _mainViewModel?.NavigateToApplicantDashboard();
+
+    [RelayCommand]
+    private void GoBack()
+        => _mainViewModel?.NavigateToApplicantDashboard();
+
+    
 }

@@ -38,6 +38,27 @@ public class ApplicantDocument
     public string? Remarks { get; set; }
     public DateTime SubmittedAt { get; set; }
 
+    // ✨ UI ONLY (not stored in DB)
+    public string FileName =>
+        string.IsNullOrWhiteSpace(FilePath)
+            ? ""
+            : Path.GetFileName(FilePath);
+
+    public string DocumentTypeName =>
+        RequirementTypeId switch
+        {
+            "79263f6b-68c0-11f1-baa4-f894c21dce1e" => "Resume",
+            "79264256-68c0-11f1-baa4-f894c21dce1e" => "ID",
+            "7926434c-68c0-11f1-baa4-f894c21dce1e" => "Transcript",
+            "79264402-68c0-11f1-baa4-f894c21dce1e" => "Certificate",
+            "7926447c-68c0-11f1-baa4-f894c21dce1e" => "Other",
+            _ => "Unknown"
+        };
+}
+public class RequirementTypeOption
+{
+    public string Id { get; set; } = "";   // KEEP STRING, NOT GUID
+    public string Name { get; set; } = "";
 }
 public class Application
 {

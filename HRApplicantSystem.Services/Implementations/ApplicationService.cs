@@ -21,7 +21,7 @@ public class ApplicationService : IApplicationService
         _jobVacancyRepo = jobVacancyRepo;
     }
 
-    public async Task<bool> SubmitApplicationAsync(string applicantId, string vacancyId)
+    public async Task<bool> SubmitApplicationAsync(string applicantId, string vacancyId, string userId)
     {
         // step 1: check if vacancy exists and is still open
         var vacancy = await _jobVacancyRepo.GetByIdAsync(vacancyId);
@@ -49,9 +49,8 @@ public class ApplicationService : IApplicationService
         bool created = await _applicationRepo.CreateAsync(application);
         if (!created) return false;
 
-        // step 6: log the initial status in history
-        await LogStatusChangeAsync(application.ApplicationId, null, ApplicationStatus.Draft, applicantId, "Application created");
-
+        Console.WriteLine($"DEBUG: userId being passed as changedBy = '{userId}'");
+        await LogStatusChangeAsync(application.ApplicationId, null, ApplicationStatus.Draft, null, "Application created");
         return true;
     }
 
