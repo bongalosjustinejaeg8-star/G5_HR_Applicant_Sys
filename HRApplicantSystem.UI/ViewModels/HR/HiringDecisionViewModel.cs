@@ -6,9 +6,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HRApplicantSystem.Data;
 using HRApplicantSystem.Data.Models;
-using HRApplicantSystem.Data.Repositories;
 using HRApplicantSystem.Shared.Enums;
 using HRApplicantSystem.Shared.Helpers;
+using HRApplicantSystem.Data.Repositories;
+
 
 namespace HRApplicantSystem.UI.ViewModels.HR;
 
@@ -18,12 +19,14 @@ public partial class HiringDecisionViewModel : ViewModelBase
 
     [ObservableProperty] private ObservableCollection<dynamic> _applicants = new();
     [ObservableProperty] private object? _selectedApplicant;
-    [ObservableProperty] private string _decision = "Accepted";
+
+    // ✅ MUST match RadioButton values in XAML
+    [ObservableProperty] private string _decision = "Accept";
+
     [ObservableProperty] private string _remarks = string.Empty;
     [ObservableProperty] private string _message = string.Empty;
     [ObservableProperty] private bool _hasMessage = false;
 
-    // role restriction — only HRManager or Admin can submit decisions
     [ObservableProperty] private bool _canDecide = false;
     [ObservableProperty] private string _roleWarning = string.Empty;
 
@@ -42,9 +45,9 @@ public partial class HiringDecisionViewModel : ViewModelBase
 
     private void CheckRole()
     {
-        // role restriction: only HRManager or Admin can make final hiring decisions
         CanDecide = SessionManager.CurrentUserRole == UserRole.HRManager
                  || SessionManager.CurrentUserRole == UserRole.Admin;
+
         RoleWarning = CanDecide
             ? string.Empty
             : "⚠️ Access denied — only HR Manager or Admin can make final hiring decisions.";
@@ -61,17 +64,18 @@ public partial class HiringDecisionViewModel : ViewModelBase
 
             var apps = await appRepo.GetAllAsync();
 
-            // only show apps eligible for final decision
             var eligible = apps.Where(a =>
                 a.Status == ApplicationStatus.ForFinalReview ||
                 a.Status == ApplicationStatus.Shortlisted ||
                 a.Status == ApplicationStatus.ForInterview);
 
             Applicants.Clear();
+
             foreach (var app in eligible)
             {
                 var applicant = await applicantRepo.GetByIdAsync(app.ApplicantId);
                 var vacancy = await vacancyRepo.GetByIdAsync(app.VacancyId);
+
                 Applicants.Add(new
                 {
                     ApplicationId = app.ApplicationId,
@@ -81,15 +85,23 @@ public partial class HiringDecisionViewModel : ViewModelBase
                 });
             }
         }
-        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+            HasMessage = true;
+        }
     }
 
     [RelayCommand]
     private async Task SubmitDecision()
     {
-        if (SelectedApplicant == null) return;
+        if (SelectedApplicant == null)
+        {
+            Message = "⚠️ Please select an applicant first.";
+            HasMessage = true;
+            return;
+        }
 
-        // enforce role restriction
         if (!CanDecide)
         {
             Message = "⚠️ Access denied — only HR Manager or Admin can submit hiring decisions.";
@@ -97,9 +109,18 @@ public partial class HiringDecisionViewModel : ViewModelBase
             return;
         }
 
+        // ✅ safety check (prevents invalid binding states)
+        if (Decision != "Accept" && Decision != "Reject")
+        {
+            Message = "⚠️ Please select Accept or Reject before submitting.";
+            HasMessage = true;
+            return;
+        }
+
         try
         {
             var appId = ((dynamic)SelectedApplicant).ApplicationId as string ?? string.Empty;
+
             var db = new DbContext(AppConfig.ConnectionString);
             var decisionRepo = new HiringDecisionRepository(db);
             var appRepo = new ApplicationRepository(db);
@@ -108,7 +129,6 @@ public partial class HiringDecisionViewModel : ViewModelBase
             var app = await appRepo.GetByIdAsync(appId);
             if (app == null) return;
 
-            // save hiring decision record
             var hiringDecision = new HiringDecision
             {
                 ApplicationId = appId,
@@ -117,16 +137,16 @@ public partial class HiringDecisionViewModel : ViewModelBase
                 Remarks = Remarks,
                 DecidedAt = DateTime.Now
             };
+
             await decisionRepo.CreateAsync(hiringDecision);
 
-            // update application status based on decision
-            var newStatus = Decision == "Accepted"
+            // ✅ FIXED: must match Decision exactly
+            var newStatus = Decision == "Accept"
                 ? ApplicationStatus.Accepted
                 : ApplicationStatus.Rejected;
 
             await appRepo.UpdateStatusAsync(appId, newStatus);
 
-            // log status change — changedBy is an HR user_id
             await historyRepo.CreateAsync(new ApplicationStatusHistory
             {
                 ApplicationId = appId,
@@ -139,10 +159,17 @@ public partial class HiringDecisionViewModel : ViewModelBase
             Message = $"✅ Decision submitted — applicant {Decision.ToLower()}.";
             HasMessage = true;
             Remarks = string.Empty;
+
             await LoadApplicantsAsync();
         }
-        catch (Exception ex) { Message = ex.Message; HasMessage = true; }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+            HasMessage = true;
+        }
     }
 
-    [RelayCommand] private void GoBack() => _mainViewModel?.NavigateToHRDashboard();
+    [RelayCommand]
+    private void GoBack()
+        => _mainViewModel?.NavigateToHRDashboard();
 }

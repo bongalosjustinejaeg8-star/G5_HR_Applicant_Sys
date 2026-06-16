@@ -183,4 +183,8 @@ public partial class ApplicantListViewModel : ViewModelBase
     }
 
     [RelayCommand] private void GoBack() => _mainViewModel?.NavigateToHRDashboard();
+
+    
 }
+
+    

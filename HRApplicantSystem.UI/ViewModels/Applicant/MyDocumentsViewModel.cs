@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -44,6 +45,23 @@ public partial class MyDocumentsViewModel : ViewModelBase
     [ObservableProperty]
     private bool hasMessage;
 
+    // Number of required document types that have NOT yet been uploaded (status = Missing).
+    // Required types: Resume, ID, Transcript, Certificate (4 total — "Other" is optional).
+    [ObservableProperty]
+    private int missingDocumentCount;
+
+    // Human-readable label shown in the UI, e.g. "2 required document(s) missing"
+    [ObservableProperty]
+    private string missingDocumentLabel = "";
+
+    private static readonly string[] RequiredTypeIds =
+    {
+        "79263f6b-68c0-11f1-baa4-f894c21dce1e", // Resume
+        "79264256-68c0-11f1-baa4-f894c21dce1e", // ID
+        "7926434c-68c0-11f1-baa4-f894c21dce1e", // Transcript
+        "79264402-68c0-11f1-baa4-f894c21dce1e"  // Certificate
+    };
+
     public MyDocumentsViewModel()
     {
         _ = LoadDocumentsAsync();
@@ -77,6 +95,18 @@ public partial class MyDocumentsViewModel : ViewModelBase
 
             foreach (var d in docs)
                 Documents.Add(d);
+
+            // Compute how many required document types are still missing.
+            // A type is considered "uploaded" if at least one Submitted document exists for it.
+            var uploadedTypeIds = docs
+                .Where(d => d.Status == DocumentStatus.Submitted)
+                .Select(d => d.RequirementTypeId)
+                .ToHashSet();
+
+            MissingDocumentCount = RequiredTypeIds.Count(id => !uploadedTypeIds.Contains(id));
+            MissingDocumentLabel = MissingDocumentCount == 0
+                ? "✅ All required documents uploaded"
+                : $"⚠️ {MissingDocumentCount} required document(s) missing";
         }
         catch (Exception ex)
         {
@@ -162,7 +192,6 @@ public partial class MyDocumentsViewModel : ViewModelBase
 
             var requirementId = SelectedRequirementType?.Id?.Trim();
 
-            // SAFE GUARD (prevents FK + length + invalid values)
             if (string.IsNullOrWhiteSpace(requirementId) || requirementId.Length != 36)
             {
                 StatusMessage = "Invalid document type selected.";
@@ -173,13 +202,9 @@ public partial class MyDocumentsViewModel : ViewModelBase
             await docRepo.CreateAsync(new ApplicantDocument
             {
                 ApplicantId = applicant.ApplicantId,
-
                 RequirementTypeId = requirementId,
-
                 FilePath = FilePath,
-
                 Status = DocumentStatus.Submitted,
-
                 SubmittedAt = DateTime.Now
             });
 
@@ -189,6 +214,7 @@ public partial class MyDocumentsViewModel : ViewModelBase
             FilePath = "";
             SelectedRequirementType = null;
 
+            // Reload list — MissingDocumentCount is recalculated inside LoadDocumentsAsync
             await LoadDocumentsAsync();
         }
         catch (Exception ex)

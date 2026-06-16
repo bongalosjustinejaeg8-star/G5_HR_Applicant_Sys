@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HRApplicantSystem.Data;
@@ -48,6 +47,9 @@ public partial class ApplicantLoginViewModel : ViewModelBase
             {
                 ErrorMessage = "Invalid email or password!";
                 HasError = true;
+                var hasher = new PasswordHasher();
+                var hash = hasher.Hash("hr123");
+                Console.WriteLine(hash);
                 return;
             }
             SessionManager.Login(account.Email, account.AccountId, UserRole.None);
